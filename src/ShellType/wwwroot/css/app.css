@@ -43,6 +43,13 @@ h1, h2, h3 {
     font-weight: 400;
 }
 
+code,
+kbd,
+input {
+    font-family: inherit;
+    font-size: inherit;
+}
+
 ::selection {
     background: var(--main);
     color: var(--bg);
