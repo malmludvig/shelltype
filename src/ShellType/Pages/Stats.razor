@@ -1,0 +1,133 @@
+@page "/stats"
+@inject HistoryService History
+
+<PageTitle>stats · shelltype</PageTitle>
+
+<section class="stats">
+    @if (_history is null)
+    {
+        <p class="muted">loading...</p>
+    }
+    else if (_history.Count == 0)
+    {
+        <div class="empty">
+            <p>no tests yet.</p>
+            <a class="accent" href="">~$ start typing</a>
+        </div>
+    }
+    else
+    {
+        <div class="summary">
+            <div class="stat"><div class="label">tests completed</div><div class="value">@_history.Count</div></div>
+            <div class="stat"><div class="label">time typing</div><div class="value">@FormatTime(_history.Sum(h => h.Seconds))</div></div>
+            <div class="stat"><div class="label">highest wpm</div><div class="value">@Math.Round(_history.Max(h => h.Wpm))</div></div>
+            <div class="stat"><div class="label">average wpm</div><div class="value">@Math.Round(_history.Average(h => h.Wpm))</div></div>
+            <div class="stat"><div class="label">last 10 avg</div><div class="value">@Math.Round(_history.TakeLast(10).Average(h => h.Wpm))</div></div>
+            <div class="stat"><div class="label">avg accuracy</div><div class="value">@Math.Round(_history.Average(h => h.Accuracy))%</div></div>
+        </div>
+
+        <h2>personal bests</h2>
+        <div class="bests">
+            @foreach (var best in PersonalBests)
+            {
+                <div class="best">
+                    <div class="label">@best.ModeLabel <span class="muted">@best.Difficulty.ToString().ToLowerInvariant()</span></div>
+                    <div class="value">@Math.Round(best.Wpm)</div>
+                    <div class="muted small">@Math.Round(best.Accuracy)% acc · @best.At.LocalDateTime.ToString("yyyy-MM-dd")</div>
+                </div>
+            }
+        </div>
+
+        @if (_weakest.Count > 0)
+        {
+            <div class="section-head">
+                <h2>commands to practice</h2>
+                <a class="accent" href="?practice=weak">practice weak commands →</a>
+            </div>
+            <table>
+                <thead>
+                    <tr><th>command</th><th class="num">attempts</th><th class="num">failed</th><th class="num">mistakes</th><th class="num">best wpm</th></tr>
+                </thead>
+                <tbody>
+                    @foreach (var (text, stat) in _weakest)
+                    {
+                        <tr>
+                            <td><code>@text</code></td>
+                            <td class="num">@stat.Attempts</td>
+                            <td class="num">@stat.Failed</td>
+                            <td class="num">@stat.Mistakes</td>
+                            <td class="num">@(stat.BestWpm > 0 ? Math.Round(stat.BestWpm).ToString() : "-")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+
+        <h2>recent tests</h2>
+        <table>
+            <thead>
+                <tr><th>date</th><th>mode</th><th class="num">wpm</th><th class="num">raw</th><th class="num">acc</th><th class="num">consistency</th></tr>
+            </thead>
+            <tbody>
+                @foreach (var entry in _history.Reverse().Take(25))
+                {
+                    <tr>
+                        <td>@entry.At.LocalDateTime.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>@entry.ModeLabel <span class="muted">@entry.Difficulty.ToString().ToLowerInvariant()</span></td>
+                        <td class="num accent">@Math.Round(entry.Wpm)</td>
+                        <td class="num">@Math.Round(entry.Raw)</td>
+                        <td class="num">@Math.Round(entry.Accuracy)%</td>
+                        <td class="num">@Math.Round(entry.Consistency)%</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+
+        <div class="danger">
+            @if (_confirmClear)
+            {
+                <span>this deletes all results and command stats.</span>
+                <button class="confirm" @onclick="ClearAsync">yes, clear everything</button>
+                <button @onclick="() => _confirmClear = false">cancel</button>
+            }
+            else
+            {
+                <button @onclick="() => _confirmClear = true">clear history</button>
+            }
+        </div>
+    }
+</section>
+
+@code {
+    private IReadOnlyList<HistoryEntry>? _history;
+    private IReadOnlyList<(string Text, CommandStat Stat)> _weakest = [];
+    private bool _confirmClear;
+
+    private IEnumerable<HistoryEntry> PersonalBests =>
+        (_history ?? [])
+            .GroupBy(h => (h.Mode, h.ModeValue, h.Difficulty))
+            .Select(g => g.MaxBy(h => h.Wpm)!)
+            .OrderBy(h => h.Mode)
+            .ThenBy(h => h.ModeValue)
+            .ThenBy(h => h.Difficulty);
+
+    protected override async Task OnInitializedAsync()
+    {
+        _history = await History.GetHistoryAsync();
+        _weakest = await History.GetWeakestAsync(10);
+    }
+
+    private async Task ClearAsync()
+    {
+        await History.ClearAsync();
+        _history = [];
+        _weakest = [];
+        _confirmClear = false;
+    }
+
+    private static string FormatTime(double seconds)
+    {
+        var t = TimeSpan.FromSeconds(seconds);
+        return t.TotalHours >= 1 ? $"{(int)t.TotalHours}h {t.Minutes}m" : $"{t.Minutes}m {t.Seconds}s";
+    }
+}
