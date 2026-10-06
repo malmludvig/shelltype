@@ -1,0 +1,100 @@
+.shell {
+    min-height: 100vh;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 2rem 2.5rem;
+    display: grid;
+    grid-template-rows: auto 1fr auto;
+    gap: 2rem;
+}
+
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    transition: opacity 0.3s;
+}
+
+.logo {
+    font-size: 1.75rem;
+    color: var(--text);
+    font-weight: 500;
+    letter-spacing: -0.02em;
+}
+
+.logo .prompt {
+    color: var(--main);
+}
+
+.cursor {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.1em;
+    margin-left: 0.15em;
+    vertical-align: -0.15em;
+    background: var(--main);
+    animation: blink 1s steps(1) infinite;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+nav {
+    display: flex;
+    gap: 1.25rem;
+    font-size: 0.95rem;
+}
+
+nav ::deep a.active {
+    color: var(--main);
+}
+
+main {
+    min-width: 0;
+}
+
+.bottom {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    font-size: 0.75rem;
+    color: var(--sub);
+    transition: opacity 0.3s;
+}
+
+.keys,
+.links {
+    display: flex;
+    gap: 1.25rem;
+    flex-wrap: wrap;
+}
+
+kbd {
+    font-family: inherit;
+    background: var(--sub);
+    color: var(--bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.25rem;
+}
+
+/* Fade chrome away while the user is typing; JS toggles the class on <body>. */
+body.is-typing .top,
+body.is-typing .bottom {
+    opacity: 0;
+}
+
+@media (max-width: 640px) {
+    .shell {
+        padding: 1rem;
+    }
+
+    .keys {
+        display: none;
+    }
+}
