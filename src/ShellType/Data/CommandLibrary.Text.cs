@@ -24,6 +24,6 @@ public static partial class CommandLibrary
         ("tee output.log", "Write stdin to a file and to stdout", Easy),
         ("rev", "Reverse each line of input", Easy),
         ("jq '.items[].name' data.json", "Extract a field from every item in a JSON array", Hard),
-        ("printf '%s\n' one two three", "Print each argument on its own line", Hard),
+        ("printf '%s\\n' one two three", "Print each argument on its own line", Hard),
         ("nl -ba script.sh", "Number every line of a file", Medium));
 }

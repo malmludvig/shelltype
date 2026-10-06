@@ -16,7 +16,7 @@ public static partial class CommandLibrary
         ("find /tmp -type f -mtime +7 -delete", "Delete files in /tmp older than a week", Hard),
         ("find . -type d -name node_modules -prune", "Find node_modules directories without descending into them", Hard),
         ("find . -size +100M", "Find files larger than 100 MB", Medium),
-        ("find . -name '*.log' -exec gzip {} \;", "Compress every log file", Hard),
+        ("find . -name '*.log' -exec gzip {} \\;", "Compress every log file", Hard),
         ("locate nginx.conf", "Look up a file in the locate database", Easy),
         ("which python3", "Show which executable runs for a command", Easy),
         ("whereis ls", "Find the binary, source and man page for a command", Easy),
