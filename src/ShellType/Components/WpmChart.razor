@@ -1,0 +1,76 @@
+@* Speed over time: net WPM (accent), raw WPM (muted) and red marks where errors happened. *@
+@using System.Globalization
+
+@if (Samples.Count == 0)
+{
+    <div class="empty">not enough data for a chart</div>
+}
+else
+{
+    <svg class="chart" viewBox="0 0 @Width @Height" role="img" aria-label="words per minute over time">
+        @for (var i = 0; i <= GridLines; i++)
+        {
+            var value = _yMax * i / GridLines;
+            var y = Y(value);
+            <line class="grid" x1="@F(Left)" x2="@F(Width - Right)" y1="@F(y)" y2="@F(y)" />
+            <!text class="axis" x="@F(Left - 8)" y="@F(y + 4)" text-anchor="end">@value</!text>
+        }
+
+        @foreach (var sample in Samples.Where((_, i) => Samples.Count <= 15 || i % (Samples.Count / 10) == 0))
+        {
+            <!text class="axis" x="@F(X(sample.Second))" y="@F(Height - 6)" text-anchor="middle">@sample.Second</!text>
+        }
+
+        <polyline class="raw" points="@Points(s => s.Raw)" />
+        <polyline class="wpm" points="@Points(s => s.Wpm)" />
+
+        @foreach (var sample in Samples.Where(s => s.Errors > 0))
+        {
+            var x = X(sample.Second);
+            var y = Y(sample.Raw);
+            var r = Math.Min(3 + sample.Errors, 7);
+            <path class="error" d="M@F(x - r) @F(y - r) L@F(x + r) @F(y + r) M@F(x + r) @F(y - r) L@F(x - r) @F(y + r)">
+                <title>@sample.Errors error@(sample.Errors == 1 ? "" : "s") at @(sample.Second)s</title>
+            </path>
+        }
+    </svg>
+    <div class="legend">
+        <span class="key wpm">wpm</span>
+        <span class="key raw">raw</span>
+        <span class="key error">errors</span>
+    </div>
+}
+
+@code {
+    private const double Width = 800;
+    private const double Height = 220;
+    private const double Left = 44;
+    private const double Right = 12;
+    private const double Top = 12;
+    private const double Bottom = 28;
+    private const int GridLines = 4;
+
+    private int _yMax;
+
+    [Parameter, EditorRequired]
+    public IReadOnlyList<SecondSample> Samples { get; set; } = [];
+
+    protected override void OnParametersSet()
+    {
+        var peak = Samples.Count == 0 ? 0 : Samples.Max(s => Math.Max(s.Wpm, s.Raw));
+        _yMax = Math.Max(20, (int)Math.Ceiling(peak * 1.1 / 20) * 20);
+    }
+
+    private double X(int second)
+    {
+        var last = Math.Max(Samples[^1].Second, 2);
+        return Left + (second - 1) / (double)(last - 1) * (Width - Left - Right);
+    }
+
+    private double Y(double value) => Height - Bottom - value / _yMax * (Height - Top - Bottom);
+
+    private string Points(Func<SecondSample, double> value) =>
+        string.Join(' ', Samples.Select(s => $"{F(X(s.Second))},{F(Y(value(s)))}"));
+
+    private static string F(double v) => v.ToString("0.#", CultureInfo.InvariantCulture);
+}

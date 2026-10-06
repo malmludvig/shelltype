@@ -1,0 +1,77 @@
+.chart {
+    width: 100%;
+    height: auto;
+    display: block;
+    overflow: visible;
+}
+
+.grid {
+    stroke: var(--bg-alt);
+    stroke-width: 1;
+}
+
+.axis {
+    fill: var(--sub);
+    font-size: 11px;
+    font-family: var(--font);
+}
+
+polyline {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linejoin: round;
+    stroke-linecap: round;
+}
+
+.wpm {
+    stroke: var(--main);
+}
+
+.raw {
+    stroke: var(--sub);
+    stroke-width: 2;
+}
+
+.error {
+    stroke: var(--error);
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+.legend {
+    display: flex;
+    gap: 1.25rem;
+    justify-content: flex-end;
+    font-size: 0.7rem;
+    color: var(--sub);
+    margin-top: 0.25rem;
+}
+
+.key::before {
+    content: "";
+    display: inline-block;
+    width: 0.8rem;
+    height: 0.2rem;
+    margin-right: 0.4rem;
+    vertical-align: middle;
+    border-radius: 1px;
+    background: currentColor;
+}
+
+.key.wpm::before {
+    background: var(--main);
+}
+
+.key.raw::before {
+    background: var(--sub);
+}
+
+.key.error::before {
+    background: var(--error);
+}
+
+.empty {
+    color: var(--sub);
+    padding: 3rem 0;
+    text-align: center;
+}
