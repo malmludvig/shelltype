@@ -25,6 +25,7 @@ public static partial class CommandLibrary
         yield return Packages;
         yield return Archives;
         yield return System;
+        yield return Git;
     }
 
     private static CommandEntry[] Build(
