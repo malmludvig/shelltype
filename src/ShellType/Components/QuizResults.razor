@@ -1,0 +1,70 @@
+@* End-of-quiz summary: score, accuracy, best combo and a review of every question. *@
+@using ShellType.Quiz
+
+<section class="results">
+    <div class="headline">
+        <div class="stat big">
+            <div class="label">score</div>
+            <div class="value">@Session.Score</div>
+        </div>
+        <div class="stat big">
+            <div class="label">correct</div>
+            <div class="value">@Session.CorrectCount/@Session.Questions.Count</div>
+        </div>
+        <div class="stat big">
+            <div class="label">best combo</div>
+            <div class="value">@Session.BestStreak</div>
+        </div>
+    </div>
+
+    @if (IsHighScore)
+    {
+        <div class="badge pb">@(HighScore is null ? "first score for this quiz" : "new high score!")</div>
+    }
+    else if (HighScore is { } best)
+    {
+        <div class="badge">high score: @best</div>
+    }
+
+    <div class="actions">
+        <button @onclick="OnRestart">play again → <kbd>enter</kbd></button>
+    </div>
+
+    <h2>review</h2>
+    <ol class="review">
+        @foreach (var answer in Session.Answers)
+        {
+            var q = answer.Question;
+            <li class="@(answer.Correct ? "ok" : "bad")">
+                <span class="mark">@(answer.Correct ? "✓" : "✗")</span>
+                <div>
+                    <div class="prompt"><span class="ps">~$</span> @q.Prompt</div>
+                    @if (q.ErrorOutput is not null)
+                    {
+                        <div class="error">@q.ErrorOutput</div>
+                    }
+                    <div class="answer">→ @q.Answer</div>
+                    @if (!answer.Correct)
+                    {
+                        <div class="yours">you: @q.Options[answer.ChosenIndex]</div>
+                    }
+                </div>
+                <span class="points">@(answer.Points > 0 ? $"+{answer.Points}" : "")</span>
+            </li>
+        }
+    </ol>
+</section>
+
+@code {
+    [Parameter, EditorRequired]
+    public QuizSession Session { get; set; } = default!;
+
+    [Parameter]
+    public int? HighScore { get; set; }
+
+    [Parameter]
+    public bool IsHighScore { get; set; }
+
+    [Parameter]
+    public EventCallback OnRestart { get; set; }
+}

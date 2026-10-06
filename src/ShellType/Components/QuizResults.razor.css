@@ -1,0 +1,125 @@
+.results {
+    max-width: 52rem;
+    margin: 2.5rem auto 0;
+    animation: fade-in 0.25s ease-out;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+.headline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 3rem;
+}
+
+.label {
+    color: var(--sub);
+    font-size: 1.2rem;
+}
+
+.value {
+    color: var(--main);
+    font-size: 3.5rem;
+    line-height: 1.1;
+}
+
+.badge {
+    margin-top: 1rem;
+    color: var(--sub);
+    font-size: 0.85rem;
+}
+
+.badge.pb {
+    color: var(--bg);
+    background: var(--main);
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius);
+    width: fit-content;
+}
+
+.actions {
+    margin: 2rem 0;
+}
+
+.actions button {
+    color: var(--sub);
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius);
+    background: var(--bg-alt);
+}
+
+.actions button:hover {
+    color: var(--bg);
+    background: var(--text);
+}
+
+kbd {
+    font-family: inherit;
+    font-size: 0.75em;
+    background: var(--sub);
+    color: var(--bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.25rem;
+    margin-left: 0.4rem;
+}
+
+h2 {
+    font-size: 1.1rem;
+    color: var(--sub);
+}
+
+.review {
+    list-style: none;
+    padding: 0;
+    font-size: 0.85rem;
+}
+
+.review li {
+    display: grid;
+    grid-template-columns: 1.5rem 1fr auto;
+    gap: 0.5rem;
+    padding: 0.6rem;
+    border-radius: var(--radius);
+}
+
+.review li:nth-child(odd) {
+    background: var(--bg-alt);
+}
+
+.ok .mark,
+.points {
+    color: var(--main);
+}
+
+.bad .mark {
+    color: var(--error);
+}
+
+.prompt {
+    word-break: break-all;
+}
+
+.ps {
+    color: var(--sub);
+}
+
+.error {
+    color: var(--error);
+    opacity: 0.8;
+    word-break: break-word;
+}
+
+.answer {
+    color: var(--main);
+    margin-top: 0.2rem;
+}
+
+.yours {
+    color: var(--sub);
+    text-decoration: line-through;
+}
