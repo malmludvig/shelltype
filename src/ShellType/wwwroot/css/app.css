@@ -50,6 +50,19 @@ input {
     font-size: inherit;
 }
 
+/* Invisible input that receives keystrokes on the typing page (see shelltype.js). */
+.key-sink {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    border: 0;
+    opacity: 0;
+    pointer-events: none;
+}
+
 ::selection {
     background: var(--main);
     color: var(--bg);

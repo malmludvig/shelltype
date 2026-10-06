@@ -2,15 +2,34 @@
 window.shellType = (() => {
     let handler = null;
 
+    // Characters are read from a hidden input rather than from keydown. That way the
+    // browser composes dead keys (e.g. ~ and ^ on Nordic/German layouts), accents and
+    // AltGr combinations for us, and we only see the finished character.
+    let sink = null;
+
     const isFormField = (el) =>
-        !!el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
+        !!el && el !== sink &&
+        (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
+
+    function focusSink() {
+        if (sink && document.activeElement !== sink) {
+            sink.focus({ preventScroll: true });
+        }
+    }
 
     function onKeyDown(e) {
-        if (!handler || e.isComposing || isFormField(e.target) || e.metaKey || e.altKey) {
+        if (!handler || isFormField(e.target) || e.metaKey) {
             return;
         }
 
-        if (e.ctrlKey) {
+        // Make sure the character produced by this key lands in the hidden input.
+        focusSink();
+
+        if (e.isComposing || e.key === "Dead") {
+            return;
+        }
+
+        if (e.ctrlKey && !e.altKey) {
             if (e.key === "Backspace") {
                 e.preventDefault();
                 handler.invokeMethodAsync("OnKey", "DeleteWord");
@@ -19,10 +38,45 @@ window.shellType = (() => {
         }
 
         const key = e.key;
-        if (key === "Tab" || key === "Enter" || key === "Backspace" || key === "Escape" || key.length === 1) {
+        if (key === "Tab" || key === "Enter" || key === "Backspace" || key === "Escape") {
             e.preventDefault();
             handler.invokeMethodAsync("OnKey", key);
         }
+    }
+
+    // Sends whatever the browser put in the input, then empties it. Reading the value
+    // (instead of event.data) means a composition that also fires an input event is
+    // never counted twice: the second read finds the input already empty.
+    function flushSink() {
+        if (!sink || !handler || !sink.value) {
+            return;
+        }
+
+        const text = sink.value;
+        sink.value = "";
+        for (const ch of text) {
+            handler.invokeMethodAsync("OnKey", ch);
+        }
+    }
+
+    function onInput(e) {
+        if (!e.isComposing) {
+            flushSink();
+        }
+    }
+
+    function createSink() {
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "key-sink";
+        input.setAttribute("aria-label", "typing input");
+        input.autocomplete = "off";
+        input.autocapitalize = "off";
+        input.spellcheck = false;
+        input.addEventListener("input", onInput);
+        input.addEventListener("compositionend", flushSink);
+        document.body.appendChild(input);
+        return input;
     }
 
     document.addEventListener("mousemove", () => document.body.classList.remove("is-typing"));
@@ -110,12 +164,16 @@ window.shellType = (() => {
         keyboard: {
             register(dotNetRef) {
                 handler = dotNetRef;
+                sink ??= createSink();
+                focusSink();
                 document.addEventListener("keydown", onKeyDown);
                 window.addEventListener("blur", onBlur);
                 window.addEventListener("focus", onFocus);
             },
             unregister() {
                 handler = null;
+                sink?.remove();
+                sink = null;
                 document.removeEventListener("keydown", onKeyDown);
                 window.removeEventListener("blur", onBlur);
                 window.removeEventListener("focus", onFocus);
