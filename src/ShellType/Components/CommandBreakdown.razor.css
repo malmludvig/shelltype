@@ -1,0 +1,59 @@
+.breakdown {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+}
+
+th {
+    text-align: left;
+    color: var(--sub);
+    font-weight: 400;
+    font-size: 0.7rem;
+    padding: 0.4rem 0.6rem;
+}
+
+td {
+    padding: 0.45rem 0.6rem;
+    vertical-align: top;
+}
+
+tbody tr:nth-child(odd) {
+    background: var(--bg-alt);
+}
+
+.num {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.mark {
+    width: 1.5rem;
+}
+
+.ok .mark {
+    color: var(--main);
+}
+
+.bad .mark {
+    color: var(--error);
+}
+
+.cmd {
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.typed {
+    color: var(--sub);
+    margin-top: 0.15rem;
+}
+
+.typed::before {
+    content: "you: ";
+    opacity: 0.6;
+}
+
+.wrong {
+    color: var(--error);
+    text-decoration: underline;
+}

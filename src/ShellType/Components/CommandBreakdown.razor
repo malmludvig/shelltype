@@ -1,0 +1,44 @@
+@* Per-command table on the results screen, showing what you typed against what was expected. *@
+
+<table class="breakdown">
+    <thead>
+        <tr>
+            <th></th>
+            <th>command</th>
+            <th class="num">mistakes</th>
+            <th class="num">wpm</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var command in Commands)
+        {
+            <tr class="@(command.Correct ? "ok" : "bad")">
+                <td class="mark">@(command.Correct ? "✓" : "✗")</td>
+                <td class="cmd">
+                    <div class="target">@command.Text</div>
+                    @if (!command.Correct)
+                    {
+                        <div class="typed">
+                            @for (var i = 0; i < command.Typed.Length; i++)
+                            {
+                                var right = i < command.Text.Length && command.Typed[i] == command.Text[i];
+                                <span class="@(right ? "" : "wrong")">@command.Typed[i]</span>
+                            }
+                            @if (command.Typed.Length == 0)
+                            {
+                                <span class="muted">(nothing)</span>
+                            }
+                        </div>
+                    }
+                </td>
+                <td class="num">@command.Mistakes</td>
+                <td class="num">@(command.Wpm is { } wpm ? Math.Round(wpm).ToString() : "-")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@code {
+    [Parameter, EditorRequired]
+    public IReadOnlyList<CommandResult> Commands { get; set; } = [];
+}
