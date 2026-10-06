@@ -20,6 +20,7 @@ public static partial class CommandLibrary
         yield return Text;
         yield return Search;
         yield return Processes;
+        yield return Networking;
     }
 
     private static CommandEntry[] Build(
