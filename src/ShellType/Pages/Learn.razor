@@ -1,0 +1,54 @@
+@page "/learn"
+
+<PageTitle>learn · shelltype</PageTitle>
+
+<section class="learn">
+    <header>
+        <h1><span class="accent">~$</span> man shelltype</h1>
+        <p class="muted">
+            Every command in the game, with what it does. Pick a category to practice just that set.
+        </p>
+        <input class="search" type="search" placeholder="grep commands..." @bind="_query" @bind:event="oninput" aria-label="search commands" />
+    </header>
+
+    @foreach (var group in Groups)
+    {
+        <section class="category">
+            <div class="category-head">
+                <h2>@group.Key.ToString().ToLowerInvariant() <span class="muted">(@group.Count())</span></h2>
+                <a class="practice" href="?category=@group.Key">practice →</a>
+            </div>
+            <dl>
+                @foreach (var command in group)
+                {
+                    <div class="entry">
+                        <dt><code>@command.Text</code> <span class="level level-@((int)command.Difficulty)" title="difficulty">@command.Difficulty.ToString().ToLowerInvariant()</span></dt>
+                        <dd>@command.Description</dd>
+                    </div>
+                }
+            </dl>
+        </section>
+    }
+
+    @if (!Groups.Any())
+    {
+        <p class="muted">no commands match "@_query"</p>
+    }
+</section>
+
+@code {
+    private string _query = "";
+
+    private IEnumerable<IGrouping<CommandCategory, CommandEntry>> Groups =>
+        CommandLibrary.All
+            .Where(Matches)
+            .OrderBy(c => c.Difficulty)
+            .GroupBy(c => c.Category)
+            .OrderBy(g => g.Key);
+
+    private bool Matches(CommandEntry command) =>
+        string.IsNullOrWhiteSpace(_query)
+        || command.Text.Contains(_query, StringComparison.OrdinalIgnoreCase)
+        || command.Description.Contains(_query, StringComparison.OrdinalIgnoreCase)
+        || command.Category.ToString().Contains(_query, StringComparison.OrdinalIgnoreCase);
+}
