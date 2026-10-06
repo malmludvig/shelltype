@@ -1,0 +1,103 @@
+@* Test setup: mode, length, difficulty and command categories. Any change restarts the test. *@
+@inject SettingsService SettingsService
+
+<div class="config @(Hidden ? "hidden" : "")">
+    <div class="group">
+        <button class="@Active(S.Mode == TestMode.Time)" @onclick="() => Change(s => s.Mode = TestMode.Time)">time</button>
+        <button class="@Active(S.Mode == TestMode.Commands)" @onclick="() => Change(s => s.Mode = TestMode.Commands)">commands</button>
+    </div>
+
+    <span class="divider"></span>
+
+    <div class="group">
+        @if (S.Mode == TestMode.Time)
+        {
+            @foreach (var seconds in TestConfig.TimeOptions)
+            {
+                <button class="@Active(S.TimeSeconds == seconds)" @onclick="() => Change(s => s.TimeSeconds = seconds)">@seconds</button>
+            }
+        }
+        else
+        {
+            @foreach (var count in TestConfig.CommandOptions)
+            {
+                <button class="@Active(S.CommandCount == count)" @onclick="() => Change(s => s.CommandCount = count)">@count</button>
+            }
+        }
+    </div>
+
+    <span class="divider"></span>
+
+    <div class="group">
+        @foreach (var difficulty in Enum.GetValues<Difficulty>())
+        {
+            <button class="@Active(S.MaxDifficulty == difficulty)"
+                    title="@DifficultyHint(difficulty)"
+                    @onclick="() => Change(s => s.MaxDifficulty = difficulty)">
+                @difficulty.ToString().ToLowerInvariant()
+            </button>
+        }
+    </div>
+
+    <span class="divider"></span>
+
+    <div class="group">
+        <button class="@Active(_showCategories)" @onclick="() => _showCategories = !_showCategories">
+            categories @(S.Categories.Count == 0 ? "(all)" : $"({S.Categories.Count})")
+        </button>
+    </div>
+</div>
+
+@if (_showCategories && !Hidden)
+{
+    <div class="categories">
+        <button class="chip @Active(S.Categories.Count == 0)" @onclick="() => Change(s => s.Categories.Clear())">all</button>
+        @foreach (var category in Enum.GetValues<CommandCategory>())
+        {
+            <button class="chip @Active(S.Categories.Contains(category))" @onclick="() => Change(s => Toggle(s, category))">
+                @category.ToString().ToLowerInvariant()
+            </button>
+        }
+    </div>
+}
+
+@code {
+    private bool _showCategories;
+
+    [Parameter]
+    public bool Hidden { get; set; }
+
+    [Parameter]
+    public EventCallback OnChanged { get; set; }
+
+    private UserSettings S => SettingsService.Current;
+
+    private static string Active(bool on) => on ? "active" : "";
+
+    private static string DifficultyHint(Difficulty d) => d switch
+    {
+        Difficulty.Easy => "short, simple commands",
+        Difficulty.Medium => "easy + commands with flags and pipes",
+        _ => "everything, including quotes, regexes and long paths",
+    };
+
+    private static void Toggle(UserSettings s, CommandCategory category)
+    {
+        if (!s.Categories.Remove(category))
+        {
+            s.Categories.Add(category);
+        }
+
+        // Selecting every category is the same as "all".
+        if (s.Categories.Count == Enum.GetValues<CommandCategory>().Length)
+        {
+            s.Categories.Clear();
+        }
+    }
+
+    private async Task Change(Action<UserSettings> change)
+    {
+        await SettingsService.UpdateAsync(change);
+        await OnChanged.InvokeAsync();
+    }
+}

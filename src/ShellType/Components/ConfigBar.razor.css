@@ -1,0 +1,73 @@
+.config {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0.5rem 1.25rem;
+    background: var(--bg-alt);
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    transition: opacity 0.3s;
+}
+
+.config.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.group {
+    display: flex;
+    gap: 0.25rem;
+}
+
+button {
+    color: var(--sub);
+    padding: 0.25rem 0.4rem;
+    border-radius: 0.3rem;
+    transition: color 0.15s;
+}
+
+button:hover,
+button:focus-visible {
+    color: var(--text);
+}
+
+button.active {
+    color: var(--main);
+}
+
+.divider {
+    width: 0.25rem;
+    height: 1.1rem;
+    border-radius: 2px;
+    background: var(--bg);
+}
+
+.categories {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.4rem;
+    margin: 0.75rem auto 0;
+    max-width: 46rem;
+    font-size: 0.8rem;
+}
+
+.chip {
+    background: var(--bg-alt);
+    padding: 0.3rem 0.7rem;
+}
+
+.chip.active {
+    background: var(--main);
+    color: var(--bg);
+}
+
+@media (max-width: 640px) {
+    .divider {
+        display: none;
+    }
+}
