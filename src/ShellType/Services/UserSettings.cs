@@ -18,6 +18,7 @@ public sealed class UserSettings
 {
     public string Theme { get; set; } = "shelltype";
     public CaretStyle Caret { get; set; } = CaretStyle.Line;
+    public bool SmoothCaret { get; set; } = true;
     public double FontSize { get; set; } = 1.6;
     public bool ShowLiveWpm { get; set; } = true;
     public bool ShowDescriptions { get; set; } = true;

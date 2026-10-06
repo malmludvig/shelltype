@@ -26,6 +26,7 @@ window.shellType = (() => {
     }
 
     document.addEventListener("mousemove", () => document.body.classList.remove("is-typing"));
+    window.addEventListener("resize", () => window.shellType.ui.moveCaret());
 
     function onBlur() {
         handler?.invokeMethodAsync("OnFocusChanged", false);
@@ -54,6 +55,34 @@ window.shellType = (() => {
             },
             setCssVar(name, value) {
                 document.documentElement.style.setProperty(name, value);
+            },
+            // Glide the smooth caret to the character marked .caret. Big jumps (a new
+            // command, a restart) snap instead of sweeping across the line.
+            moveCaret() {
+                const caret = document.querySelector(".terminal .smooth-caret");
+                const target = document.querySelector(".terminal .line.current .char.caret");
+                if (!caret || !target) {
+                    return;
+                }
+
+                const box = caret.parentElement.getBoundingClientRect();
+                const rect = target.getBoundingClientRect();
+                const x = rect.left - box.left;
+                const y = rect.top - box.top;
+                const last = caret._pos;
+                const far = !last || Math.abs(x - last.x) > rect.width * 6 || y !== last.y && x > last.x;
+
+                if (far) {
+                    caret.style.transition = "none";
+                }
+                caret.style.setProperty("--cw", rect.width + "px");
+                caret.style.setProperty("--ch", rect.height + "px");
+                caret.style.transform = `translate(${x}px, ${y}px)`;
+                caret._pos = { x, y };
+                if (far) {
+                    caret.getBoundingClientRect(); // commit the jump before re-enabling the transition
+                    caret.style.transition = "";
+                }
             },
             // While typing, hide the header/footer. Moving the mouse brings them back.
             setTyping(on) {

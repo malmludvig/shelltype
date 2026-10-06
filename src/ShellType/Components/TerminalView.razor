@@ -1,6 +1,6 @@
 @* The "terminal" where commands are typed: a little history, the active prompt and what's next. *@
 
-<div class="terminal caret-@Settings.Caret.ToString().ToLowerInvariant() @(Session.State == SessionState.Running ? "running" : "")">
+<div class="terminal caret-@Settings.Caret.ToString().ToLowerInvariant() @(Settings.SmoothCaret ? "smooth" : "") @(Session.State == SessionState.Running ? "running" : "")">
     <div class="history">
         @foreach (var attempt in Session.Completed.TakeLast(HistoryLines))
         {
@@ -17,7 +17,14 @@
         var current = Session.Current;
         <div class="line current">
             <span class="prompt">~$</span>
-            <span class="cmd">@RenderChars(current, showCaret: true)</span>
+            <span class="cmd">
+                @if (Settings.SmoothCaret)
+                {
+                    @* Kept as the first child so Blazor reuses the same element and the CSS transition can run. *@
+                    <span class="smooth-caret" aria-hidden="true"></span>
+                }
+                @RenderChars(current, showCaret: true)
+            </span>
         </div>
         @if (Settings.ShowDescriptions)
         {
@@ -48,6 +55,17 @@
 
     [Parameter, EditorRequired]
     public UserSettings Settings { get; set; } = default!;
+
+    [Inject]
+    private IJSRuntime JS { get; set; } = default!;
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (Settings.SmoothCaret)
+        {
+            await JS.InvokeVoidAsync("shellType.ui.moveCaret");
+        }
+    }
 
     private RenderFragment RenderChars(CommandAttempt attempt, bool showCaret)
     {

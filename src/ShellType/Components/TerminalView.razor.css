@@ -138,6 +138,53 @@
     display: none;
 }
 
+/* ---------- smooth caret: one element that glides between characters ---------- */
+
+.smooth .line.current .cmd {
+    position: relative;
+}
+
+.smooth .char.caret::before {
+    display: none;
+}
+
+.smooth-caret {
+    position: absolute;
+    left: 0;
+    top: 0;
+    background: var(--caret);
+    border-radius: 1px;
+    pointer-events: none;
+    transition: transform 0.1s ease-out;
+    animation: caret-blink 1s infinite;
+}
+
+.running .smooth-caret {
+    animation: none;
+}
+
+.caret-line .smooth-caret {
+    width: 0.1em;
+    height: calc(var(--ch, 1.3em) * 0.8);
+    margin: calc(var(--ch, 1.3em) * 0.1) 0 0 -0.05em;
+}
+
+.caret-block .smooth-caret {
+    width: var(--cw, 0.6em);
+    height: var(--ch, 1.3em);
+    opacity: 0.4;
+}
+
+.caret-underline .smooth-caret {
+    width: var(--cw, 0.6em);
+    height: 0.1em;
+    margin-top: calc(var(--ch, 1.3em) - 0.15em);
+}
+
+.caret-off .smooth-caret {
+    display: none;
+}
+
 @keyframes caret-blink {
     0%, 100% {
         opacity: 1;
