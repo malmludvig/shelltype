@@ -1,0 +1,302 @@
+/* ---------- mode / length bar (matches the typing page's config bar) ---------- */
+
+.config {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem 1rem;
+    width: fit-content;
+    margin: 0 auto;
+    padding: 0.5rem 1.25rem;
+    background: var(--bg-alt);
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+}
+
+.group {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.config button {
+    color: var(--sub);
+    padding: 0.25rem 0.4rem;
+    border-radius: 0.3rem;
+}
+
+.config button:hover {
+    color: var(--text);
+}
+
+.config button.active {
+    color: var(--main);
+}
+
+.divider {
+    width: 0.25rem;
+    height: 1.1rem;
+    border-radius: 2px;
+    background: var(--bg);
+}
+
+/* ---------- question ---------- */
+
+.quiz {
+    max-width: 52rem;
+    margin: 2.5rem auto 0;
+}
+
+.status {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    min-height: 2.4rem;
+}
+
+.progress {
+    color: var(--sub);
+}
+
+.score {
+    color: var(--main);
+    font-size: 1.6rem;
+    animation: bump 0.3s ease-out;
+}
+
+.combo {
+    font-size: 0.85rem;
+    padding: 0.15rem 0.6rem;
+    border-radius: 999px;
+    color: var(--bg);
+    background: var(--main);
+    animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.6, 1);
+}
+
+/* The badge heats up as the streak grows. */
+.combo-2 {
+    background: color-mix(in srgb, var(--main) 60%, var(--error));
+}
+
+.combo-3 {
+    background: color-mix(in srgb, var(--main) 30%, var(--error));
+}
+
+.combo-4 {
+    background: var(--error);
+    box-shadow: 0 0 12px color-mix(in srgb, var(--error) 60%, transparent);
+}
+
+.kind {
+    margin-top: 1.25rem;
+    color: var(--sub);
+    font-style: italic;
+    font-size: 0.85rem;
+}
+
+.prompt {
+    font-size: 1.6rem;
+    margin: 0.4rem 0;
+    word-break: break-all;
+}
+
+.ps {
+    color: var(--main);
+}
+
+.error-output {
+    color: var(--error);
+    font-size: 0.95rem;
+    padding: 0.6rem 0.9rem;
+    border-left: 3px solid var(--error);
+    background: color-mix(in srgb, var(--error) 8%, transparent);
+    border-radius: 0 var(--radius) var(--radius) 0;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+
+/* ---------- fzf picker ---------- */
+
+.picker {
+    margin-top: 1.5rem;
+}
+
+.query {
+    display: flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 1px solid var(--bg-alt);
+}
+
+.query .arrow {
+    color: var(--main);
+}
+
+.query .text {
+    white-space: pre;
+}
+
+.query .cursor {
+    width: 0.55em;
+    height: 1.15em;
+    align-self: center;
+    margin-left: -0.5rem;
+    background: var(--caret);
+    animation: blink 1s steps(1) infinite;
+}
+
+.query .count {
+    margin-left: auto;
+    color: var(--sub);
+    font-size: 0.8rem;
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0.5rem 0 0;
+}
+
+.option {
+    display: flex;
+    gap: 0.6rem;
+    padding: 0.45rem 0.6rem;
+    border-radius: var(--radius);
+    color: var(--text);
+    cursor: pointer;
+    transition: background 0.1s, opacity 0.2s;
+}
+
+.option .pointer {
+    width: 0.8rem;
+    flex: none;
+    color: var(--main);
+}
+
+.option .text {
+    word-break: break-word;
+}
+
+.option.selected {
+    background: var(--bg-alt);
+}
+
+.hl {
+    color: var(--main);
+    font-weight: 700;
+}
+
+.option.gone {
+    opacity: 0.25;
+    text-decoration: line-through;
+    cursor: default;
+}
+
+/* ---------- reveal ---------- */
+
+.reveal .option {
+    cursor: default;
+    color: var(--sub);
+}
+
+.reveal .option.right {
+    color: var(--main);
+    background: color-mix(in srgb, var(--main) 12%, transparent);
+}
+
+.reveal .option.right .pointer {
+    color: var(--main);
+}
+
+.reveal .option.wrong {
+    color: var(--error);
+    background: color-mix(in srgb, var(--error) 12%, transparent);
+}
+
+.reveal .option.wrong .pointer {
+    color: var(--error);
+}
+
+.verdict {
+    margin-top: 1rem;
+    font-size: 1.3rem;
+}
+
+.verdict.good {
+    color: var(--main);
+    animation: pop 0.35s cubic-bezier(0.3, 1.6, 0.6, 1);
+}
+
+.verdict.bad {
+    color: var(--error);
+    animation: shake 0.4s;
+}
+
+.explanation {
+    color: var(--sub);
+    font-style: italic;
+    font-size: 0.9rem;
+}
+
+.continue {
+    color: var(--sub);
+    font-size: 0.8rem;
+}
+
+.hint {
+    text-align: center;
+    color: var(--sub);
+    font-size: 0.75rem;
+    margin-top: 2.5rem;
+    line-height: 2;
+}
+
+kbd {
+    font-family: inherit;
+    background: var(--sub);
+    color: var(--bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.25rem;
+    margin: 0 0.1rem;
+}
+
+@keyframes pop {
+    from {
+        transform: scale(0.6);
+        opacity: 0;
+    }
+}
+
+@keyframes bump {
+    40% {
+        transform: translateY(-4px);
+    }
+}
+
+@keyframes shake {
+    20%, 60% {
+        transform: translateX(-6px);
+    }
+
+    40%, 80% {
+        transform: translateX(6px);
+    }
+}
+
+@media (max-width: 640px) {
+    .divider {
+        display: none;
+    }
+
+    .prompt {
+        font-size: 1.2rem;
+    }
+}

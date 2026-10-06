@@ -52,7 +52,7 @@ public static class QuizGenerator
             null,
             options,
             IndexOf(options, command.Description),
-            $"{command.Program}: {command.Category.ToString().ToLowerInvariant()}");
+            $"{command.Program} is one of the {command.Category.ToString().ToLowerInvariant()} commands. See them all on the learn page.");
     }
 
     public static QuizQuestion FromError(ErrorScenario scenario, Random random)

@@ -1,0 +1,253 @@
+@page "/quiz"
+@using ShellType.Quiz
+@implements IAsyncDisposable
+@inject IJSRuntime JS
+@inject BrowserStorage Storage
+@inject TimeProvider Time
+
+<PageTitle>quiz · shelltype</PageTitle>
+
+<div class="config">
+    <div class="group">
+        <button class="@Active(_mode == QuizMode.Mixed)" @onclick="() => Restart(QuizMode.Mixed)">mixed</button>
+        <button class="@Active(_mode == QuizMode.Commands)" @onclick="() => Restart(QuizMode.Commands)">what does it do?</button>
+        <button class="@Active(_mode == QuizMode.Errors)" @onclick="() => Restart(QuizMode.Errors)">fix the error</button>
+    </div>
+    <span class="divider"></span>
+    <div class="group">
+        @foreach (var length in QuizGenerator.LengthOptions)
+        {
+            <button class="@Active(_length == length)" @onclick="() => Restart(length: length)">@length</button>
+        }
+    </div>
+</div>
+
+@if (_session is { Phase: QuizPhase.Finished })
+{
+    <QuizResults Session="_session" HighScore="_highScore" IsHighScore="_isHighScore" OnRestart="() => Restart()" />
+}
+else if (_session is not null)
+{
+    var q = _session.Current;
+    <section class="quiz">
+        <div class="status">
+            <span class="progress">@(_session.Index + 1)/@_session.Questions.Count</span>
+            <span class="score" @key="_session.Score">@_session.Score</span>
+            @if (_session.Streak > 0)
+            {
+                <span class="combo combo-@Math.Min(_session.Streak, QuizSession.MaxComboLevel)" @key="_session.Streak"
+                      title="right answers in a row, and the multiplier on your next answer">
+                    @_session.Streak in a row · ×@_session.Multiplier.ToString("0.#", System.Globalization.CultureInfo.InvariantCulture)
+                </span>
+            }
+        </div>
+
+        <div class="kind">@(q.Kind == QuestionKind.WhatDoesItDo ? "# what does this do?" : "# how do you fix this?")</div>
+        <div class="prompt"><span class="ps">~$</span> @q.Prompt</div>
+        @if (q.ErrorOutput is not null)
+        {
+            <div class="error-output">@q.ErrorOutput</div>
+        }
+
+        @if (_session.Phase == QuizPhase.Answering)
+        {
+            <div class="picker">
+                <div class="query">
+                    <span class="arrow">&gt;</span>
+                    <span class="text">@_session.Query</span><span class="cursor"></span>
+                    <span class="count">@_session.Visible.Count/@q.Options.Count</span>
+                </div>
+                <ul>
+                    @for (var i = 0; i < _session.Visible.Count; i++)
+                    {
+                        var option = _session.Visible[i];
+                        var position = i;
+                        <li class="option @(i == _session.Selected ? "selected" : "")" @onclick="() => Pick(position)">
+                            <span class="pointer">@(i == _session.Selected ? "▌" : "")</span>
+                            <span class="text">
+                                @{ var marks = option.Highlights.ToHashSet(); }
+                                @for (var c = 0; c < option.Text.Length; c++)
+                                {
+                                    <span class="@(marks.Contains(c) ? "hl" : "")">@option.Text[c]</span>
+                                }
+                            </span>
+                        </li>
+                    }
+                    @foreach (var gone in q.Options.Where((_, idx) => _session.Visible.All(v => v.Index != idx)))
+                    {
+                        <li class="option gone"><span class="pointer"></span><span class="text">@gone</span></li>
+                    }
+                </ul>
+            </div>
+        }
+        else if (_session.LastAnswer is { } answer)
+        {
+            <ul class="reveal">
+                @for (var i = 0; i < q.Options.Count; i++)
+                {
+                    var css = i == q.AnswerIndex ? "right" : i == answer.ChosenIndex ? "wrong" : "";
+                    <li class="option @css">
+                        <span class="pointer">@(i == q.AnswerIndex ? "✓" : i == answer.ChosenIndex ? "✗" : "")</span>
+                        <span class="text">@q.Options[i]</span>
+                    </li>
+                }
+            </ul>
+            <div class="verdict @(answer.Correct ? "good" : "bad")">
+                @if (answer.Correct)
+                {
+                    <span>correct! +@answer.Points</span>
+                }
+                else
+                {
+                    <span>not quite</span>
+                }
+            </div>
+            <p class="explanation"># @q.Explanation</p>
+            <p class="continue">press <kbd>enter</kbd> to continue</p>
+        }
+    </section>
+
+    <p class="hint">
+        type to filter · <kbd>↑</kbd><kbd>↓</kbd> or <kbd>ctrl</kbd>+<kbd>j</kbd>/<kbd>k</kbd> to move ·
+        <kbd>enter</kbd> to answer · <kbd>esc</kbd> to clear · <kbd>tab</kbd> new quiz
+    </p>
+}
+
+@code {
+    private const string HighScoreKey = "shelltype.quiz.best";
+
+    private DotNetObjectReference<Quiz>? _self;
+    private QuizSession? _session;
+    private QuizMode _mode = QuizMode.Mixed;
+    private int _length = QuizGenerator.LengthOptions[0];
+    private Dictionary<string, int> _highScores = [];
+    private int? _highScore;
+    private bool _isHighScore;
+    private bool _saved;
+
+    private string ScoreKey => $"{_mode}-{_length}";
+
+    protected override async Task OnInitializedAsync()
+    {
+        _highScores = await Storage.GetAsync<Dictionary<string, int>>(HighScoreKey) ?? [];
+        Restart();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _self = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("shellType.keyboard.register", _self);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnKey(string key)
+    {
+        if (_session is null)
+        {
+            return;
+        }
+
+        if (key == "Tab" || (key == "Enter" && _session.Phase == QuizPhase.Finished))
+        {
+            Restart();
+            StateHasChanged();
+            return;
+        }
+
+        switch (key)
+        {
+            case "Enter":
+                _session.Submit();
+                break;
+            case "Escape":
+                _session.ClearQuery();
+                break;
+            case "Backspace":
+                _session.Backspace();
+                break;
+            case "DeleteWord":
+                _session.DeleteWord();
+                break;
+            case "Up":
+                _session.Move(-1);
+                break;
+            case "Down":
+                _session.Move(1);
+                break;
+            default:
+                if (key.Length == 1)
+                {
+                    _session.Type(key[0]);
+                }
+
+                break;
+        }
+
+        await CheckFinishedAsync();
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnFocusChanged(bool focused)
+    {
+    }
+
+    private async Task Pick(int position)
+    {
+        if (_session is null)
+        {
+            return;
+        }
+
+        // Clicking selects that option and answers it, same as moving there and pressing Enter.
+        _session.Move(position - _session.Selected);
+        _session.Submit();
+        await CheckFinishedAsync();
+    }
+
+    /// <summary>When the quiz has just ended, compare against and update the stored high score.</summary>
+    private async Task CheckFinishedAsync()
+    {
+        if (_session is not { Phase: QuizPhase.Finished } || _saved)
+        {
+            return;
+        }
+
+        _saved = true;
+        _highScore = _highScores.TryGetValue(ScoreKey, out var previous) ? previous : null;
+        _isHighScore = _session.Score > previous;
+        if (_isHighScore)
+        {
+            _highScores[ScoreKey] = _session.Score;
+            await Storage.SetAsync(HighScoreKey, _highScores);
+        }
+    }
+
+    private void Restart(QuizMode? mode = null, int? length = null)
+    {
+        _mode = mode ?? _mode;
+        _length = length ?? _length;
+        _session = new QuizSession(QuizGenerator.Create(_mode, _length), Time);
+        _saved = false;
+        _isHighScore = false;
+        _highScore = null;
+    }
+
+    private static string Active(bool on) => on ? "active" : "";
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("shellType.keyboard.unregister");
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+
+        _self?.Dispose();
+    }
+}
