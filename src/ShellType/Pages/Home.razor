@@ -112,7 +112,11 @@ else if (_session is not null)
             default:
                 if (key.Length == 1)
                 {
-                    _session.Type(key[0]);
+                    var correct = _session.Type(key[0]);
+                    if (Settings.KeySounds)
+                    {
+                        await JS.InvokeVoidAsync("shellType.sound.play", correct);
+                    }
                 }
 
                 break;

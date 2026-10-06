@@ -60,6 +60,24 @@ window.shellType = (() => {
                 document.body.classList.toggle("is-typing", on);
             },
         },
+        // Tiny synthesized clicks, so there are no audio files to download.
+        sound: {
+            ctx: null,
+            play(correct) {
+                try {
+                    const ctx = (this.ctx ??= new AudioContext());
+                    const osc = ctx.createOscillator();
+                    const gain = ctx.createGain();
+                    osc.type = correct ? "triangle" : "square";
+                    osc.frequency.value = correct ? 1400 + Math.random() * 200 : 180;
+                    gain.gain.setValueAtTime(correct ? 0.05 : 0.04, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + (correct ? 0.03 : 0.08));
+                    osc.connect(gain).connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.09);
+                } catch { }
+            },
+        },
         keyboard: {
             register(dotNetRef) {
                 handler = dotNetRef;
