@@ -34,6 +34,26 @@ window.shellType = (() => {
     }
 
     return {
+        // localStorage can throw (private mode, blocked storage), so every access is guarded.
+        storage: {
+            get(key) {
+                try { return localStorage.getItem(key); } catch { return null; }
+            },
+            set(key, value) {
+                try { localStorage.setItem(key, value); } catch { }
+            },
+            remove(key) {
+                try { localStorage.removeItem(key); } catch { }
+            },
+        },
+        ui: {
+            setTheme(name) {
+                document.documentElement.dataset.theme = name;
+            },
+            setCssVar(name, value) {
+                document.documentElement.style.setProperty(name, value);
+            },
+        },
         keyboard: {
             register(dotNetRef) {
                 handler = dotNetRef;
