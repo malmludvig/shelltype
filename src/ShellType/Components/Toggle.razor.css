@@ -1,0 +1,18 @@
+.toggle {
+    display: flex;
+    gap: 0.4rem;
+}
+
+button {
+    background: var(--bg-alt);
+    color: var(--text);
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    min-width: 3.5rem;
+}
+
+button.active {
+    background: var(--main);
+    color: var(--bg);
+}

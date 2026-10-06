@@ -1,0 +1,33 @@
+.setting {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: 1.5rem;
+    align-items: center;
+    padding: 0.9rem 0;
+}
+
+.title {
+    color: var(--text);
+}
+
+.description {
+    color: var(--sub);
+    font-size: 0.8rem;
+    margin-top: 0.2rem;
+}
+
+.control {
+    display: flex;
+    justify-content: flex-end;
+}
+
+@media (max-width: 640px) {
+    .setting {
+        grid-template-columns: 1fr;
+        gap: 0.6rem;
+    }
+
+    .control {
+        justify-content: flex-start;
+    }
+}

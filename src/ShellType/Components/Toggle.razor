@@ -1,0 +1,14 @@
+@* An on/off pair of buttons in the same style as the rest of the settings. *@
+
+<div class="toggle" role="group">
+    <button class="@(Value ? "" : "active")" aria-pressed="@(!Value)" @onclick="() => OnChange.InvokeAsync(false)">off</button>
+    <button class="@(Value ? "active" : "")" aria-pressed="@Value" @onclick="() => OnChange.InvokeAsync(true)">on</button>
+</div>
+
+@code {
+    [Parameter]
+    public bool Value { get; set; }
+
+    [Parameter]
+    public EventCallback<bool> OnChange { get; set; }
+}

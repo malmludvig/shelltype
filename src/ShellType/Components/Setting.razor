@@ -1,0 +1,20 @@
+@* One row on the settings page: a title and explanation on the left, a control on the right. *@
+
+<div class="setting">
+    <div>
+        <div class="title">@Title</div>
+        <div class="description">@Description</div>
+    </div>
+    <div class="control">@ChildContent</div>
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public string Title { get; set; } = "";
+
+    [Parameter]
+    public string? Description { get; set; }
+
+    [Parameter]
+    public RenderFragment? ChildContent { get; set; }
+}
