@@ -30,15 +30,19 @@ window.shellType = (() => {
         }
 
         if (e.ctrlKey && !e.altKey) {
-            if (e.key === "Backspace") {
+            // fzf-style list navigation: ctrl+j/k (and ctrl+p for up, like emacs).
+            const ctrlKeys = { Backspace: "DeleteWord", j: "Down", k: "Up", p: "Up" };
+            const mapped = ctrlKeys[e.key];
+            if (mapped) {
                 e.preventDefault();
-                handler.invokeMethodAsync("OnKey", "DeleteWord");
+                handler.invokeMethodAsync("OnKey", mapped);
             }
             return;
         }
 
-        const key = e.key;
-        if (key === "Tab" || key === "Enter" || key === "Backspace" || key === "Escape") {
+        const named = { Tab: "Tab", Enter: "Enter", Backspace: "Backspace", Escape: "Escape", ArrowUp: "Up", ArrowDown: "Down" };
+        const key = named[e.key];
+        if (key) {
             e.preventDefault();
             handler.invokeMethodAsync("OnKey", key);
         }
