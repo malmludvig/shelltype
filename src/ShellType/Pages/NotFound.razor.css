@@ -1,0 +1,14 @@
+.not-found {
+    max-width: 40rem;
+    margin: 4rem auto;
+    font-size: 1.2rem;
+}
+
+.error {
+    color: var(--error);
+}
+
+a {
+    color: var(--text);
+    text-decoration: underline;
+}
