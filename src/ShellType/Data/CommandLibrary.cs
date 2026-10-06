@@ -21,6 +21,7 @@ public static partial class CommandLibrary
         yield return Search;
         yield return Processes;
         yield return Networking;
+        yield return Permissions;
     }
 
     private static CommandEntry[] Build(
