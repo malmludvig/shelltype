@@ -1,0 +1,76 @@
+@page "/settings"
+@inject SettingsService SettingsService
+
+<PageTitle>settings · shelltype</PageTitle>
+
+<section class="settings">
+    <h2>theme</h2>
+    <div class="themes">
+        @foreach (var theme in Themes.All)
+        {
+            <button class="theme @(S.Theme == theme.Id ? "active" : "")"
+                    style="background:@theme.Background;color:@theme.Text"
+                    @onclick="() => Update(s => s.Theme = theme.Id)">
+                <span class="dot" style="background:@theme.Main"></span>
+                @theme.Id
+            </button>
+        }
+    </div>
+
+    <h2>behavior</h2>
+    <Setting Title="stop on error" Description="Wrong keys are rejected, so you have to type the right character before moving on. Enter only runs a command once it is correct.">
+        <Toggle Value="S.StopOnError" OnChange="v => Update(s => s.StopOnError = v)" />
+    </Setting>
+    <Setting Title="confidence mode" Description="Backspace is disabled. Commit to every keystroke.">
+        <Toggle Value="S.ConfidenceMode" OnChange="v => Update(s => s.ConfidenceMode = v)" />
+    </Setting>
+    <Setting Title="key sounds" Description="Play a soft click on each keystroke, and a lower tone on mistakes.">
+        <Toggle Value="S.KeySounds" OnChange="v => Update(s => s.KeySounds = v)" />
+    </Setting>
+
+    <h2>appearance</h2>
+    <Setting Title="caret style" Description="How the cursor looks in the terminal.">
+        <div class="options">
+            @foreach (var caret in Enum.GetValues<CaretStyle>())
+            {
+                <button class="@(S.Caret == caret ? "active" : "")" @onclick="() => Update(s => s.Caret = caret)">
+                    @caret.ToString().ToLowerInvariant()
+                </button>
+            }
+        </div>
+    </Setting>
+    <Setting Title="font size" Description="Size of the commands you type.">
+        <div class="options">
+            @foreach (var size in FontSizes)
+            {
+                <button class="@(Math.Abs(S.FontSize - size) < 0.01 ? "active" : "")" @onclick="() => Update(s => s.FontSize = size)">
+                    @size.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)
+                </button>
+            }
+        </div>
+    </Setting>
+    <Setting Title="live wpm" Description="Show your speed while typing.">
+        <Toggle Value="S.ShowLiveWpm" OnChange="v => Update(s => s.ShowLiveWpm = v)" />
+    </Setting>
+    <Setting Title="command descriptions" Description="Show a comment explaining what the current command does.">
+        <Toggle Value="S.ShowDescriptions" OnChange="v => Update(s => s.ShowDescriptions = v)" />
+    </Setting>
+    <Setting Title="upcoming commands" Description="Preview the next few commands below the prompt.">
+        <Toggle Value="S.ShowUpcoming" OnChange="v => Update(s => s.ShowUpcoming = v)" />
+    </Setting>
+
+    <h2>danger zone</h2>
+    <Setting Title="reset settings" Description="Restore every setting to its default. Your stats are kept.">
+        <div class="options">
+            <button class="danger" @onclick="SettingsService.ResetAsync">reset</button>
+        </div>
+    </Setting>
+</section>
+
+@code {
+    private static readonly double[] FontSizes = [1.2, 1.4, 1.6, 2.0, 2.4];
+
+    private UserSettings S => SettingsService.Current;
+
+    private Task Update(Action<UserSettings> change) => SettingsService.UpdateAsync(change);
+}

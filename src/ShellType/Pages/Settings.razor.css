@@ -1,0 +1,69 @@
+.settings {
+    max-width: 52rem;
+    margin: 0 auto;
+}
+
+h2 {
+    font-size: 1.1rem;
+    color: var(--sub);
+    margin: 2.5rem 0 1rem;
+}
+
+h2:first-child {
+    margin-top: 0;
+}
+
+.themes {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    gap: 0.5rem;
+}
+
+.theme {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 0.6rem 0.9rem;
+    border-radius: var(--radius);
+    border: 2px solid transparent;
+    font-size: 0.85rem;
+    transition: transform 0.1s;
+}
+
+.theme:hover {
+    transform: translateY(-1px);
+}
+
+.theme.active {
+    border-color: var(--main);
+}
+
+.dot {
+    width: 0.8rem;
+    height: 0.8rem;
+    border-radius: 50%;
+}
+
+.options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+}
+
+.options button {
+    background: var(--bg-alt);
+    color: var(--text);
+    padding: 0.45rem 0.9rem;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+}
+
+.options button.active {
+    background: var(--main);
+    color: var(--bg);
+}
+
+.options button.danger:hover {
+    background: var(--error);
+    color: var(--bg);
+}
