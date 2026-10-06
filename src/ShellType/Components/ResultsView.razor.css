@@ -1,0 +1,117 @@
+.results {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 1.5rem 2.5rem;
+    animation: fade-in 0.25s ease-out;
+}
+
+@keyframes fade-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+}
+
+.headline {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.chart {
+    min-width: 0;
+    align-self: center;
+}
+
+.details,
+.actions {
+    grid-column: 1 / -1;
+}
+
+.details {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+}
+
+.label {
+    color: var(--sub);
+    font-size: 1rem;
+}
+
+.value {
+    color: var(--main);
+    font-size: 1.9rem;
+    line-height: 1.2;
+}
+
+.value.small {
+    font-size: 1rem;
+}
+
+.big .label {
+    font-size: 1.9rem;
+}
+
+.big .value {
+    font-size: 4rem;
+    line-height: 1;
+}
+
+.err {
+    color: var(--error);
+}
+
+.badge {
+    color: var(--sub);
+    font-size: 0.8rem;
+}
+
+.badge.pb {
+    color: var(--bg);
+    background: var(--main);
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius);
+    width: fit-content;
+}
+
+.badge.invalid {
+    color: var(--error);
+}
+
+.actions {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+
+.actions button {
+    color: var(--sub);
+    padding: 0.6rem 1.2rem;
+    border-radius: var(--radius);
+    transition: color 0.15s, background 0.15s;
+}
+
+.actions button:hover,
+.actions button:focus-visible {
+    color: var(--bg);
+    background: var(--text);
+}
+
+.results ::deep .breakdown {
+    grid-column: 1 / -1;
+}
+
+@media (max-width: 760px) {
+    .results {
+        grid-template-columns: 1fr;
+    }
+
+    .headline {
+        flex-direction: row;
+        flex-wrap: wrap;
+        align-items: flex-end;
+        gap: 2rem;
+    }
+}

@@ -1,0 +1,86 @@
+@* The end-of-test screen: headline numbers, chart, details and the per-command breakdown. *@
+
+<section class="results">
+    <div class="headline">
+        <div class="stat big">
+            <div class="label">wpm</div>
+            <div class="value accent" title="@Result.Wpm.ToString("0.00")">@Math.Round(Result.Wpm)</div>
+        </div>
+        <div class="stat big">
+            <div class="label">acc</div>
+            <div class="value accent" title="@Result.Accuracy.ToString("0.00")%">@Math.Round(Result.Accuracy)%</div>
+        </div>
+        @if (!Result.IsValid)
+        {
+            <div class="badge invalid">too short to count</div>
+        }
+        else if (IsPersonalBest)
+        {
+            <div class="badge pb">@(PreviousBest is null ? "first result for this mode" : "new personal best!")</div>
+        }
+        else if (PreviousBest is { } best)
+        {
+            <div class="badge">best: @Math.Round(best) wpm</div>
+        }
+    </div>
+
+    <div class="chart">
+        <WpmChart Samples="Result.Samples" />
+    </div>
+
+    <div class="details">
+        <div class="stat">
+            <div class="label">test type</div>
+            <div class="value small">@Result.ModeLabel<br />@Result.Difficulty.ToString().ToLowerInvariant()</div>
+        </div>
+        <div class="stat">
+            <div class="label">raw</div>
+            <div class="value">@Math.Round(Result.RawWpm)</div>
+        </div>
+        <div class="stat">
+            <div class="label">characters</div>
+            <div class="value" title="correct / incorrect / extra / missed">
+                @Result.CorrectChars/<span class="err">@Result.IncorrectChars</span>/@Result.ExtraChars/@Result.MissedChars
+            </div>
+        </div>
+        <div class="stat">
+            <div class="label">consistency</div>
+            <div class="value">@Math.Round(Result.Consistency)%</div>
+        </div>
+        <div class="stat">
+            <div class="label">time</div>
+            <div class="value">@Math.Round(Result.Duration.TotalSeconds)s</div>
+        </div>
+        <div class="stat">
+            <div class="label">commands</div>
+            <div class="value">@Result.Commands.Count(c => c.Correct)/@Result.Commands.Count</div>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button @onclick="OnNext" title="next test (tab)">next test →</button>
+        <button @onclick="OnRepeat" title="type the same commands again">repeat test ↻</button>
+    </div>
+
+    @if (Result.Commands.Count > 0)
+    {
+        <CommandBreakdown Commands="Result.Commands" />
+    }
+</section>
+
+@code {
+    [Parameter, EditorRequired]
+    public TestResult Result { get; set; } = default!;
+
+    [Parameter]
+    public bool IsPersonalBest { get; set; }
+
+    [Parameter]
+    public double? PreviousBest { get; set; }
+
+    [Parameter]
+    public EventCallback OnNext { get; set; }
+
+    [Parameter]
+    public EventCallback OnRepeat { get; set; }
+}
