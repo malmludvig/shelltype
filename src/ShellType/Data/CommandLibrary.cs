@@ -16,6 +16,7 @@ public static partial class CommandLibrary
     private static IEnumerable<CommandEntry[]> Sources()
     {
         yield return Navigation;
+        yield return Files;
     }
 
     private static CommandEntry[] Build(
