@@ -1,7 +1,226 @@
-﻿@page "/"
+@page "/"
+@implements IAsyncDisposable
+@inject SettingsService SettingsService
+@inject HistoryService History
+@inject IJSRuntime JS
+@inject TimeProvider Time
 
-<PageTitle>Home</PageTitle>
+<PageTitle>shelltype</PageTitle>
 
-<h1>Hello, world!</h1>
+@if (_result is not null)
+{
+    <ResultsView Result="_result"
+                 IsPersonalBest="_isPersonalBest"
+                 PreviousBest="_previousBest"
+                 OnNext="() => NewTestAsync()"
+                 OnRepeat="() => NewTestAsync(repeat: true)" />
+}
+else if (_session is not null)
+{
+    <ConfigBar Hidden="_session.State == SessionState.Running" OnChanged="() => NewTestAsync()" />
 
-Welcome to your new app.
+    <section class="test @(_focused ? "" : "blurred")" @onclick="() => _focused = true">
+        @if (_banner is not null)
+        {
+            <div class="banner">
+                @_banner
+                <a href="" @onclick:stopPropagation="true">clear</a>
+            </div>
+        }
+
+        <LiveStats Session="_session" ShowWpm="Settings.ShowLiveWpm" />
+        <TerminalView Session="_session" Settings="Settings" />
+
+        @if (!_focused)
+        {
+            <div class="focus-warning">click here or press any key to focus</div>
+        }
+    </section>
+
+    <p class="hint">
+        @if (_session.State == SessionState.Ready)
+        {
+            <span>start typing the command, press <kbd>enter</kbd> to run it</span>
+        }
+        else
+        {
+            <span><kbd>tab</kbd> to restart</span>
+        }
+    </p>
+}
+
+@code {
+    private DotNetObjectReference<Home>? _self;
+    private TypingSession? _session;
+    private TestResult? _result;
+    private bool _isPersonalBest;
+    private double? _previousBest;
+    private bool _focused = true;
+    private string? _banner;
+    private Timer? _timer;
+
+    [SupplyParameterFromQuery]
+    public string? Practice { get; set; }
+
+    [SupplyParameterFromQuery]
+    public string? Category { get; set; }
+
+    private UserSettings Settings => SettingsService.Current;
+
+    protected override async Task OnParametersSetAsync()
+    {
+        await NewTestAsync();
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _self = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("shellType.keyboard.register", _self);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnKey(string key)
+    {
+        _focused = true;
+        if (key is "Tab" or "Escape")
+        {
+            await NewTestAsync();
+            StateHasChanged();
+            return;
+        }
+
+        if (_session is null || _result is not null)
+        {
+            return;
+        }
+
+        var wasReady = _session.State == SessionState.Ready;
+        switch (key)
+        {
+            case "Enter":
+                _session.Submit();
+                break;
+            case "Backspace":
+                _session.Backspace();
+                break;
+            case "DeleteWord":
+                _session.DeleteWord();
+                break;
+            default:
+                if (key.Length == 1)
+                {
+                    _session.Type(key[0]);
+                }
+
+                break;
+        }
+
+        if (wasReady && _session.State == SessionState.Running)
+        {
+            StartTimer();
+            await JS.InvokeVoidAsync("shellType.ui.setTyping", true);
+        }
+
+        StateHasChanged();
+    }
+
+    [JSInvokable]
+    public void OnFocusChanged(bool focused)
+    {
+        _focused = focused;
+        StateHasChanged();
+    }
+
+    private async Task NewTestAsync(bool repeat = false)
+    {
+        StopTimer();
+        var config = Settings.ToTestConfig();
+        var generator = new CommandGenerator(await BuildPoolAsync(config));
+        ICommandSource source = repeat && _session is not null
+            ? new ReplaySource(_session.Attempts.Select(a => a.Command).ToList(), generator)
+            : generator;
+
+        _session = new TypingSession(config, source, Time);
+        _session.Finished += () => _ = InvokeAsync(ShowResultsAsync);
+        _result = null;
+        await JS.InvokeVoidAsync("shellType.ui.setTyping", false);
+    }
+
+    private async Task<IReadOnlyList<CommandEntry>> BuildPoolAsync(TestConfig config)
+    {
+        _banner = null;
+
+        if (Practice == "weak")
+        {
+            var weak = (await History.GetWeakestAsync(15))
+                .Select(w => CommandLibrary.Find(w.Text))
+                .OfType<CommandEntry>()
+                .ToList();
+            if (weak.Count >= 3)
+            {
+                _banner = $"practicing your {weak.Count} weakest commands";
+                return weak;
+            }
+
+            _banner = "not enough history yet to find weak commands, practicing everything";
+        }
+
+        if (Enum.TryParse<CommandCategory>(Category, ignoreCase: true, out var category))
+        {
+            _banner = $"practicing {category.ToString().ToLowerInvariant()} commands";
+            return CommandLibrary.Filter([category], Difficulty.Hard);
+        }
+
+        var pool = CommandLibrary.Filter(config.Categories, config.MaxDifficulty);
+        return pool.Count > 0 ? pool : CommandLibrary.All;
+    }
+
+    private async Task ShowResultsAsync()
+    {
+        StopTimer();
+        if (_session is null)
+        {
+            return;
+        }
+
+        var result = StatsCalculator.Compute(_session);
+        _previousBest = await History.GetPersonalBestAsync(result.Mode, result.ModeValue, result.Difficulty);
+        _isPersonalBest = await History.RecordAsync(result);
+        _result = result;
+        await JS.InvokeVoidAsync("shellType.ui.setTyping", false);
+        StateHasChanged();
+    }
+
+    private void StartTimer()
+    {
+        _timer ??= new Timer(_ => InvokeAsync(() =>
+        {
+            _session?.Tick();
+            StateHasChanged();
+        }), null, TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250));
+    }
+
+    private void StopTimer()
+    {
+        _timer?.Dispose();
+        _timer = null;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        StopTimer();
+        try
+        {
+            await JS.InvokeVoidAsync("shellType.keyboard.unregister");
+            await JS.InvokeVoidAsync("shellType.ui.setTyping", false);
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+
+        _self?.Dispose();
+    }
+}

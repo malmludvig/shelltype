@@ -1,0 +1,45 @@
+.test {
+    position: relative;
+    margin: 3rem auto 0;
+    max-width: 60rem;
+    cursor: default;
+}
+
+.test.blurred ::deep .terminal {
+    filter: blur(4px);
+    opacity: 0.4;
+    transition: filter 0.2s, opacity 0.2s;
+}
+
+.focus-warning {
+    position: absolute;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    color: var(--text);
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.banner {
+    display: flex;
+    gap: 1rem;
+    color: var(--main);
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+}
+
+.hint {
+    text-align: center;
+    color: var(--sub);
+    font-size: 0.8rem;
+    margin-top: 3rem;
+}
+
+kbd {
+    font-family: inherit;
+    background: var(--sub);
+    color: var(--bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.25rem;
+}
