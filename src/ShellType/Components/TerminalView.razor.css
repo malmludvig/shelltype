@@ -1,0 +1,149 @@
+.terminal {
+    font-size: var(--type-size);
+    line-height: 1.6;
+    user-select: none;
+}
+
+.line {
+    display: flex;
+    gap: 0.6em;
+    align-items: baseline;
+}
+
+.prompt {
+    color: var(--main);
+    flex: none;
+}
+
+.cmd {
+    white-space: pre-wrap;
+    word-break: break-all;
+    min-width: 0;
+}
+
+.history {
+    min-height: 3.2em;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.line.done {
+    opacity: 0.45;
+    font-size: 0.8em;
+}
+
+.line.done .prompt {
+    color: var(--sub);
+}
+
+.mark {
+    font-size: 0.85em;
+}
+
+.done.ok .mark {
+    color: var(--main);
+}
+
+.done.bad .mark {
+    color: var(--error);
+}
+
+.line.current {
+    margin: 0.35em 0 0.1em;
+}
+
+.comment {
+    color: var(--sub);
+    font-size: 0.6em;
+    font-style: italic;
+    margin-left: 2.1em;
+    min-height: 1.6em;
+}
+
+.upcoming {
+    margin-top: 0.6em;
+    min-height: 3em;
+}
+
+.line.next {
+    color: var(--sub);
+    opacity: 0.6;
+    font-size: 0.7em;
+}
+
+.line.next .prompt {
+    color: var(--sub);
+}
+
+/* ---------- characters ---------- */
+
+.char {
+    position: relative;
+    color: var(--sub);
+    transition: color 0.05s;
+}
+
+.char.correct {
+    color: var(--text);
+}
+
+.char.incorrect {
+    color: var(--error);
+}
+
+.char.incorrect.space {
+    background: color-mix(in srgb, var(--error) 35%, transparent);
+    border-radius: 2px;
+}
+
+.char.extra {
+    color: var(--extra);
+}
+
+/* ---------- caret styles ---------- */
+
+.char.caret::before {
+    content: "";
+    position: absolute;
+    background: var(--caret);
+    animation: caret-blink 1s infinite;
+    border-radius: 1px;
+}
+
+.running .char.caret::before {
+    animation: none;
+}
+
+.caret-line .char.caret::before {
+    left: -0.06em;
+    top: 0.15em;
+    bottom: 0.15em;
+    width: 0.1em;
+}
+
+.caret-block .char.caret::before {
+    inset: 0.12em 0;
+    opacity: 0.4;
+}
+
+.caret-underline .char.caret::before {
+    left: 0;
+    right: 0;
+    bottom: 0.1em;
+    height: 0.1em;
+}
+
+.caret-off .char.caret::before {
+    display: none;
+}
+
+@keyframes caret-blink {
+    0%, 100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0;
+    }
+}

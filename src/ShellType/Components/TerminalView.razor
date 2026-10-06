@@ -1,0 +1,84 @@
+@* The "terminal" where commands are typed: a little history, the active prompt and what's next. *@
+
+<div class="terminal caret-@Settings.Caret.ToString().ToLowerInvariant() @(Session.State == SessionState.Running ? "running" : "")">
+    <div class="history">
+        @foreach (var attempt in Session.Completed.TakeLast(HistoryLines))
+        {
+            <div class="line done @(attempt.IsCorrect ? "ok" : "bad")">
+                <span class="prompt">~$</span>
+                <span class="cmd">@RenderChars(attempt, showCaret: false)</span>
+                <span class="mark">@(attempt.IsCorrect ? "✓" : "✗")</span>
+            </div>
+        }
+    </div>
+
+    @if (Session.State != SessionState.Finished)
+    {
+        var current = Session.Current;
+        <div class="line current">
+            <span class="prompt">~$</span>
+            <span class="cmd">@RenderChars(current, showCaret: true)</span>
+        </div>
+        @if (Settings.ShowDescriptions)
+        {
+            <div class="comment"># @current.Command.Description</div>
+        }
+    }
+
+    @if (Settings.ShowUpcoming)
+    {
+        <div class="upcoming">
+            @foreach (var next in Session.Upcoming.Take(UpcomingLines))
+            {
+                <div class="line next">
+                    <span class="prompt">~$</span>
+                    <span class="cmd">@next.Target</span>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@code {
+    private const int HistoryLines = 2;
+    private const int UpcomingLines = 3;
+
+    [Parameter, EditorRequired]
+    public TypingSession Session { get; set; } = default!;
+
+    [Parameter, EditorRequired]
+    public UserSettings Settings { get; set; } = default!;
+
+    private RenderFragment RenderChars(CommandAttempt attempt, bool showCaret)
+    {
+        var caretAt = showCaret ? attempt.TypedLength : -1;
+        return @<text>
+            @for (var i = 0; i < attempt.DisplayLength; i++)
+            {
+                <span class="@CharClass(attempt, i, caretAt)">@attempt.DisplayCharAt(i)</span>
+            }
+            @if (caretAt == attempt.DisplayLength)
+            {
+                <span class="char end caret">&nbsp;</span>
+            }
+        </text>;
+    }
+
+    private static string CharClass(CommandAttempt attempt, int index, int caretAt)
+    {
+        var css = attempt.StateAt(index) switch
+        {
+            CharState.Correct => "char correct",
+            CharState.Incorrect => "char incorrect",
+            CharState.Extra => "char extra",
+            _ => "char pending",
+        };
+
+        if (attempt.DisplayCharAt(index) == ' ')
+        {
+            css += " space";
+        }
+
+        return index == caretAt ? css + " caret" : css;
+    }
+}
