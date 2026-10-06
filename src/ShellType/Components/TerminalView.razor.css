@@ -155,7 +155,7 @@
     background: var(--caret);
     border-radius: 1px;
     pointer-events: none;
-    transition: transform 0.1s ease-out;
+    transition: transform 0.15s ease-out;
     animation: caret-blink 1s infinite;
 }
 
