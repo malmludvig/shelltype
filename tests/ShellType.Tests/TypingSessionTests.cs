@@ -149,6 +149,38 @@ public class TypingSessionTests
     }
 
     [Fact]
+    public void Stop_on_error_rejects_wrong_characters()
+    {
+        var session = Session(new TestConfig { StopOnError = true }, "ls", "pwd");
+        TypeAll(session, "lxs");
+
+        Assert.Equal("ls", session.Current.Typed);
+        Assert.Equal(1, session.Current.Mistakes);
+        Assert.Contains(session.Keystrokes, k => !k.Correct);
+    }
+
+    [Fact]
+    public void Stop_on_error_blocks_submitting_incomplete_commands()
+    {
+        var session = Session(new TestConfig { StopOnError = true }, "ls -la", "pwd");
+        TypeAll(session, "ls");
+        session.Submit();
+
+        Assert.Equal(0, session.CurrentIndex);
+    }
+
+    [Fact]
+    public void Confidence_mode_disables_backspace()
+    {
+        var session = Session(new TestConfig { ConfidenceMode = true }, "git status");
+        TypeAll(session, "git sx");
+        session.Backspace();
+        session.DeleteWord();
+
+        Assert.Equal("git sx", session.Current.Typed);
+    }
+
+    [Fact]
     public void Records_every_keystroke_including_enter()
     {
         var session = Session(new TestConfig(), "ls", "pwd");

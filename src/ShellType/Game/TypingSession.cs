@@ -76,6 +76,13 @@ public sealed class TypingSession
 
         var at = Elapsed;
         var correct = Current.WouldBeCorrect(c);
+        if (!correct && Config.StopOnError)
+        {
+            Current.RegisterRejected(at);
+            _keystrokes.Add(new Keystroke(at, false));
+            return false;
+        }
+
         if (!Current.Append(c, at))
         {
             return false;
@@ -91,9 +98,11 @@ public sealed class TypingSession
         return correct;
     }
 
+    public bool CanEdit => State == SessionState.Running && !Config.ConfidenceMode;
+
     public void Backspace()
     {
-        if (State == SessionState.Running)
+        if (CanEdit)
         {
             Current.Backspace();
         }
@@ -101,7 +110,7 @@ public sealed class TypingSession
 
     public void DeleteWord()
     {
-        if (State == SessionState.Running)
+        if (CanEdit)
         {
             Current.DeleteWord();
         }
@@ -116,6 +125,13 @@ public sealed class TypingSession
         }
 
         var at = Elapsed;
+        if (Config.StopOnError && !Current.IsCorrect)
+        {
+            Current.RegisterRejected(at);
+            _keystrokes.Add(new Keystroke(at, false));
+            return;
+        }
+
         _keystrokes.Add(new Keystroke(at, Current.IsCorrect));
         Current.Submit(at);
 

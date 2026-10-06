@@ -24,6 +24,12 @@ public sealed record TestConfig
     /// <summary>Categories to draw commands from. Empty means all of them.</summary>
     public IReadOnlySet<CommandCategory> Categories { get; init; } = new HashSet<CommandCategory>();
 
+    /// <summary>Wrong characters are rejected; you cannot move on until you type the right one.</summary>
+    public bool StopOnError { get; init; }
+
+    /// <summary>Backspace is disabled, so every mistake sticks.</summary>
+    public bool ConfidenceMode { get; init; }
+
     public int ModeValue => Mode == TestMode.Time ? TimeSeconds : CommandCount;
 
     public string ModeLabel => Mode == TestMode.Time ? $"time {TimeSeconds}" : $"commands {CommandCount}";
