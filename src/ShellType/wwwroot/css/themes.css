@@ -1,0 +1,108 @@
+/*
+  Every theme is just a set of color tokens. Components only ever use the tokens.
+  --bg       page background
+  --bg-alt   panels, config bar, buttons
+  --main     accent: logo, caret, highlights
+  --caret    caret color
+  --sub      muted text: untyped chars, labels
+  --text     typed-correct text
+  --error    wrong chars
+  --extra    chars typed past the end of a command
+*/
+
+:root,
+[data-theme="shelltype"] {
+    --bg: #16181d;
+    --bg-alt: #1f232b;
+    --main: #7ee787;
+    --caret: #7ee787;
+    --sub: #5c6773;
+    --text: #d6dde6;
+    --error: #ff6b6b;
+    --extra: #a33b3b;
+    color-scheme: dark;
+}
+
+[data-theme="serika"] {
+    --bg: #323437;
+    --bg-alt: #2c2e31;
+    --main: #e2b714;
+    --caret: #e2b714;
+    --sub: #646669;
+    --text: #d1d0c5;
+    --error: #ca4754;
+    --extra: #7e2a33;
+    color-scheme: dark;
+}
+
+[data-theme="dracula"] {
+    --bg: #282a36;
+    --bg-alt: #20222c;
+    --main: #bd93f9;
+    --caret: #ff79c6;
+    --sub: #6272a4;
+    --text: #f8f8f2;
+    --error: #ff5555;
+    --extra: #a33b3b;
+    color-scheme: dark;
+}
+
+[data-theme="nord"] {
+    --bg: #2e3440;
+    --bg-alt: #3b4252;
+    --main: #88c0d0;
+    --caret: #d8dee9;
+    --sub: #616e88;
+    --text: #d8dee9;
+    --error: #bf616a;
+    --extra: #793e44;
+    color-scheme: dark;
+}
+
+[data-theme="gruvbox"] {
+    --bg: #282828;
+    --bg-alt: #32302f;
+    --main: #fabd2f;
+    --caret: #fabd2f;
+    --sub: #7c6f64;
+    --text: #ebdbb2;
+    --error: #fb4934;
+    --extra: #9d0006;
+    color-scheme: dark;
+}
+
+[data-theme="matrix"] {
+    --bg: #000000;
+    --bg-alt: #0b120b;
+    --main: #15ff00;
+    --caret: #15ff00;
+    --sub: #006500;
+    --text: #d1ffcd;
+    --error: #da3333;
+    --extra: #791717;
+    color-scheme: dark;
+}
+
+[data-theme="solarized"] {
+    --bg: #fdf6e3;
+    --bg-alt: #eee8d5;
+    --main: #268bd2;
+    --caret: #268bd2;
+    --sub: #93a1a1;
+    --text: #586e75;
+    --error: #dc322f;
+    --extra: #a12c27;
+    color-scheme: light;
+}
+
+[data-theme="paper"] {
+    --bg: #eeeeee;
+    --bg-alt: #dddddd;
+    --main: #444444;
+    --caret: #444444;
+    --sub: #a8a8a8;
+    --text: #444444;
+    --error: #d70000;
+    --extra: #990000;
+    color-scheme: light;
+}
