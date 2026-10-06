@@ -1,0 +1,45 @@
+@page "/about"
+
+<PageTitle>about · shelltype</PageTitle>
+
+<article class="about">
+    <h1><span class="accent">~$</span> cat ABOUT.md</h1>
+
+    <p>
+        <strong>shelltype</strong> is a minimalist typing test for Linux commands, inspired by
+        <a href="https://monkeytype.com" target="_blank" rel="noopener">monkeytype</a>.
+        Instead of random words you type real command lines: flags, pipes, paths, quotes and all.
+        It builds muscle memory for the commands you use every day and teaches a few new ones along the way.
+    </p>
+
+    <h2>how to play</h2>
+    <ul>
+        <li>Start typing the command shown after the prompt. The timer starts on your first key.</li>
+        <li>Press <kbd>enter</kbd> to run it and move on to the next command.</li>
+        <li><kbd>backspace</kbd> fixes a character, <kbd>ctrl</kbd> + <kbd>backspace</kbd> deletes a whole word.</li>
+        <li><kbd>tab</kbd> or <kbd>esc</kbd> restarts the test at any time.</li>
+    </ul>
+
+    <h2>modes</h2>
+    <ul>
+        <li><span class="accent">time</span>: type as many commands as you can in 15, 30, 60 or 120 seconds.</li>
+        <li><span class="accent">commands</span>: type a fixed number of commands as fast as you can.</li>
+        <li><span class="accent">difficulty</span>: easy sticks to short commands; hard adds quoting, regexes and long pipelines.</li>
+        <li><span class="accent">categories</span>: focus on git, networking, permissions, text processing and more.</li>
+    </ul>
+
+    <h2>stats</h2>
+    <p>
+        <span class="accent">wpm</span> counts only commands you typed correctly (plus the enter key), with a
+        "word" being five characters. <span class="accent">raw</span> counts everything you typed.
+        <span class="accent">accuracy</span> is the share of keystrokes that were right, including ones you later
+        fixed. <span class="accent">consistency</span> measures how steady your speed was second to second.
+    </p>
+    <p>
+        Results are saved in your browser only. shelltype remembers which commands trip you up so you can
+        <a href="?practice=weak">practice your weak spots</a>.
+    </p>
+
+    <h2>built with</h2>
+    <p>C# and Blazor WebAssembly on .NET 10. No server, no tracking: everything runs in your browser.</p>
+</article>

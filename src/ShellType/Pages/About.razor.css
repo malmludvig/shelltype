@@ -1,0 +1,43 @@
+.about {
+    max-width: 46rem;
+    margin: 0 auto;
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+h1 {
+    font-size: 1.6rem;
+}
+
+h2 {
+    font-size: 1.1rem;
+    color: var(--sub);
+    margin-top: 2rem;
+}
+
+strong {
+    color: var(--main);
+    font-weight: 500;
+}
+
+a {
+    color: var(--main);
+    text-decoration: underline;
+}
+
+ul {
+    padding-left: 1.25rem;
+}
+
+li::marker {
+    color: var(--main);
+}
+
+kbd {
+    font-family: inherit;
+    font-size: 0.85em;
+    background: var(--sub);
+    color: var(--bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.25rem;
+}
