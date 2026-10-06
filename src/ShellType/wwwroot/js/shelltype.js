@@ -25,6 +25,8 @@ window.shellType = (() => {
         }
     }
 
+    document.addEventListener("mousemove", () => document.body.classList.remove("is-typing"));
+
     function onBlur() {
         handler?.invokeMethodAsync("OnFocusChanged", false);
     }
@@ -52,6 +54,10 @@ window.shellType = (() => {
             },
             setCssVar(name, value) {
                 document.documentElement.style.setProperty(name, value);
+            },
+            // While typing, hide the header/footer. Moving the mouse brings them back.
+            setTyping(on) {
+                document.body.classList.toggle("is-typing", on);
             },
         },
         keyboard: {
