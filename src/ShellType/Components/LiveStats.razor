@@ -1,0 +1,25 @@
+@* Timer / progress and live speed shown above the terminal while typing. *@
+
+<div class="live @(Session.State == SessionState.Running ? "visible" : "")">
+    @if (Session.Remaining is { } remaining)
+    {
+        <span class="counter">@Math.Ceiling(remaining.TotalSeconds)</span>
+    }
+    else
+    {
+        <span class="counter">@Session.Completed.Count()/@Session.Attempts.Count</span>
+    }
+
+    @if (ShowWpm)
+    {
+        <span class="wpm">@Math.Round(StatsCalculator.LiveWpm(Session)) wpm</span>
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public TypingSession Session { get; set; } = default!;
+
+    [Parameter]
+    public bool ShowWpm { get; set; } = true;
+}
