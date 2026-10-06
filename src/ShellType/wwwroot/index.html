@@ -1,32 +1,45 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="shelltype">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ShellType</title>
+    <meta name="description" content="A minimalist typing test for practicing Linux commands in the browser." />
+    <title>shelltype</title>
     <base href="/" />
     <link rel="preload" id="webassembly" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" />
+    <link rel="stylesheet" href="css/themes.css" />
     <link rel="stylesheet" href="css/app.css" />
-    <!-- If you add any scoped CSS files, uncomment the following to load them
-    <link href="ShellType.styles.css" rel="stylesheet" /> -->
+    <link rel="stylesheet" href="ShellType.styles.css" />
+    <script>
+        // Apply the saved theme before Blazor boots so there is no flash of the default.
+        try {
+            var s = JSON.parse(localStorage.getItem("shelltype.settings") || "{}");
+            if (s.theme) document.documentElement.dataset.theme = s.theme;
+        } catch (e) { }
+    </script>
     <script type="importmap"></script>
 </head>
 
 <body>
     <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
+        <div class="boot">
+            <div>
+                <span class="prompt">~$</span> booting shelltype...
+                <span class="bar"></span>
+            </div>
+        </div>
     </div>
 
     <div id="blazor-error-ui">
         An unhandled error has occurred.
         <a href="." class="reload">Reload</a>
-        <span class="dismiss">🗙</span>
+        <span class="dismiss">x</span>
     </div>
+    <script src="js/shelltype.js"></script>
     <script src="_framework/blazor.webassembly#[.{fingerprint}].js"></script>
 </body>
 
