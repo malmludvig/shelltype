@@ -110,6 +110,20 @@ public sealed class CommandAttempt(CommandEntry command)
         }
     }
 
+    /// <summary>Deletes back to the previous word boundary, like Ctrl+Backspace / Ctrl+W.</summary>
+    internal void DeleteWord()
+    {
+        while (_typed.Length > 0 && _typed[^1] == ' ')
+        {
+            _typed.Length--;
+        }
+
+        while (_typed.Length > 0 && _typed[^1] != ' ')
+        {
+            _typed.Length--;
+        }
+    }
+
     internal void Submit(TimeSpan at)
     {
         FirstKeyAt ??= at;

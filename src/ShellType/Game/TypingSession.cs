@@ -99,6 +99,14 @@ public sealed class TypingSession
         }
     }
 
+    public void DeleteWord()
+    {
+        if (State == SessionState.Running)
+        {
+            Current.DeleteWord();
+        }
+    }
+
     /// <summary>Finishes the current command, like pressing Enter in a terminal.</summary>
     public void Submit()
     {

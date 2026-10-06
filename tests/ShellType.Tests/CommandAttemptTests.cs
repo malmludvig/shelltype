@@ -104,6 +104,21 @@ public class CommandAttemptTests
         Assert.Null(attempt.Wpm);
     }
 
+    [Theory]
+    [InlineData("git commit -m", "git commit ")]
+    [InlineData("git commit ", "git ")]
+    [InlineData("git", "")]
+    [InlineData("", "")]
+    public void DeleteWord_removes_the_last_word(string typed, string expected)
+    {
+        var attempt = Attempt("git commit -m 'msg'");
+        TypeAll(attempt, typed);
+
+        attempt.DeleteWord();
+
+        Assert.Equal(expected, attempt.Typed);
+    }
+
     [Fact]
     public void IsOnTrack_detects_divergence()
     {
