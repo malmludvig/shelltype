@@ -6,7 +6,7 @@ namespace ShellType.Game;
 public sealed record SecondSample(int Second, double Wpm, double Raw, int Errors);
 
 /// <summary>How the player did on a single command.</summary>
-public sealed record CommandResult(string Text, string Typed, bool Correct, int Mistakes, double? Wpm);
+public sealed record CommandResult(string Text, string Typed, bool Correct, int Mistakes, double? Wpm, bool Finished = true);
 
 /// <summary>Everything we know about a finished test.</summary>
 public sealed record TestResult

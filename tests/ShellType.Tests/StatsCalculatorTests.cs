@@ -131,5 +131,6 @@ public class StatsCalculatorTests
         Assert.Equal(StatsCalculator.Wpm(6, TimeSpan.FromSeconds(15)), result.Wpm, precision: 6);
         Assert.Equal(0, result.MissedChars);
         Assert.Equal(100, result.Accuracy);
+        Assert.False(Assert.Single(result.Commands).Finished);
     }
 }

@@ -38,6 +38,10 @@ tbody tr:nth-child(odd) {
     color: var(--error);
 }
 
+.cut {
+    opacity: 0.6;
+}
+
 .cmd {
     white-space: pre-wrap;
     word-break: break-all;

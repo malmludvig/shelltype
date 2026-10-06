@@ -12,8 +12,8 @@
     <tbody>
         @foreach (var command in Commands)
         {
-            <tr class="@(command.Correct ? "ok" : "bad")">
-                <td class="mark">@(command.Correct ? "✓" : "✗")</td>
+            <tr class="@(!command.Finished ? "cut" : command.Correct ? "ok" : "bad")">
+                <td class="mark" title="@(command.Finished ? "" : "time ran out")">@(!command.Finished ? "…" : command.Correct ? "✓" : "✗")</td>
                 <td class="cmd">
                     <div class="target">@command.Text</div>
                     @if (!command.Correct)

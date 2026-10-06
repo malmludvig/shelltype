@@ -136,7 +136,7 @@ public static class StatsCalculator
             MissedChars = typed.Sum(a => a.MissedChars),
             Samples = samples,
             Commands = typed
-                .Select(a => new CommandResult(a.Target, a.Typed, a.IsSubmitted && a.IsCorrect, a.Mistakes, a.Wpm))
+                .Select(a => new CommandResult(a.Target, a.Typed, a.IsSubmitted && a.IsCorrect, a.Mistakes, a.Wpm, a.IsSubmitted))
                 .ToList(),
         };
     }

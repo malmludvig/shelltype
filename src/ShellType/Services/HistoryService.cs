@@ -93,7 +93,7 @@ public sealed class HistoryService(BrowserStorage storage)
         }
 
         var commands = (Dictionary<string, CommandStat>)await GetCommandStatsAsync();
-        foreach (var command in result.Commands.Where(c => c.Typed.Length > 0))
+        foreach (var command in result.Commands.Where(c => c.Finished))
         {
             if (!commands.TryGetValue(command.Text, out var stat))
             {
