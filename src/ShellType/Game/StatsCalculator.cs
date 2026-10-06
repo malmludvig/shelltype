@@ -83,15 +83,19 @@ public static class StatsCalculator
         return samples;
     }
 
-    public static TestResult Compute(TypingSession session)
-    {
-        var duration = session.Elapsed;
-        var typed = session.Attempts.Where(a => a.TypedLength > 0 || a.IsSubmitted).ToList();
+    /// <summary>Net WPM so far, for the live counter while typing.</summary>
+    public static double LiveWpm(TypingSession session) =>
+        session.State == SessionState.Ready ? 0 : Wpm(CountChars(session.Attempts).WpmChars, session.Elapsed);
 
-        // Correct chars: whole commands typed right (+1 for Enter), plus a clean partial last command.
+    /// <summary>
+    /// WPM chars are whole commands typed right (+1 for Enter) plus a clean partial
+    /// command; raw chars are everything typed.
+    /// </summary>
+    private static (int WpmChars, int RawChars) CountChars(IEnumerable<CommandAttempt> attempts)
+    {
         var wpmChars = 0;
         var rawChars = 0;
-        foreach (var attempt in typed)
+        foreach (var attempt in attempts)
         {
             rawChars += attempt.TypedLength + (attempt.IsSubmitted ? 1 : 0);
             if (attempt.IsSubmitted && attempt.IsCorrect)
@@ -104,6 +108,14 @@ public static class StatsCalculator
             }
         }
 
+        return (wpmChars, rawChars);
+    }
+
+    public static TestResult Compute(TypingSession session)
+    {
+        var duration = session.Elapsed;
+        var typed = session.Attempts.Where(a => a.TypedLength > 0 || a.IsSubmitted).ToList();
+        var (wpmChars, rawChars) = CountChars(typed);
         var keystrokes = session.Keystrokes;
         var samples = Samples(keystrokes, duration);
 

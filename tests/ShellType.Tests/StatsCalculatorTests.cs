@@ -97,6 +97,26 @@ public class StatsCalculatorTests
     }
 
     [Fact]
+    public void LiveWpm_is_zero_before_the_test_starts()
+    {
+        var session = new TypingSession(new TestConfig(), new FixedCommandSource("ls"), new ManualTimeProvider());
+
+        Assert.Equal(0, StatsCalculator.LiveWpm(session));
+    }
+
+    [Fact]
+    public void LiveWpm_tracks_progress_while_running()
+    {
+        var clock = new ManualTimeProvider();
+        var session = new TypingSession(new TestConfig(), new FixedCommandSource("ls -la"), clock);
+        foreach (var c in "ls -la") { session.Type(c); }
+        clock.Advance(6);
+
+        // 6 clean chars in 6 seconds = 1.2 words in 0.1 min = 12 WPM
+        Assert.Equal(12, StatsCalculator.LiveWpm(session), precision: 6);
+    }
+
+    [Fact]
     public void Compute_includes_a_clean_partial_command_in_timed_tests()
     {
         var clock = new ManualTimeProvider();
