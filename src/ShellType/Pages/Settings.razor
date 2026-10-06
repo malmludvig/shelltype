@@ -39,6 +39,9 @@
             }
         </div>
     </Setting>
+    <Setting Title="smooth caret" Description="The caret glides to the next character instead of jumping.">
+        <Toggle Value="S.SmoothCaret" OnChange="v => Update(s => s.SmoothCaret = v)" />
+    </Setting>
     <Setting Title="font size" Description="Size of the commands you type.">
         <div class="options">
             @foreach (var size in FontSizes)
