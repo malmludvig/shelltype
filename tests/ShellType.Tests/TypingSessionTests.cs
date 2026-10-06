@@ -122,6 +122,33 @@ public class TypingSessionTests
     }
 
     [Fact]
+    public void Timed_test_ends_at_exactly_the_time_limit()
+    {
+        var session = Session(new TestConfig { TimeSeconds = 15 }, "ls");
+        session.Type('l');
+        _clock.Advance(14.5);
+        session.Tick();
+        Assert.Equal(SessionState.Running, session.State);
+        Assert.Equal(0.5, session.Remaining!.Value.TotalSeconds, precision: 6);
+
+        _clock.Advance(1.2);
+        session.Tick();
+
+        Assert.Equal(SessionState.Finished, session.State);
+        Assert.Equal(TimeSpan.FromSeconds(15), session.Elapsed);
+    }
+
+    [Fact]
+    public void Tick_does_not_start_the_clock()
+    {
+        var session = Session(new TestConfig { TimeSeconds = 15 }, "ls");
+        _clock.Advance(60);
+        session.Tick();
+
+        Assert.Equal(SessionState.Ready, session.State);
+    }
+
+    [Fact]
     public void Records_every_keystroke_including_enter()
     {
         var session = Session(new TestConfig(), "ls", "pwd");

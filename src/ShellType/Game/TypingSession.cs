@@ -127,14 +127,32 @@ public sealed class TypingSession
         }
     }
 
-    public void Finish()
+    /// <summary>Time left in a timed test, or null in commands mode.</summary>
+    public TimeSpan? Remaining => Config.Mode == TestMode.Time
+        ? TimeSpan.FromSeconds(Math.Max(0, Config.TimeSeconds - Elapsed.TotalSeconds))
+        : null;
+
+    /// <summary>Called by a UI timer; ends a timed test when the clock runs out.</summary>
+    public void Tick()
+    {
+        if (State == SessionState.Running
+            && Config.Mode == TestMode.Time
+            && Elapsed.TotalSeconds >= Config.TimeSeconds)
+        {
+            Finish(TimeSpan.FromSeconds(Config.TimeSeconds));
+        }
+    }
+
+    public void Finish() => Finish(null);
+
+    private void Finish(TimeSpan? at)
     {
         if (State == SessionState.Finished)
         {
             return;
         }
 
-        _finishedAt = State == SessionState.Running ? Elapsed : TimeSpan.Zero;
+        _finishedAt = at ?? (State == SessionState.Running ? Elapsed : TimeSpan.Zero);
         State = SessionState.Finished;
         CompletedAt = _time.GetUtcNow();
         Finished?.Invoke();
