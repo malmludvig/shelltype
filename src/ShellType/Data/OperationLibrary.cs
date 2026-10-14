@@ -87,6 +87,11 @@ public static class OperationLibrary
             ("echo 'export EDITOR=vim' >> ~/.bashrc", "Make it permanent for new shells"),
             ("source ~/.bashrc", "Reload the config in the current shell")),
 
+        Op("undo the last commit", "you committed too early. undo it but keep the changes.", Git,
+            ("git log --oneline -3", "Look at the latest commits"),
+            ("git reset --soft HEAD~1", "Undo the commit and keep its changes staged"),
+            ("git status", "Check the changes are still there")),
+
         Op("size up a machine", "you just logged in to an unknown server. how big is it?", CommandCategory.System,
             ("nproc", "Count the cpu cores"),
             ("free -h", "See how much memory it has"),
