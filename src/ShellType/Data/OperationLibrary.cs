@@ -301,6 +301,12 @@ public static class OperationLibrary
             ("ip -s link show eth0", "Check the interface for errors and drops"),
             ("ethtool eth0", "Check link speed and duplex")),
 
+        Op("debug an ssh connection", "ssh to the server hangs or is refused.", Networking,
+            ("ssh -v deploy@10.0.0.12", "Connect verbosely to see where it stops"),
+            ("nc -zv 10.0.0.12 22", "Check the port is reachable at all"),
+            ("sudo systemctl status ssh", "On the server: is sshd running?"),
+            ("sudo journalctl -u ssh -n 20", "On the server: read sshd's latest messages")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
