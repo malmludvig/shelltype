@@ -283,6 +283,13 @@ public static class OperationLibrary
             ("git add src/auth.js", "Mark the file as resolved"),
             ("git commit", "Finish the merge commit")),
 
+        Op("run a container", "try nginx in docker without installing it.", Packages,
+            ("docker pull nginx:alpine", "Download the image"),
+            ("docker run -d --name web -p 8080:80 nginx:alpine", "Start it in the background on port 8080"),
+            ("docker ps", "Check it is running"),
+            ("docker logs web", "Read its output"),
+            ("docker stop web", "Stop it when you are done")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
