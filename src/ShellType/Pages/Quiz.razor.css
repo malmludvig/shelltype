@@ -467,6 +467,14 @@ kbd {
         line-height: 1.45;
     }
 
+    .feedback.good .explanation {
+        border-left-color: var(--main);
+    }
+
+    .feedback.bad .explanation {
+        border-left-color: var(--error);
+    }
+
     /* The next button sticks to the bottom of the screen, within thumb reach. */
     .next-bar {
         position: sticky;

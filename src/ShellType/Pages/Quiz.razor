@@ -97,7 +97,7 @@ else if (_session is not null)
                         </li>
                     }
                 </ul>
-                <div class="feedback">
+                <div class="feedback @(answer.Correct ? "good" : "bad")">
                     <div class="verdict @(answer.Correct ? "good" : "bad")">
                         @if (answer.Correct)
                         {
