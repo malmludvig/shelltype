@@ -43,5 +43,6 @@ public static partial class TheoryLibrary
         yield return ExitCodes;
         yield return Scripting;
         yield return TextTools;
+        yield return Regex;
     }
 }
