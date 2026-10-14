@@ -20,5 +20,6 @@ public static partial class TheoryLibrary
     {
         yield return FilesystemHierarchy;
         yield return EverythingIsAFile;
+        yield return Paths;
     }
 }
