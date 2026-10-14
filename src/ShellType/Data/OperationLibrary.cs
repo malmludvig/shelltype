@@ -55,6 +55,17 @@ public static class OperationLibrary
             ("ls -lh ~/Downloads/ubuntu.iso", "Check its size and date before deleting"),
             ("rm ~/Downloads/ubuntu.iso", "Delete it")),
 
+        Op("who is on the server", "something changed. see who is logged in and who was here recently.", CommandCategory.System,
+            ("who", "List the users logged in right now"),
+            ("w", "See what each of them is running"),
+            ("last -n 5", "Show the five most recent logins")),
+
+        Op("size up a machine", "you just logged in to an unknown server. how big is it?", CommandCategory.System,
+            ("nproc", "Count the cpu cores"),
+            ("free -h", "See how much memory it has"),
+            ("df -h", "See the disks and how full they are"),
+            ("uptime", "See how long it has run and how loaded it is")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
