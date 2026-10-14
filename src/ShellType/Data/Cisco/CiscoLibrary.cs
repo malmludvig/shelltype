@@ -31,6 +31,33 @@ public static partial class CiscoLibrary
     public static IReadOnlyList<CommandEntry> Filter(Difficulty maxDifficulty) =>
         Essentials.Where(c => c.Difficulty <= maxDifficulty).ToList();
 
+    /// <summary>The name of the IOS mode a prompt belongs to, e.g. "interface configuration" for <c>R1(config-if)#</c>.</summary>
+    public static string ModeName(string prompt)
+    {
+        if (prompt.EndsWith('>'))
+        {
+            return "user EXEC";
+        }
+
+        var open = prompt.IndexOf('(');
+        if (open < 0)
+        {
+            return "privileged EXEC";
+        }
+
+        return prompt[(open + 1)..prompt.IndexOf(')')] switch
+        {
+            "config" => "global configuration",
+            "config-if" => "interface configuration",
+            "config-subif" => "subinterface configuration",
+            "config-line" => "line configuration",
+            "config-router" => "router configuration",
+            "config-vlan" => "VLAN configuration",
+            "dhcp-config" => "DHCP pool configuration",
+            var other => other,
+        };
+    }
+
     private static IEnumerable<CommandEntry[]> Sources()
     {
         yield return Modes;
