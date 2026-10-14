@@ -29,6 +29,23 @@
     margin-bottom: 1rem;
 }
 
+.operation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 1rem;
+    align-items: baseline;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.operation .name {
+    color: var(--main);
+}
+
+.operation .goal {
+    color: var(--sub);
+}
+
 .hint {
     text-align: center;
     color: var(--sub);

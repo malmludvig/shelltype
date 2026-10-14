@@ -12,6 +12,7 @@
     <ResultsView Result="_result"
                  IsPersonalBest="_isPersonalBest"
                  PreviousBest="_previousBest"
+                 Operation="_operation?.Name"
                  OnNext="() => NewTestAsync()"
                  OnRepeat="() => NewTestAsync(repeat: true)" />
 }
@@ -25,6 +26,14 @@ else if (_session is not null)
             <div class="banner">
                 @_banner
                 <a href="" @onclick:stopPropagation="true">clear</a>
+            </div>
+        }
+
+        @if (_operation is not null)
+        {
+            <div class="operation">
+                <span class="name">@_operation.Name</span>
+                <span class="goal"># @_operation.Goal</span>
             </div>
         }
 
@@ -53,6 +62,7 @@ else if (_session is not null)
     private DotNetObjectReference<Home>? _self;
     private TypingSession? _session;
     private TestResult? _result;
+    private Operation? _operation;
     private bool _isPersonalBest;
     private double? _previousBest;
     private bool _focused = true;
@@ -142,6 +152,14 @@ else if (_session is not null)
     {
         StopTimer();
         var config = Settings.ToTestConfig();
+        if (config.Mode == TestMode.Operations)
+        {
+            StartOperation(config, repeat);
+            await JS.InvokeVoidAsync("shellType.ui.setTyping", false);
+            return;
+        }
+
+        _operation = null;
         var generator = new CommandGenerator(await BuildPoolAsync(config));
         ICommandSource source = repeat && _session is not null
             ? new ReplaySource(_session.Attempts.Select(a => a.Command).ToList(), generator)
@@ -151,6 +169,24 @@ else if (_session is not null)
         _session.Finished += () => _ = InvokeAsync(ShowResultsAsync);
         _result = null;
         await JS.InvokeVoidAsync("shellType.ui.setTyping", false);
+    }
+
+    private void StartOperation(TestConfig config, bool repeat)
+    {
+        if (!repeat || _operation is null)
+        {
+            // Pick a different operation than last time, so "next test" always moves on.
+            var candidates = OperationLibrary.ByLength(config.OperationLength).Where(o => o != _operation).ToList();
+            _operation = candidates[Random.Shared.Next(candidates.Count)];
+        }
+
+        _banner = null;
+        _session = new TypingSession(
+            config with { CommandCount = _operation.Steps.Count, MaxDifficulty = Difficulty.Medium },
+            new ReplaySource(_operation.Steps, new CommandGenerator(_operation.Steps)),
+            Time);
+        _session.Finished += () => _ = InvokeAsync(ShowResultsAsync);
+        _result = null;
     }
 
     private async Task<IReadOnlyList<CommandEntry>> BuildPoolAsync(TestConfig config)

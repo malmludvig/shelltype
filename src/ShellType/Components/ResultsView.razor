@@ -31,7 +31,7 @@
     <div class="details">
         <div class="stat">
             <div class="label">test type</div>
-            <div class="value small">@Result.ModeLabel<br />@TestModes.DifficultyLabel(Result.Mode, Result.Difficulty)</div>
+            <div class="value small">@Result.ModeLabel<br />@(Operation ?? TestModes.DifficultyLabel(Result.Mode, Result.Difficulty))</div>
         </div>
         <div class="stat">
             <div class="label">raw</div>
@@ -77,6 +77,10 @@
 
     [Parameter]
     public double? PreviousBest { get; set; }
+
+    /// <summary>Name of the operation that was typed, in operations mode.</summary>
+    [Parameter]
+    public string? Operation { get; set; }
 
     [Parameter]
     public EventCallback OnNext { get; set; }
