@@ -1,0 +1,72 @@
+.theory-content {
+    line-height: 1.75;
+    font-size: 0.95rem;
+}
+
+h2 {
+    font-size: 1.15rem;
+    color: var(--main);
+    margin: 2rem 0 0.5rem;
+}
+
+h3 {
+    font-size: 1rem;
+    color: var(--text);
+    margin: 1.5rem 0 0.4rem;
+}
+
+p {
+    margin: 0 0 1rem;
+}
+
+strong {
+    color: var(--main);
+    font-weight: 500;
+}
+
+code {
+    font-size: 0.9em;
+    padding: 0.05rem 0.3rem;
+    border-radius: 0.25rem;
+    background: var(--bg-alt);
+    color: var(--text);
+}
+
+pre {
+    margin: 0 0 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-alt);
+    overflow-x: auto;
+    line-height: 1.5;
+}
+
+pre code {
+    padding: 0;
+    background: none;
+    font-size: 0.85rem;
+}
+
+ul {
+    margin: 0 0 1rem;
+    padding-left: 1.25rem;
+}
+
+li {
+    margin-bottom: 0.3rem;
+}
+
+li::marker {
+    color: var(--main);
+}
+
+@media (max-width: 640px) {
+    .theory-content {
+        font-size: 0.92rem;
+        line-height: 1.7;
+    }
+
+    pre code {
+        font-size: 0.8rem;
+    }
+}

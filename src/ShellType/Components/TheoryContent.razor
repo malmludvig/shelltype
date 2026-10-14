@@ -1,0 +1,54 @@
+@* Renders a parsed theory chapter. Everything is plain elements, never raw HTML. *@
+@using ShellType.Theory
+
+<div class="theory-content">
+    @foreach (var block in Blocks)
+    {
+        @switch (block)
+        {
+            case HeadingBlock { Level: <= 2 } heading:
+                <h2>@RenderInline(heading.Text)</h2>
+                break;
+            case HeadingBlock heading:
+                <h3>@RenderInline(heading.Text)</h3>
+                break;
+            case ParagraphBlock paragraph:
+                <p>@RenderInline(paragraph.Text)</p>
+                break;
+            case CodeBlock codeBlock:
+                <pre><code>@codeBlock.Code</code></pre>
+                break;
+            case ListBlock list:
+                <ul>
+                    @foreach (var item in list.Items)
+                    {
+                        <li>@RenderInline(item)</li>
+                    }
+                </ul>
+                break;
+        }
+    }
+</div>
+
+@code {
+    [Parameter, EditorRequired]
+    public IReadOnlyList<TheoryBlock> Blocks { get; set; } = [];
+
+    private static RenderFragment RenderInline(IReadOnlyList<Inline> inlines) => @<text>
+        @foreach (var inline in inlines)
+        {
+            @switch (inline.Kind)
+            {
+                case InlineKind.Code:
+                    <code>@inline.Text</code>
+                    break;
+                case InlineKind.Bold:
+                    <strong>@inline.Text</strong>
+                    break;
+                default:
+                    @inline.Text
+                    break;
+            }
+        }
+    </text>;
+}
