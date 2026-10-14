@@ -81,6 +81,30 @@ public static class QuizGenerator
             $"{command.Name} is one of the {command.Category.ToString().ToLowerInvariant()} commands. Try {command.Name} --help or man {command.Name} to see what else it can do.");
     }
 
+    /// <summary>Shown a Cisco command at its prompt, pick what it does.</summary>
+    public static QuizQuestion FromCisco(CommandEntry command, Random random)
+    {
+        // Commands typed in the same mode are the easiest to mix up.
+        var options = Shuffle(CiscoDistractors(command, random).Select(c => c.Description)
+            .Where(d => d != command.Description)
+            .Distinct()
+            .Take(OptionCount - 1)
+            .Append(command.Description), random);
+        return new QuizQuestion(
+            QuestionKind.WhatDoesItDo,
+            command.Text,
+            null,
+            options,
+            IndexOf(options, command.Description),
+            $"{command.Text} is typed in {CiscoLibrary.ModeName(command.Prompt)} mode, at the {command.Prompt} prompt.",
+            command.Prompt);
+    }
+
+    private static IEnumerable<CommandEntry> CiscoDistractors(CommandEntry command, Random random) =>
+        Shuffle(CiscoLibrary.Essentials.Where(c => c.Prompt == command.Prompt), random)
+            .Concat(Shuffle(CiscoLibrary.Essentials, random))
+            .Where(c => c != command);
+
     public static QuizQuestion FromError(ErrorScenario scenario, Random random)
     {
         var options = Shuffle(scenario.WrongFixes.Append(scenario.Fix), random);
