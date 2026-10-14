@@ -123,3 +123,41 @@ h2 {
     color: var(--sub);
     text-decoration: line-through;
 }
+
+@media (max-width: 640px), (pointer: coarse) {
+    .results {
+        margin-top: 1.5rem;
+    }
+
+    .headline {
+        gap: 1.5rem;
+    }
+
+    .label {
+        font-size: 0.9rem;
+    }
+
+    .value {
+        font-size: 2.2rem;
+    }
+
+    .actions button {
+        width: 100%;
+        padding: 1rem;
+        color: var(--bg);
+        background: var(--main);
+        touch-action: manipulation;
+    }
+
+    .actions kbd {
+        display: none;
+    }
+
+    .review li {
+        grid-template-columns: 1.25rem 1fr;
+    }
+
+    .points {
+        grid-column: 2;
+    }
+}
