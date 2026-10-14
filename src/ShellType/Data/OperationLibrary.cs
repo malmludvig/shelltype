@@ -326,6 +326,13 @@ public static class OperationLibrary
             ("ps -fp 5480", "See what the parent is"),
             ("kill -HUP 5480", "Nudge the parent to reap its children, or restart it")),
 
+        Op("fix too many open files", "the app logs \"too many open files\" under load.", Processes,
+            ("ulimit -n", "See your shell's open-file limit"),
+            ("grep \"open files\" /proc/2214/limits", "See the limit of the running process"),
+            ("ls /proc/2214/fd | wc -l", "Count how many files it has open"),
+            ("sudo systemctl edit myapp", "Raise LimitNOFILE for the service"),
+            ("sudo systemctl restart myapp", "Restart it with the new limit")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
