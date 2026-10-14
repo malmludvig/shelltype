@@ -122,6 +122,7 @@ public static class StatsCalculator
         return new TestResult
         {
             CompletedAt = session.CompletedAt ?? DateTimeOffset.UtcNow,
+            Platform = session.Config.Platform,
             Mode = session.Config.Mode,
             ModeValue = session.Config.ModeValue,
             Difficulty = session.Config.MaxDifficulty,

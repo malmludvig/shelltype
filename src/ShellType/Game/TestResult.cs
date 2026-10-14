@@ -12,6 +12,7 @@ public sealed record CommandResult(string Text, string Typed, bool Correct, int 
 public sealed record TestResult
 {
     public required DateTimeOffset CompletedAt { get; init; }
+    public Platform Platform { get; init; } = Platform.Linux;
     public required TestMode Mode { get; init; }
     public required int ModeValue { get; init; }
     public required Difficulty Difficulty { get; init; }
@@ -27,7 +28,7 @@ public sealed record TestResult
     public required IReadOnlyList<SecondSample> Samples { get; init; }
     public required IReadOnlyList<CommandResult> Commands { get; init; }
 
-    public string ModeLabel => TestModes.Label(Mode, ModeValue);
+    public string ModeLabel => TestModes.Label(Mode, ModeValue, Platform);
 
     /// <summary>A test this short or with this little typing does not count toward records.</summary>
     public bool IsValid => Duration.TotalSeconds >= 3 && Commands.Count > 0;
