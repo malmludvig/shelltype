@@ -119,6 +119,11 @@ public static class OperationLibrary
             ("sudo chown -R www-data:www-data /var/www/site", "Give the web server ownership"),
             ("ls -l /var/www/site", "Verify the new owner")),
 
+        Op("is the site up?", "someone says the site is down. check it yourself.", Networking,
+            ("ping -c 3 example.com", "Check the host answers at all"),
+            ("curl -I https://example.com", "Fetch just the response headers"),
+            ("curl -s -o /dev/null -w \"%{http_code}\" https://example.com", "Print only the HTTP status code")),
+
         Op("zip a folder", "send a folder of photos as one file.", Archives,
             ("zip -r photos.zip photos/", "Pack the folder into a zip"),
             ("ls -lh photos.zip", "Check the size"),
