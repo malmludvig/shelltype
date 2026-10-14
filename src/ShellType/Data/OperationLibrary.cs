@@ -274,6 +274,12 @@ public static class OperationLibrary
             ("sudo timedatectl set-ntp true", "Turn on automatic time sync"),
             ("timedatectl timesync-status", "Confirm it synced with a time server")),
 
+        Op("set the right timezone", "log timestamps are an hour off.", CommandCategory.System,
+            ("timedatectl", "See the current timezone"),
+            ("timedatectl list-timezones | grep Stockholm", "Find the exact timezone name"),
+            ("sudo timedatectl set-timezone Europe/Stockholm", "Set it"),
+            ("date", "Check the local time is right now")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
