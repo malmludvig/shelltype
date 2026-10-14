@@ -151,6 +151,12 @@ public static class OperationLibrary
             ("find . -name \"*.log\" -mtime +7", "List the old log files first"),
             ("find . -name \"*.log\" -mtime +7 -delete", "Delete them")),
 
+        Op("commit and push", "your change is done. save it and send it to github.", Git,
+            ("git status", "See what changed"),
+            ("git add .", "Stage everything"),
+            ("git commit -m \"Update docs\"", "Commit with a message"),
+            ("git push", "Send it to the remote")),
+
         Op("get help for a command", "you forgot the flags for ls.", Navigation,
             ("ls --help | head", "Show the short built-in help"),
             ("man ls", "Open the full manual")),
