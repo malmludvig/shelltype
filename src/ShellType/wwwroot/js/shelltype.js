@@ -7,6 +7,10 @@ window.shellType = (() => {
     // AltGr combinations for us, and we only see the finished character.
     let sink = null;
 
+    // On phones and tablets, focusing the hidden input pops up the on-screen keyboard,
+    // which would cover the quiz answers. Only focus it there once a key is pressed.
+    const isTouch = () => window.matchMedia("(pointer: coarse)").matches;
+
     const isFormField = (el) =>
         !!el && el !== sink &&
         (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable);
@@ -169,7 +173,9 @@ window.shellType = (() => {
             register(dotNetRef) {
                 handler = dotNetRef;
                 sink ??= createSink();
-                focusSink();
+                if (!isTouch()) {
+                    focusSink();
+                }
                 document.addEventListener("keydown", onKeyDown);
                 window.addEventListener("blur", onBlur);
                 window.addEventListener("focus", onFocus);
