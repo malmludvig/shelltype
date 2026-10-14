@@ -24,5 +24,6 @@ public static partial class TheoryLibrary
         yield return InodesAndLinks;
         yield return DisksAndMounting;
         yield return UsersAndGroups;
+        yield return Permissions;
     }
 }
