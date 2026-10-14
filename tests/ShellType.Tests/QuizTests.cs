@@ -30,6 +30,7 @@ public class QuizGeneratorTests
     [InlineData(QuizMode.Mixed)]
     [InlineData(QuizMode.Commands)]
     [InlineData(QuizMode.Errors)]
+    [InlineData(QuizMode.Basics)]
     public void Creates_the_requested_number_of_valid_questions(QuizMode mode)
     {
         var questions = QuizGenerator.Create(mode, 10, new Random(3));
@@ -207,5 +208,30 @@ public class QuizSessionTests
         Assert.Equal(1, session.Index);
         Assert.Equal("", session.Query);
         Assert.Equal(4, session.Visible.Count);
+    }
+}
+
+public class BasicCommandsTests
+{
+    [Fact]
+    public void There_are_250_unique_commands_with_unique_descriptions()
+    {
+        Assert.Equal(250, BasicCommands.All.Count);
+        Assert.Equal(250, BasicCommands.All.Select(c => c.Name).Distinct().Count());
+        Assert.Equal(250, BasicCommands.All.Select(c => c.Description).Distinct().Count());
+    }
+
+    [Fact]
+    public void Basics_mode_asks_about_program_names()
+    {
+        var questions = QuizGenerator.Create(QuizMode.Basics, 20, new Random(4));
+
+        Assert.Equal(20, questions.Count);
+        Assert.All(questions, q =>
+        {
+            Assert.Equal(QuestionKind.WhatIsThisCommand, q.Kind);
+            Assert.Equal(QuizGenerator.OptionCount, q.Options.Distinct().Count());
+            Assert.Equal(BasicCommands.All.Single(c => c.Name == q.Prompt).Description, q.Answer);
+        });
     }
 }

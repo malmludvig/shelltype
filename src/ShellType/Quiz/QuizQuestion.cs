@@ -7,6 +7,9 @@ public enum QuestionKind
 
     /// <summary>Shown a command and the error it printed, pick the fix.</summary>
     FixTheError,
+
+    /// <summary>Shown just a program name like <c>grep</c>, pick what it is for.</summary>
+    WhatIsThisCommand,
 }
 
 /// <summary>A multiple-choice question.</summary>

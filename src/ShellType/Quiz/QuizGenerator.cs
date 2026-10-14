@@ -8,6 +8,7 @@ public enum QuizMode
     Mixed,
     Commands,
     Errors,
+    Basics,
 }
 
 /// <summary>Builds a shuffled set of quiz questions.</summary>
@@ -19,6 +20,11 @@ public static class QuizGenerator
     public static IReadOnlyList<QuizQuestion> Create(QuizMode mode, int count, Random? random = null)
     {
         random ??= Random.Shared;
+
+        if (mode == QuizMode.Basics)
+        {
+            return Shuffle(BasicCommands.All, random).Take(count).Select(b => FromBasic(b, random)).ToList();
+        }
 
         var (commandCount, errorCount) = mode switch
         {
@@ -53,6 +59,26 @@ public static class QuizGenerator
             options,
             IndexOf(options, command.Description),
             $"{command.Program} is one of the {command.Category.ToString().ToLowerInvariant()} commands. See them all on the learn page.");
+    }
+
+    public static QuizQuestion FromBasic(BasicCommand command, Random random)
+    {
+        var sameCategory = BasicCommands.All.Where(c => c.Category == command.Category);
+        var distractors = Shuffle(sameCategory, random)
+            .Concat(Shuffle(BasicCommands.All, random))
+            .Select(c => c.Description)
+            .Where(d => d != command.Description)
+            .Distinct()
+            .Take(OptionCount - 1);
+
+        var options = Shuffle(distractors.Append(command.Description), random);
+        return new QuizQuestion(
+            QuestionKind.WhatIsThisCommand,
+            command.Name,
+            null,
+            options,
+            IndexOf(options, command.Description),
+            $"{command.Name} is one of the {command.Category.ToString().ToLowerInvariant()} commands. Try {command.Name} --help or man {command.Name} to see what else it can do.");
     }
 
     public static QuizQuestion FromError(ErrorScenario scenario, Random random)
