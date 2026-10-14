@@ -41,5 +41,6 @@ public static partial class TheoryLibrary
         yield return StreamsAndPipes;
         yield return Environment;
         yield return ExitCodes;
+        yield return Scripting;
     }
 }
