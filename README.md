@@ -15,7 +15,8 @@ Instead of random words you type real command lines (flags, pipes, paths and quo
 
 ## Features
 
-- **Two modes:** *time* (15 / 30 / 60 / 120 s) and *commands* (5 / 10 / 25 / 50)
+- **Three modes:** *time* (15 / 30 / 60 / 120 s), *commands* (5 / 10 / 25 / 50) and *operations*
+- **Operations:** 23 everyday tasks typed as command sequences, from killing a runaway process (3-4 steps) to securing a fresh server (8-10 steps), each step explaining why it is done
 - **200+ commands** in 11 categories: navigation, files, text, search, processes, networking, permissions, packages, archives, system and git
 - **Three difficulty levels**, from `pwd` to `awk -F, '{sum += $3} END {print sum}' sales.csv`
 - **Learn as you type:** every command shows a short `# comment` explaining it
@@ -76,6 +77,14 @@ Add a line to the matching `src/ShellType/Data/CommandLibrary.<Category>.cs`:
 
 ```csharp
 ("du -sh *", "Show the size of each item in the current directory", Medium),
+```
+
+Operations live in `src/ShellType/Data/OperationLibrary.cs`. Each one is a name, a goal and 3-10 steps:
+
+```csharp
+Op("free a busy port", "port 8080 is already in use. find who holds it and stop it.", Networking,
+    ("sudo ss -ltnp | grep :8080", "Find the process listening on port 8080"),
+    ("sudo kill 3127", "Stop the process holding the port")),
 ```
 
 Tests check that every command is unique, printable ASCII and has a description.
