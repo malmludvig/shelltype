@@ -185,6 +185,11 @@ public static class OperationLibrary
             ("journalctl -u docker --since \"10 min ago\"", "Read what it logged recently"),
             ("sudo systemctl reset-failed", "Clear the failed state once it is fixed")),
 
+        Op("read logs from before a crash", "the server rebooted on its own. what happened before?", CommandCategory.System,
+            ("journalctl --list-boots", "List the boots the journal knows about"),
+            ("journalctl -b -1 -p warning", "Show warnings and worse from the previous boot"),
+            ("journalctl -b -1 -n 30 --no-pager", "Read the last lines before it went down")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
