@@ -114,6 +114,11 @@ public static class OperationLibrary
             ("for f in *.jpeg; do mv \"$f\" \"${f%.jpeg}.jpg\"; done", "Rename each one, swapping the extension"),
             ("ls *.jpg", "Check the result")),
 
+        Op("fix web file ownership", "the site shows permission errors after an upload.", Permissions,
+            ("ls -l /var/www", "See who owns the site files"),
+            ("sudo chown -R www-data:www-data /var/www/site", "Give the web server ownership"),
+            ("ls -l /var/www/site", "Verify the new owner")),
+
         Op("zip a folder", "send a folder of photos as one file.", Archives,
             ("zip -r photos.zip photos/", "Pack the folder into a zip"),
             ("ls -lh photos.zip", "Check the size"),
