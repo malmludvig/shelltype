@@ -19,5 +19,6 @@ public static partial class TheoryLibrary
     private static IEnumerable<TheoryTopic> Topics()
     {
         yield return FilesystemHierarchy;
+        yield return EverythingIsAFile;
     }
 }
