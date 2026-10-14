@@ -27,6 +27,7 @@ public sealed class UserSettings
     public bool StopOnError { get; set; }
     public bool ConfidenceMode { get; set; }
 
+    public Platform Platform { get; set; } = Platform.Linux;
     public TestMode Mode { get; set; } = TestMode.Time;
     public int TimeSeconds { get; set; } = 30;
     public int CommandCount { get; set; } = 10;
@@ -36,7 +37,8 @@ public sealed class UserSettings
 
     public TestConfig ToTestConfig() => new()
     {
-        Mode = Mode,
+        Platform = Platform,
+        Mode = EffectiveMode,
         TimeSeconds = TimeSeconds,
         CommandCount = CommandCount,
         MaxDifficulty = MaxDifficulty,
@@ -45,4 +47,8 @@ public sealed class UserSettings
         StopOnError = StopOnError,
         ConfidenceMode = ConfidenceMode,
     };
+
+    /// <summary>The essentials list only exists for Cisco, so on Linux it falls back to a commands test.</summary>
+    public TestMode EffectiveMode =>
+        Mode == TestMode.Essentials && Platform != Platform.Cisco ? TestMode.Commands : Mode;
 }
