@@ -31,6 +31,7 @@ public class QuizGeneratorTests
     [InlineData(QuizMode.Commands)]
     [InlineData(QuizMode.Errors)]
     [InlineData(QuizMode.Basics)]
+    [InlineData(QuizMode.Cisco)]
     public void Creates_the_requested_number_of_valid_questions(QuizMode mode)
     {
         var questions = QuizGenerator.Create(mode, 10, new Random(3));
@@ -233,5 +234,42 @@ public class BasicCommandsTests
             Assert.Equal(QuizGenerator.OptionCount, q.Options.Distinct().Count());
             Assert.Equal(BasicCommands.All.Single(c => c.Name == q.Prompt).Description, q.Answer);
         });
+    }
+}
+
+public class CiscoQuizTests
+{
+    [Fact]
+    public void Cisco_mode_asks_both_ways_round_at_the_right_prompt()
+    {
+        var questions = QuizGenerator.Create(QuizMode.Cisco, 20, new Random(5));
+
+        Assert.Equal(10, questions.Count(q => q.Kind == QuestionKind.WhatDoesItDo));
+        Assert.Equal(10, questions.Count(q => q.Kind == QuestionKind.WhichCommand));
+        Assert.All(questions, q =>
+        {
+            var command = q.Kind == QuestionKind.WhichCommand
+                ? CiscoLibrary.Essentials.Single(c => c.Description == q.Prompt)
+                : CiscoLibrary.Essentials.Single(c => c.Text == q.Prompt);
+            Assert.Equal(command.Prompt, q.Shell);
+            Assert.Equal(q.Kind == QuestionKind.WhichCommand ? command.Text : command.Description, q.Answer);
+        });
+    }
+
+    [Theory]
+    [InlineData("R1>", "user EXEC")]
+    [InlineData("R1#", "privileged EXEC")]
+    [InlineData("R1(config)#", "global configuration")]
+    [InlineData("SW1(config-if)#", "interface configuration")]
+    [InlineData("R1(dhcp-config)#", "DHCP pool configuration")]
+    public void Prompts_name_their_mode(string prompt, string mode)
+    {
+        Assert.Equal(mode, CiscoLibrary.ModeName(prompt));
+    }
+
+    [Fact]
+    public void Cisco_descriptions_are_unique()
+    {
+        Assert.Equal(50, CiscoLibrary.Essentials.Select(c => c.Description).Distinct().Count());
     }
 }
