@@ -173,6 +173,12 @@ public static class OperationLibrary
             ("npm install", "Install the dependencies"),
             ("npm start", "Run it")),
 
+        Op("find out why a service failed", "postgres will not start. read its status and logs.", CommandCategory.System,
+            ("systemctl status postgresql", "See the state, exit code and the last few log lines"),
+            ("journalctl -u postgresql -n 50 --no-pager", "Read the last 50 lines from the service"),
+            ("journalctl -u postgresql -p err -b", "Show only errors since the last boot"),
+            ("sudo systemctl restart postgresql", "Try again once the cause is fixed")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
