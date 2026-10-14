@@ -5,6 +5,8 @@
     padding: 2rem 2.5rem;
     display: grid;
     grid-template-rows: auto 1fr auto;
+    /* Never wider than the screen, even when the menu scrolls sideways on phones. */
+    grid-template-columns: minmax(0, 1fr);
     gap: 2rem;
 }
 
