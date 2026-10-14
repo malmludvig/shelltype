@@ -38,5 +38,6 @@ public static partial class TheoryLibrary
         yield return Packages;
         yield return Shell;
         yield return ExpansionAndQuoting;
+        yield return StreamsAndPipes;
     }
 }
