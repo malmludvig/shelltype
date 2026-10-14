@@ -128,6 +128,14 @@ public static class OperationLibrary
             ("ip -br addr", "List each interface with its local address"),
             ("curl ifconfig.me", "Ask an outside server for your public address")),
 
+        Op("back up before editing", "about to change a config file. keep a copy first.", Files,
+            ("cp config.yml config.yml.bak", "Copy the file so you can roll back"),
+            ("vim config.yml", "Now edit it safely")),
+
+        Op("clean up old logs", "remove log files older than a week.", Search,
+            ("find . -name \"*.log\" -mtime +7", "List the old log files first"),
+            ("find . -name \"*.log\" -mtime +7 -delete", "Delete them")),
+
         Op("get help for a command", "you forgot the flags for ls.", Navigation,
             ("ls --help | head", "Show the short built-in help"),
             ("man ls", "Open the full manual")),
