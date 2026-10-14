@@ -451,6 +451,7 @@ kbd {
     }
 
     .verdict {
+        margin-top: 0.75rem;
         font-size: 1.15rem;
     }
 
