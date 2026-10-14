@@ -85,33 +85,37 @@ else if (_session is not null)
         }
         else if (_session.LastAnswer is { } answer)
         {
-            <ul class="reveal">
-                @for (var i = 0; i < q.Options.Count; i++)
-                {
-                    var css = i == q.AnswerIndex ? "right" : i == answer.ChosenIndex ? "wrong" : "";
-                    <li class="option @css">
-                        <span class="pointer">@(i == q.AnswerIndex ? "✓" : i == answer.ChosenIndex ? "✗" : "")</span>
-                        <span class="letter">@(i == q.AnswerIndex ? "✓" : i == answer.ChosenIndex ? "✗" : Letter(i))</span>
-                        <span class="text">@q.Options[i]</span>
-                    </li>
-                }
-            </ul>
-            <div class="verdict @(answer.Correct ? "good" : "bad")">
-                @if (answer.Correct)
-                {
-                    <span>correct! +@answer.Points</span>
-                }
-                else
-                {
-                    <span>not quite</span>
-                }
-            </div>
-            <p class="explanation"># @q.Explanation</p>
-            <div class="next-bar">
-                <button class="next" @onclick="Continue">
-                    @(_session.Index == _session.Questions.Count - 1 ? "see results" : "next question") →
-                    <kbd>enter</kbd>
-                </button>
+            <div class="result">
+                <ul class="reveal">
+                    @for (var i = 0; i < q.Options.Count; i++)
+                    {
+                        var css = i == q.AnswerIndex ? "right" : i == answer.ChosenIndex ? "wrong" : "";
+                        <li class="option @css">
+                            <span class="pointer">@(i == q.AnswerIndex ? "✓" : i == answer.ChosenIndex ? "✗" : "")</span>
+                            <span class="letter">@(i == q.AnswerIndex ? "✓" : i == answer.ChosenIndex ? "✗" : Letter(i))</span>
+                            <span class="text">@q.Options[i]</span>
+                        </li>
+                    }
+                </ul>
+                <div class="feedback">
+                    <div class="verdict @(answer.Correct ? "good" : "bad")">
+                        @if (answer.Correct)
+                        {
+                            <span>correct! +@answer.Points</span>
+                        }
+                        else
+                        {
+                            <span>not quite</span>
+                        }
+                    </div>
+                    <p class="explanation"># @q.Explanation</p>
+                </div>
+                <div class="next-bar">
+                    <button class="next" @onclick="Continue">
+                        @(_session.Index == _session.Questions.Count - 1 ? "see results" : "next question") →
+                        <kbd>enter</kbd>
+                    </button>
+                </div>
             </div>
         }
     </section>
