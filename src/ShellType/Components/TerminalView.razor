@@ -5,7 +5,7 @@
         @foreach (var attempt in Session.Completed.TakeLast(HistoryLines))
         {
             <div class="line done @(attempt.IsCorrect ? "ok" : "bad")">
-                <span class="prompt">~$</span>
+                <span class="prompt">@attempt.Command.Prompt</span>
                 <span class="cmd">@RenderChars(attempt, showCaret: false)</span>
                 <span class="mark">@(attempt.IsCorrect ? "✓" : "✗")</span>
             </div>
@@ -16,7 +16,7 @@
     {
         var current = Session.Current;
         <div class="line current">
-            <span class="prompt">~$</span>
+            <span class="prompt">@current.Command.Prompt</span>
             <span class="cmd">
                 @if (Settings.SmoothCaret)
                 {
@@ -38,7 +38,7 @@
             @foreach (var next in Session.Upcoming.Take(UpcomingLines))
             {
                 <div class="line next">
-                    <span class="prompt">~$</span>
+                    <span class="prompt">@next.Command.Prompt</span>
                     <span class="cmd">@next.Target</span>
                 </div>
             }
