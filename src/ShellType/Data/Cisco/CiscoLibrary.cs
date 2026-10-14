@@ -27,6 +27,10 @@ public static partial class CiscoLibrary
     /// <summary>All 50 commands, in learning order.</summary>
     public static IReadOnlyList<CommandEntry> Essentials => AllCommands.Value;
 
+    /// <summary>The commands up to a difficulty, for time and commands tests.</summary>
+    public static IReadOnlyList<CommandEntry> Filter(Difficulty maxDifficulty) =>
+        Essentials.Where(c => c.Difficulty <= maxDifficulty).ToList();
+
     private static IEnumerable<CommandEntry[]> Sources()
     {
         yield return Modes;
