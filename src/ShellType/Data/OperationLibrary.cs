@@ -262,6 +262,12 @@ public static class OperationLibrary
             ("sudo mount -a", "Mount everything to test the change"),
             ("findmnt /data", "Verify it is mounted where it should be")),
 
+        Op("find what slows the disk", "everything is sluggish and top shows high iowait.", CommandCategory.System,
+            ("top -b -n 1 | head -5", "Check the wa (iowait) value"),
+            ("iostat -x 1 3", "See which disk is saturated"),
+            ("sudo iotop -o -b -n 3", "Find the processes doing the most disk io"),
+            ("sudo smartctl -H /dev/sda", "Check the disk's own health report")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
