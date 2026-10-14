@@ -30,5 +30,6 @@ public static partial class TheoryLibrary
         yield return SignalsAndJobs;
         yield return Memory;
         yield return Scheduling;
+        yield return Boot;
     }
 }
