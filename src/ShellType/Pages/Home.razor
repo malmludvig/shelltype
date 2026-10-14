@@ -176,7 +176,8 @@ else if (_session is not null)
         if (!repeat || _operation is null)
         {
             // Pick a different operation than last time, so "next test" always moves on.
-            var candidates = OperationLibrary.ByLength(config.OperationLength).Where(o => o != _operation).ToList();
+            var library = config.Platform == Platform.Cisco ? CiscoLibrary.Operations : OperationLibrary.All;
+            var candidates = library.Where(o => o.Length == config.OperationLength && o != _operation).ToList();
             _operation = candidates[Random.Shared.Next(candidates.Count)];
         }
 
