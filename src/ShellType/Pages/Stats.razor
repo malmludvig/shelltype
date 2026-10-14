@@ -105,9 +105,10 @@
 
     private IEnumerable<HistoryEntry> PersonalBests =>
         (_history ?? [])
-            .GroupBy(h => (h.Mode, h.ModeValue, h.Difficulty))
+            .GroupBy(h => (h.Platform, h.Mode, h.ModeValue, h.Difficulty))
             .Select(g => g.MaxBy(h => h.Wpm)!)
-            .OrderBy(h => h.Mode)
+            .OrderBy(h => h.Platform)
+            .ThenBy(h => h.Mode)
             .ThenBy(h => h.ModeValue)
             .ThenBy(h => h.Difficulty);
 
