@@ -297,6 +297,13 @@ public static class OperationLibrary
             ("grep -rn \"oldName\" src/", "Make sure nothing was missed"),
             ("git commit -am \"Rename oldName to newName\"", "Commit the rename")),
 
+        Op("check a tls certificate", "make sure the https certificate will not expire unnoticed.", Networking,
+            ("echo | openssl s_client -connect example.com:443 2>/dev/null | openssl x509 -noout -dates", "Read the certificate's valid-from and expiry dates"),
+            ("sudo certbot certificates", "List the certificates certbot manages"),
+            ("sudo certbot renew --dry-run", "Test that renewal would work"),
+            ("systemctl list-timers | grep certbot", "Check the automatic renewal timer is scheduled"),
+            ("curl -vI https://example.com 2>&1 | grep expire", "Double-check the expiry from the client side")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
