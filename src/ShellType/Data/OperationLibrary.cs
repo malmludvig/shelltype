@@ -280,6 +280,14 @@ public static class OperationLibrary
             ("sudo timedatectl set-timezone Europe/Stockholm", "Set it"),
             ("date", "Check the local time is right now")),
 
+        Op("bring a network interface up", "the server has no ip address after a reboot.", Networking,
+            ("ip link", "List interfaces and whether they are up"),
+            ("ip addr show eth0", "Check if eth0 has an address"),
+            ("sudo ip link set eth0 up", "Bring the interface up"),
+            ("sudo dhclient eth0", "Ask the dhcp server for an address"),
+            ("ip route", "Check there is a default route"),
+            ("ping -c 3 1.1.1.1", "Test that traffic gets out")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
