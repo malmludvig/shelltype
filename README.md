@@ -17,6 +17,7 @@ Instead of random words you type real command lines (flags, pipes, paths and quo
 
 - **Three modes:** *time* (15 / 30 / 60 / 120 s), *commands* (5 / 10 / 25 / 50) and *operations*
 - **Operations:** 86 everyday tasks typed as command sequences, from finding your ip address (2 steps) to securing a fresh server (8-10 steps), each step explaining why it is done
+- **Cisco IOS:** switch the platform to practice configuring routers and switches. Every command is shown at its mode's prompt (`R1#`, `R1(config)#`, `R1(config-if)#`), with time and commands tests, 23 operations (ssh, OSPF, DHCP, NAT, VLANs, trunks, ACLs and more) and an *all 50* mode that runs through the 50 most common IOS commands
 - **200+ commands** in 11 categories: navigation, files, text, search, processes, networking, permissions, packages, archives, system and git
 - **Three difficulty levels**, from `pwd` to `awk -F, '{sum += $3} END {print sum}' sales.csv`
 - **Learn as you type:** every command shows a short `# comment` explaining it
