@@ -7,6 +7,9 @@ public enum TestMode
     Time,
     Commands,
     Operations,
+
+    /// <summary>Every one of the most common commands once, in random order.</summary>
+    Essentials,
 }
 
 /// <summary>
@@ -39,7 +42,7 @@ public sealed record TestConfig
     public int ModeValue => Mode switch
     {
         TestMode.Time => TimeSeconds,
-        TestMode.Commands => CommandCount,
+        TestMode.Commands or TestMode.Essentials => CommandCount,
         _ => (int)OperationLength,
     };
 
@@ -54,6 +57,7 @@ public static class TestModes
         {
             TestMode.Time => $"time {value}",
             TestMode.Commands => $"commands {value}",
+            TestMode.Essentials => $"all {value}",
             _ => $"operations {((OperationLength)value).ToString().ToLowerInvariant()}",
         };
 
@@ -61,7 +65,7 @@ public static class TestModes
         return platform == Platform.Cisco ? $"cisco {label}" : label;
     }
 
-    /// <summary>Operations are hand-written sequences, so the difficulty setting does not apply to them.</summary>
+    /// <summary>Operations and the full essentials list are fixed, so the difficulty setting does not apply to them.</summary>
     public static string DifficultyLabel(TestMode mode, Difficulty difficulty) =>
-        mode == TestMode.Operations ? "" : difficulty.ToString().ToLowerInvariant();
+        mode is TestMode.Operations or TestMode.Essentials ? "" : difficulty.ToString().ToLowerInvariant();
 }
