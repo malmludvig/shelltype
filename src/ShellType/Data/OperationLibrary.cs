@@ -132,6 +132,16 @@ public static class OperationLibrary
             ("cp config.yml config.yml.bak", "Copy the file so you can roll back"),
             ("vim config.yml", "Now edit it safely")),
 
+        Op("peek at a big file", "a huge log file: see how long it is and what it looks like.", Text,
+            ("wc -l access.log", "Count the lines"),
+            ("head -n 5 access.log", "Look at the first lines"),
+            ("tail -n 5 access.log", "Look at the newest lines")),
+
+        Op("start a notes folder", "make a folder for your notes and a first file in it.", Navigation,
+            ("mkdir notes", "Create the folder"),
+            ("cd notes", "Go into it"),
+            ("touch todo.txt", "Create an empty file")),
+
         Op("clean up old logs", "remove log files older than a week.", Search,
             ("find . -name \"*.log\" -mtime +7", "List the old log files first"),
             ("find . -name \"*.log\" -mtime +7 -delete", "Delete them")),
