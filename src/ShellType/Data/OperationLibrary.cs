@@ -50,6 +50,11 @@ public static class OperationLibrary
             ("git switch main", "Go to the main branch"),
             ("git pull", "Get the latest commits")),
 
+        Op("find a huge file", "your home directory is suddenly full. find the big file and delete it.", Files,
+            ("find ~ -type f -size +500M", "List every file bigger than 500 MB"),
+            ("ls -lh ~/Downloads/ubuntu.iso", "Check its size and date before deleting"),
+            ("rm ~/Downloads/ubuntu.iso", "Delete it")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
