@@ -81,6 +81,12 @@ public static class OperationLibrary
             ("sudo lsof -i :22", "See which process owns port 22"),
             ("nc -zv localhost 22", "Check the port actually accepts connections")),
 
+        Op("set a default editor", "git keeps opening nano. make vim your editor for good.", CommandCategory.System,
+            ("echo $EDITOR", "See which editor is set now"),
+            ("export EDITOR=vim", "Set it for this shell"),
+            ("echo 'export EDITOR=vim' >> ~/.bashrc", "Make it permanent for new shells"),
+            ("source ~/.bashrc", "Reload the config in the current shell")),
+
         Op("size up a machine", "you just logged in to an unknown server. how big is it?", CommandCategory.System,
             ("nproc", "Count the cpu cores"),
             ("free -h", "See how much memory it has"),
