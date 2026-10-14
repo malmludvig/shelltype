@@ -100,6 +100,23 @@ public static class QuizGenerator
             command.Prompt);
     }
 
+    /// <summary>Shown what a Cisco command does and the prompt, pick the command.</summary>
+    public static QuizQuestion WhichCisco(CommandEntry command, Random random)
+    {
+        var options = Shuffle(CiscoDistractors(command, random).Select(c => c.Text)
+            .Distinct()
+            .Take(OptionCount - 1)
+            .Append(command.Text), random);
+        return new QuizQuestion(
+            QuestionKind.WhichCommand,
+            command.Description,
+            null,
+            options,
+            IndexOf(options, command.Text),
+            $"{command.Text}, typed in {CiscoLibrary.ModeName(command.Prompt)} mode.",
+            command.Prompt);
+    }
+
     private static IEnumerable<CommandEntry> CiscoDistractors(CommandEntry command, Random random) =>
         Shuffle(CiscoLibrary.Essentials.Where(c => c.Prompt == command.Prompt), random)
             .Concat(Shuffle(CiscoLibrary.Essentials, random))
