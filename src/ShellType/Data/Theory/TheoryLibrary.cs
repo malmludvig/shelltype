@@ -42,5 +42,6 @@ public static partial class TheoryLibrary
         yield return Environment;
         yield return ExitCodes;
         yield return Scripting;
+        yield return TextTools;
     }
 }
