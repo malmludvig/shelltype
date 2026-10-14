@@ -33,5 +33,6 @@ public static partial class TheoryLibrary
         yield return Boot;
         yield return Systemd;
         yield return Logging;
+        yield return Kernel;
     }
 }
