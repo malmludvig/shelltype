@@ -92,6 +92,12 @@ public static class OperationLibrary
             ("git reset --soft HEAD~1", "Undo the commit and keep its changes staged"),
             ("git status", "Check the changes are still there")),
 
+        Op("scaffold a project", "set up the folders for a new project in one go.", Navigation,
+            ("mkdir -p app/{src,tests,docs}", "Create the project and its subfolders at once"),
+            ("cd app", "Go into the project"),
+            ("touch README.md", "Create an empty readme"),
+            ("tree", "Look at the structure you made")),
+
         Op("size up a machine", "you just logged in to an unknown server. how big is it?", CommandCategory.System,
             ("nproc", "Count the cpu cores"),
             ("free -h", "See how much memory it has"),
