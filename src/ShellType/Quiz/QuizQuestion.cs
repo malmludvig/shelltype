@@ -1,3 +1,5 @@
+using ShellType.Models;
+
 namespace ShellType.Quiz;
 
 public enum QuestionKind
@@ -18,13 +20,15 @@ public enum QuestionKind
 /// <param name="Options">The choices, already shuffled.</param>
 /// <param name="AnswerIndex">Index of the right choice in <paramref name="Options"/>.</param>
 /// <param name="Explanation">Shown after answering, to teach why.</param>
+/// <param name="Shell">The prompt shown before the command, like <c>~$</c> or <c>R1(config)#</c>.</param>
 public sealed record QuizQuestion(
     QuestionKind Kind,
     string Prompt,
     string? ErrorOutput,
     IReadOnlyList<string> Options,
     int AnswerIndex,
-    string Explanation)
+    string Explanation,
+    string Shell = CommandEntry.ShellPrompt)
 {
     public string Answer => Options[AnswerIndex];
 }
