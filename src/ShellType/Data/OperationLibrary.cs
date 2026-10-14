@@ -268,6 +268,12 @@ public static class OperationLibrary
             ("sudo iotop -o -b -n 3", "Find the processes doing the most disk io"),
             ("sudo smartctl -H /dev/sda", "Check the disk's own health report")),
 
+        Op("fix a wrong clock", "tls and apt fail with certificate errors. the clock is off.", CommandCategory.System,
+            ("date", "See what time the server thinks it is"),
+            ("timedatectl", "Check whether time sync is active"),
+            ("sudo timedatectl set-ntp true", "Turn on automatic time sync"),
+            ("timedatectl timesync-status", "Confirm it synced with a time server")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
