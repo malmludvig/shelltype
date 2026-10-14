@@ -239,6 +239,13 @@ public static class OperationLibrary
             ("sudo systemctl restart rsyslog", "Restart the process holding the file so the space is released"),
             ("df -h /", "Check that the space came back")),
 
+        Op("fix permission denied", "you cannot read a shared file even though you should.", Permissions,
+            ("ls -l /srv/data/report.csv", "See the file's owner, group and mode"),
+            ("id", "See which groups you are in"),
+            ("namei -l /srv/data/report.csv", "Check permissions on every directory along the path"),
+            ("sudo usermod -aG data $USER", "Add yourself to the file's group"),
+            ("newgrp data", "Start using the new group without logging out")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
