@@ -339,6 +339,12 @@ public static class OperationLibrary
             ("psql -h db.internal -U app -c \"select 1\"", "Try a real login with the app's user"),
             ("sudo tail /var/log/postgresql/postgresql-16-main.log", "On the database: read why it refused")),
 
+        Op("check a service's environment", "the service works in your shell but not under systemd.", CommandCategory.System,
+            ("systemctl show myapp -p Environment", "See the variables systemd gives the service"),
+            ("sudo cat /proc/$(pidof myapp)/environ | tr '\\0' '\\n'", "See the real environment of the running process"),
+            ("sudo systemctl edit myapp", "Add the missing variable in an override"),
+            ("sudo systemctl restart myapp", "Restart to pick it up")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
