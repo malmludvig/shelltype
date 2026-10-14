@@ -124,6 +124,14 @@ public static class OperationLibrary
             ("curl -I https://example.com", "Fetch just the response headers"),
             ("curl -s -o /dev/null -w \"%{http_code}\" https://example.com", "Print only the HTTP status code")),
 
+        Op("find your ip address", "you need your local and public ip.", Networking,
+            ("ip -br addr", "List each interface with its local address"),
+            ("curl ifconfig.me", "Ask an outside server for your public address")),
+
+        Op("get help for a command", "you forgot the flags for ls.", Navigation,
+            ("ls --help | head", "Show the short built-in help"),
+            ("man ls", "Open the full manual")),
+
         Op("zip a folder", "send a folder of photos as one file.", Archives,
             ("zip -r photos.zip photos/", "Pack the folder into a zip"),
             ("ls -lh photos.zip", "Check the size"),
