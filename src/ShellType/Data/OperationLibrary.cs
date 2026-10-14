@@ -320,6 +320,12 @@ public static class OperationLibrary
             ("sudo apt --fix-broken install", "Repair broken dependencies"),
             ("sudo apt install htop", "Try the install again")),
 
+        Op("clean up zombie processes", "ps shows defunct processes piling up.", Processes,
+            ("ps aux | awk '$8 ~ /Z/'", "List processes in the zombie state"),
+            ("ps -o ppid= -p 5512", "Find the parent of a zombie"),
+            ("ps -fp 5480", "See what the parent is"),
+            ("kill -HUP 5480", "Nudge the parent to reap its children, or restart it")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
