@@ -210,6 +210,11 @@ public static class OperationLibrary
             ("systemctl status api", "Check whether systemd restarted the service"),
             ("journalctl -u api --since \"1 hour ago\"", "Read what the service logged before it died")),
 
+        Op("check ssh logins", "make sure only the right people logged in over ssh.", Networking,
+            ("systemctl status ssh", "Check the ssh server is running"),
+            ("journalctl -u ssh --since yesterday", "Read ssh activity since yesterday"),
+            ("sudo grep \"Accepted\" /var/log/auth.log | tail", "Show the latest successful logins")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
