@@ -246,6 +246,14 @@ public static class OperationLibrary
             ("sudo usermod -aG data $USER", "Add yourself to the file's group"),
             ("newgrp data", "Start using the new group without logging out")),
 
+        Op("recover a read-only filesystem", "writes fail with \"read-only file system\".", CommandCategory.System,
+            ("touch /data/test", "Confirm writes really fail"),
+            ("mount | grep /data", "See whether it is mounted ro"),
+            ("sudo dmesg -T | grep -i ext4", "Look for the filesystem errors that made the kernel remount it"),
+            ("sudo umount /data", "Unmount it before checking"),
+            ("sudo fsck -y /dev/sdb1", "Check and repair the filesystem"),
+            ("sudo mount -a", "Mount everything in fstab again")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
