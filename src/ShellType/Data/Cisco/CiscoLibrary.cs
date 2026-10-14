@@ -33,6 +33,7 @@ public static partial class CiscoLibrary
         yield return Show;
         yield return Interfaces;
         yield return RemoteAccess;
+        yield return Routing;
     }
 
     private static CommandEntry C(string prompt, string text, string description, Difficulty difficulty) =>
