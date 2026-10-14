@@ -17,6 +17,7 @@ public sealed record TestConfig
     public static readonly int[] TimeOptions = [15, 30, 60, 120];
     public static readonly int[] CommandOptions = [5, 10, 25, 50];
 
+    public Platform Platform { get; init; } = Platform.Linux;
     public TestMode Mode { get; init; } = TestMode.Time;
     public int TimeSeconds { get; init; } = 30;
     public int CommandCount { get; init; } = 10;
@@ -42,17 +43,23 @@ public sealed record TestConfig
         _ => (int)OperationLength,
     };
 
-    public string ModeLabel => TestModes.Label(Mode, ModeValue);
+    public string ModeLabel => TestModes.Label(Mode, ModeValue, Platform);
 }
 
 public static class TestModes
 {
-    public static string Label(TestMode mode, int value) => mode switch
+    public static string Label(TestMode mode, int value, Platform platform = Platform.Linux)
     {
-        TestMode.Time => $"time {value}",
-        TestMode.Commands => $"commands {value}",
-        _ => $"operations {((OperationLength)value).ToString().ToLowerInvariant()}",
-    };
+        var label = mode switch
+        {
+            TestMode.Time => $"time {value}",
+            TestMode.Commands => $"commands {value}",
+            _ => $"operations {((OperationLength)value).ToString().ToLowerInvariant()}",
+        };
+
+        // Linux is the default, so only Cisco tests get a prefix.
+        return platform == Platform.Cisco ? $"cisco {label}" : label;
+    }
 
     /// <summary>Operations are hand-written sequences, so the difficulty setting does not apply to them.</summary>
     public static string DifficultyLabel(TestMode mode, Difficulty difficulty) =>
