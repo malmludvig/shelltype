@@ -20,7 +20,9 @@ Instead of random words you type real command lines (flags, pipes, paths and quo
 - **200+ commands** in 11 categories: navigation, files, text, search, processes, networking, permissions, packages, archives, system and git
 - **Three difficulty levels**, from `pwd` to `awk -F, '{sum += $3} END {print sum}' sales.csv`
 - **Learn as you type:** every command shows a short `# comment` explaining it
-- **Quiz mode:** *what does this do?* and *fix the error* questions (26 real-world errors like `Permission denied (publickey)`), answered with an fzf-style fuzzy picker, with a speed bonus and combo multiplier
+- **Quiz mode:** *what does this do?*, *fix the error* (26 real-world errors like `Permission denied (publickey)`) and *basics* (what is `grep`, `sysctl`, `lsof` for? 250 common commands), answered with an fzf-style fuzzy picker, with a speed bonus and combo multiplier
+- **Mobile friendly quiz:** on a phone the answers become big tap targets, with a next button in thumb reach
+- **Theory:** 30 short chapters (about a page each) on how Linux works: filesystem layout, permissions, processes, signals, memory, boot, systemd, logs, the shell, pipes, regex, networking, DNS, firewalls and ssh, with read-progress tracking
 - **Results screen** with WPM, raw WPM, accuracy, consistency, a speed-over-time chart and a per-command breakdown
 - **Personal bests & history**, stored locally in your browser
 - **Weak-command practice:** shelltype tracks which commands trip you up and drills them
@@ -37,7 +39,7 @@ Instead of random words you type real command lines (flags, pipes, paths and quo
 | <kbd>Ctrl</kbd> + <kbd>Backspace</kbd> | delete a word |
 | <kbd>Tab</kbd> / <kbd>Esc</kbd> | restart |
 
-In the quiz, type to fuzzy-filter the answers, move with <kbd>↑</kbd> <kbd>↓</kbd> or <kbd>Ctrl</kbd> + <kbd>J</kbd> / <kbd>K</kbd>, answer with <kbd>Enter</kbd>, clear the filter with <kbd>Esc</kbd>.
+On a phone, just tap an answer. On a keyboard, type to fuzzy-filter the answers, move with <kbd>↑</kbd> <kbd>↓</kbd> or <kbd>Ctrl</kbd> + <kbd>J</kbd> / <kbd>K</kbd>, answer with <kbd>Enter</kbd>, clear the filter with <kbd>Esc</kbd>.
 
 ## How stats are calculated
 
@@ -59,12 +61,13 @@ dotnet test                             # engine unit tests
 
 ```
 src/ShellType/
-  Data/        command catalogue (one file per category) and error scenarios
+  Data/        command catalogue (one file per category), operations, basic commands, error scenarios and theory chapters
   Game/        UI-free engine: TypingSession, CommandAttempt, StatsCalculator
   Quiz/        quiz engine: QuizSession, QuizGenerator, FuzzyMatcher
+  Theory/      the small Markdown parser theory chapters are written in
   Services/    settings, history and localStorage persistence
   Components/  TerminalView, ConfigBar, ResultsView, WpmChart, ...
-  Pages/       type, quiz, learn, stats, settings, about
+  Pages/       type, quiz, theory, learn, stats, settings, about
   wwwroot/     themes, styles and the small JS keyboard bridge
 tests/ShellType.Tests/   xUnit tests for the engine and library
 ```
