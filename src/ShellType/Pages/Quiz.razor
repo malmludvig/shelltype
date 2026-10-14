@@ -14,6 +14,8 @@
                 @onclick="() => Restart(QuizMode.Basics)">basics</button>
         <button class="@Active(_mode == QuizMode.Commands)" @onclick="() => Restart(QuizMode.Commands)">what does it do?</button>
         <button class="@Active(_mode == QuizMode.Errors)" @onclick="() => Restart(QuizMode.Errors)">fix the error</button>
+        <button class="@Active(_mode == QuizMode.Cisco)" title="the 50 most common cisco ios commands"
+                @onclick="() => Restart(QuizMode.Cisco)">cisco ios</button>
     </div>
     <span class="divider"></span>
     <div class="group">
