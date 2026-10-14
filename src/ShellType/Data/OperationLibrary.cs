@@ -179,6 +179,12 @@ public static class OperationLibrary
             ("journalctl -u postgresql -p err -b", "Show only errors since the last boot"),
             ("sudo systemctl restart postgresql", "Try again once the cause is fixed")),
 
+        Op("check for failed services", "something is broken after an update. which services failed?", CommandCategory.System,
+            ("systemctl --failed", "List every unit in the failed state"),
+            ("systemctl status docker", "Look at the failed unit's status"),
+            ("journalctl -u docker --since \"10 min ago\"", "Read what it logged recently"),
+            ("sudo systemctl reset-failed", "Clear the failed state once it is fixed")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
