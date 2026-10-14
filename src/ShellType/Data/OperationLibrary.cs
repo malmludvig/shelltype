@@ -254,6 +254,14 @@ public static class OperationLibrary
             ("sudo fsck -y /dev/sdb1", "Check and repair the filesystem"),
             ("sudo mount -a", "Mount everything in fstab again")),
 
+        Op("fix a mount that fails", "the data disk did not mount after a reboot.", CommandCategory.System,
+            ("cat /etc/fstab", "See how the disk is supposed to be mounted"),
+            ("lsblk -f", "List disks with their filesystems and UUIDs"),
+            ("sudo blkid /dev/sdb1", "Get the real UUID of the partition"),
+            ("sudo vim /etc/fstab", "Fix the UUID or options in fstab"),
+            ("sudo mount -a", "Mount everything to test the change"),
+            ("findmnt /data", "Verify it is mounted where it should be")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
