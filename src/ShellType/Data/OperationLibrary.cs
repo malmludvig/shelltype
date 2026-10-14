@@ -313,6 +313,13 @@ public static class OperationLibrary
             ("chmod 600 ~/.ssh/authorized_keys", "Only you may read the key list"),
             ("sudo tail /var/log/auth.log", "Check sshd stopped complaining")),
 
+        Op("unstick apt", "apt says the dpkg lock is held, or a package is half installed.", Packages,
+            ("sudo lsof /var/lib/dpkg/lock-frontend", "See which process holds the lock"),
+            ("ps aux | grep -i apt", "Check if an update is still running"),
+            ("sudo dpkg --configure -a", "Finish any interrupted installs"),
+            ("sudo apt --fix-broken install", "Repair broken dependencies"),
+            ("sudo apt install htop", "Try the install again")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
