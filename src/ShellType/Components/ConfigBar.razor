@@ -17,37 +17,46 @@
         <button class="@Active(S.Mode == TestMode.Operations)"
                 title="real tasks as sequences of commands"
                 @onclick="() => Change(s => s.Mode = TestMode.Operations)">operations</button>
-    </div>
-
-    <span class="divider"></span>
-
-    <div class="group">
-        @if (S.Mode == TestMode.Time)
+        @if (S.Platform == Platform.Cisco)
         {
-            @foreach (var seconds in TestConfig.TimeOptions)
-            {
-                <button class="@Active(S.TimeSeconds == seconds)" @onclick="() => Change(s => s.TimeSeconds = seconds)">@seconds</button>
-            }
-        }
-        else if (S.Mode == TestMode.Operations)
-        {
-            @foreach (var length in Enum.GetValues<OperationLength>())
-            {
-                <button class="@Active(S.OperationLength == length)"
-                        title="@LengthHint(length)"
-                        @onclick="() => Change(s => s.OperationLength = length)">
-                    @length.ToString().ToLowerInvariant()
-                </button>
-            }
-        }
-        else
-        {
-            @foreach (var count in TestConfig.CommandOptions)
-            {
-                <button class="@Active(S.CommandCount == count)" @onclick="() => Change(s => s.CommandCount = count)">@count</button>
-            }
+            <button class="@Active(S.Mode == TestMode.Essentials)"
+                    title="every one of the 50 most common cisco commands, once each"
+                    @onclick="() => Change(s => s.Mode = TestMode.Essentials)">all 50</button>
         }
     </div>
+
+    @if (S.EffectiveMode != TestMode.Essentials)
+    {
+        <span class="divider"></span>
+
+        <div class="group">
+            @if (S.Mode == TestMode.Time)
+            {
+                @foreach (var seconds in TestConfig.TimeOptions)
+                {
+                    <button class="@Active(S.TimeSeconds == seconds)" @onclick="() => Change(s => s.TimeSeconds = seconds)">@seconds</button>
+                }
+            }
+            else if (S.Mode == TestMode.Operations)
+            {
+                @foreach (var length in Enum.GetValues<OperationLength>())
+                {
+                    <button class="@Active(S.OperationLength == length)"
+                            title="@LengthHint(length)"
+                            @onclick="() => Change(s => s.OperationLength = length)">
+                        @length.ToString().ToLowerInvariant()
+                    </button>
+                }
+            }
+            else
+            {
+                @foreach (var count in TestConfig.CommandOptions)
+                {
+                    <button class="@Active(S.CommandCount == count)" @onclick="() => Change(s => s.CommandCount = count)">@count</button>
+                }
+            }
+        </div>
+    }
 
     @* Operations are fixed sequences, so difficulty and categories do not apply. *@
     @if (S.Mode != TestMode.Operations)
