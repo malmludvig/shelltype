@@ -29,5 +29,6 @@ public static partial class TheoryLibrary
         yield return Processes;
         yield return SignalsAndJobs;
         yield return Memory;
+        yield return Scheduling;
     }
 }
