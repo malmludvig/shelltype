@@ -66,11 +66,21 @@ public static class OperationLibrary
             ("export PATH=\"$PATH:/opt/node/bin\"", "Add node's directory to the PATH"),
             ("node --version", "Confirm the shell finds it now")),
 
+        Op("unpack an archive", "you got a release tarball. look inside, then extract it.", Archives,
+            ("tar -tzf release.tar.gz", "List the contents without extracting"),
+            ("tar -xzf release.tar.gz", "Extract it here"),
+            ("ls release/", "Check what came out")),
+
         Op("size up a machine", "you just logged in to an unknown server. how big is it?", CommandCategory.System,
             ("nproc", "Count the cpu cores"),
             ("free -h", "See how much memory it has"),
             ("df -h", "See the disks and how full they are"),
             ("uptime", "See how long it has run and how loaded it is")),
+
+        Op("zip a folder", "send a folder of photos as one file.", Archives,
+            ("zip -r photos.zip photos/", "Pack the folder into a zip"),
+            ("ls -lh photos.zip", "Check the size"),
+            ("unzip -l photos.zip", "List what is inside")),
 
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
