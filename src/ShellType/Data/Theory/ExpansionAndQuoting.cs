@@ -50,7 +50,7 @@ public static partial class TheoryLibrary
 
         You cannot put a single quote inside single quotes; close, add an escaped one, and reopen: `'It'\''s'`.
 
-        **Double quotes** `"..."` prevent word splitting and globbing but **still allow** `$variable`, `$(command)` and `$((math))` expansions, plus backslash escapes for `$`, `` ` ``, `"` and `\`. This is what you want around variables almost always:
+        **Double quotes** `"..."` prevent word splitting and globbing but **still allow** `$variable`, `$(command)` and `$((math))` expansions, plus backslash escapes for `$`, backticks, `"` and `\`. This is what you want around variables almost always:
 
         ```
         echo "Hello $USER, you are in $(pwd)"
