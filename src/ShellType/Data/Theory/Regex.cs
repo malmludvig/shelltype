@@ -61,7 +61,7 @@ public static partial class TheoryLibrary
 
         When a pattern with `+` or `|` "does not work" in grep, a missing `-E` is almost always the reason. Just use `-E` by default.
 
-        `grep -P` gives **Perl-compatible** regex (PCRE), which adds handy shortcuts like `\d` for a digit, `\s` for whitespace and `\w` for a word character. In plain grep, use the POSIX classes `[[:digit:]]`, `[[:space:]]` and `[[:alpha:]]` instead.
+        `grep -P` gives **Perl-compatible** regex (PCRE), which adds handy shortcuts like `\d` for a digit, `\s` for whitespace and `\w` for a word character. Without `-P`, `\d` does not work; use `[0-9]` or the POSIX classes `[[:digit:]]`, `[[:space:]]` and `[[:alpha:]]` instead, which work in every tool.
 
         ## Quote your patterns
 
@@ -71,7 +71,7 @@ public static partial class TheoryLibrary
 
         ```
         grep -E '^[^#]' sshd_config                  # lines that are not comments
-        grep -Ev '^\s*(#|$)' nginx.conf              # skip comments and blank lines (with -P style \s in GNU grep)
+        grep -Ev '^[[:space:]]*(#|$)' nginx.conf     # skip comments and blank lines
         grep -Eo '[0-9]{1,3}(\.[0-9]{1,3}){3}' log   # extract IPv4 addresses
         grep -E ' (4|5)[0-9]{2} ' access.log         # HTTP 4xx and 5xx responses
         sed -E 's/[[:space:]]+$//' file.txt          # strip trailing whitespace
