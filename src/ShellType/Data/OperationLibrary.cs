@@ -60,6 +60,12 @@ public static class OperationLibrary
             ("w", "See what each of them is running"),
             ("last -n 5", "Show the five most recent logins")),
 
+        Op("fix command not found", "node is installed but the shell cannot find it.", CommandCategory.System,
+            ("which node", "Check whether node is on your PATH"),
+            ("echo $PATH", "See which directories the shell searches"),
+            ("export PATH=\"$PATH:/opt/node/bin\"", "Add node's directory to the PATH"),
+            ("node --version", "Confirm the shell finds it now")),
+
         Op("size up a machine", "you just logged in to an unknown server. how big is it?", CommandCategory.System,
             ("nproc", "Count the cpu cores"),
             ("free -h", "See how much memory it has"),
