@@ -295,6 +295,12 @@ public static class OperationLibrary
             ("sudo ip route add default via 192.168.1.1", "Add the missing default route"),
             ("ping -c 3 1.1.1.1", "Confirm the internet is reachable")),
 
+        Op("track down packet loss", "connections drop now and then. where are packets lost?", Networking,
+            ("ping -c 20 example.com", "Measure loss and latency over 20 pings"),
+            ("mtr -rw -c 20 example.com", "See loss per hop along the route"),
+            ("ip -s link show eth0", "Check the interface for errors and drops"),
+            ("ethtool eth0", "Check link speed and duplex")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
