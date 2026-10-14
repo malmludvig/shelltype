@@ -333,6 +333,12 @@ public static class OperationLibrary
             ("sudo systemctl edit myapp", "Raise LimitNOFILE for the service"),
             ("sudo systemctl restart myapp", "Restart it with the new limit")),
 
+        Op("app cannot reach the database", "the app says connection refused to the database.", Networking,
+            ("getent hosts db.internal", "Check the database hostname resolves"),
+            ("nc -zv db.internal 5432", "Check the port is reachable"),
+            ("psql -h db.internal -U app -c \"select 1\"", "Try a real login with the app's user"),
+            ("sudo tail /var/log/postgresql/postgresql-16-main.log", "On the database: read why it refused")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
