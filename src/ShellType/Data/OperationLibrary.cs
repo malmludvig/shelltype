@@ -269,6 +269,13 @@ public static class OperationLibrary
             ("crontab -l", "Check the new job is there"),
             ("grep CRON /var/log/syslog | tail -3", "Look for cron runs in the log the next day")),
 
+        Op("run an app as a service", "make your app start on boot and restart when it crashes.", CommandCategory.System,
+            ("sudo vim /etc/systemd/system/myapp.service", "Write the unit file"),
+            ("sudo systemctl daemon-reload", "Make systemd read the new unit"),
+            ("sudo systemctl enable --now myapp", "Start it now and on every boot"),
+            ("systemctl status myapp", "Check it is running"),
+            ("journalctl -u myapp -f", "Follow its logs")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
