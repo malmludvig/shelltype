@@ -262,6 +262,13 @@ public static class OperationLibrary
             ("swapon --show", "Check the swap is active"),
             ("echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab", "Turn it on at every boot")),
 
+        Op("schedule a nightly backup", "run your backup script at 03:00 every night.", CommandCategory.System,
+            ("chmod +x ~/backup.sh", "Make sure the script can run"),
+            ("crontab -l", "See which jobs are already scheduled"),
+            ("(crontab -l; echo \"0 3 * * * ~/backup.sh\") | crontab -", "Add the job while keeping the old ones"),
+            ("crontab -l", "Check the new job is there"),
+            ("grep CRON /var/log/syslog | tail -3", "Look for cron runs in the log the next day")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
