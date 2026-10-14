@@ -247,6 +247,13 @@ public static class OperationLibrary
             ("ps -o pid,stat,cmd -p 9120", "See if it is still there and in which state"),
             ("kill -9 9120", "Force it to die (SIGKILL)")),
 
+        Op("mount a usb drive", "copy files from a usb stick on a server without a desktop.", CommandCategory.System,
+            ("lsblk", "Find the device name of the usb stick"),
+            ("sudo mkdir -p /mnt/usb", "Create a mount point"),
+            ("sudo mount /dev/sdb1 /mnt/usb", "Mount the partition"),
+            ("ls /mnt/usb", "Look at the files"),
+            ("sudo umount /mnt/usb", "Unmount it before pulling the stick out")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
