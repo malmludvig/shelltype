@@ -1,0 +1,194 @@
+/* ---------- topic list ---------- */
+
+.theory,
+.chapter {
+    max-width: 46rem;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 1.6rem;
+    margin: 0 0 0.5rem;
+}
+
+header p {
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+.progress {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--sub);
+    font-size: 0.85rem;
+}
+
+.bar {
+    flex: 1;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--bg-alt);
+    overflow: hidden;
+}
+
+.fill {
+    height: 100%;
+    background: var(--main);
+    transition: width 0.3s;
+}
+
+.group h2 {
+    font-size: 1rem;
+    color: var(--sub);
+    margin: 2.25rem 0 0.75rem;
+}
+
+.topics {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    gap: 0.5rem;
+}
+
+.topics a {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.2rem 1rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-alt);
+    color: var(--text);
+    border: 1px solid transparent;
+    transition: border-color 0.15s;
+}
+
+.topics a:hover,
+.topics a:focus-visible {
+    border-color: var(--main);
+}
+
+.title {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.check {
+    width: 1rem;
+    flex: none;
+    color: var(--main);
+}
+
+.topic-summary {
+    grid-column: 1;
+    padding-left: 1.5rem;
+    color: var(--sub);
+    font-size: 0.82rem;
+    line-height: 1.5;
+}
+
+.minutes {
+    grid-column: 2;
+    grid-row: 1;
+    color: var(--sub);
+    font-size: 0.8rem;
+}
+
+.read .title {
+    color: var(--sub);
+}
+
+/* ---------- a chapter ---------- */
+
+.back {
+    font-size: 0.85rem;
+}
+
+.meta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem 1.25rem;
+    margin: 1.5rem 0 0.5rem;
+    color: var(--sub);
+    font-size: 0.8rem;
+}
+
+.summary {
+    color: var(--sub);
+    font-style: italic;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+}
+
+.done {
+    margin: 2.5rem 0 1.5rem;
+    text-align: center;
+}
+
+.read-toggle {
+    padding: 0.7rem 1.6rem;
+    border-radius: var(--radius);
+    background: var(--bg-alt);
+    color: var(--sub);
+    transition: color 0.15s, background 0.15s;
+}
+
+.read-toggle:hover {
+    color: var(--text);
+}
+
+.read-toggle.is-read {
+    background: var(--main);
+    color: var(--bg);
+}
+
+.pager {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+}
+
+.pager a {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding: 0.8rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-alt);
+    color: var(--text);
+    font-size: 0.9rem;
+}
+
+.pager .next {
+    grid-column: 2;
+    text-align: right;
+}
+
+.pager .muted {
+    font-size: 0.75rem;
+}
+
+@media (max-width: 640px), (pointer: coarse) {
+    h1 {
+        font-size: 1.35rem;
+    }
+
+    .topics a {
+        padding: 0.9rem;
+        touch-action: manipulation;
+    }
+
+    .read-toggle {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    .pager {
+        grid-template-columns: 1fr;
+    }
+
+    .pager .next {
+        grid-column: 1;
+    }
+}

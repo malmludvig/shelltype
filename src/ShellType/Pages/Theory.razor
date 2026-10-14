@@ -1,0 +1,138 @@
+@page "/theory"
+@page "/theory/{Slug}"
+@using ShellType.Theory
+@inject BrowserStorage Storage
+@inject NavigationManager Nav
+
+@if (_topic is not null)
+{
+    var index = IndexOf(_topic);
+    var previous = index > 0 ? TheoryLibrary.All[index - 1] : null;
+    var next = index < TheoryLibrary.All.Count - 1 ? TheoryLibrary.All[index + 1] : null;
+
+    <PageTitle>@_topic.Title · theory · shelltype</PageTitle>
+
+    <article class="chapter">
+        <a class="back" href="theory">← all topics</a>
+        <div class="meta">
+            <span class="accent">@_topic.Group</span>
+            <span>chapter @(index + 1)/@TheoryLibrary.All.Count</span>
+            <span>@_topic.Minutes min read</span>
+        </div>
+        <h1>@_topic.Title</h1>
+        <p class="summary">@_topic.Summary</p>
+
+        <TheoryContent Blocks="_blocks" />
+
+        <div class="done">
+            <button class="read-toggle @(_read.Contains(_topic.Slug) ? "is-read" : "")" @onclick="() => ToggleReadAsync(_topic)">
+                @(_read.Contains(_topic.Slug) ? "✓ read" : "mark as read")
+            </button>
+        </div>
+
+        <nav class="pager">
+            @if (previous is not null)
+            {
+                <a class="prev" href="theory/@previous.Slug"><span class="muted">← previous</span>@previous.Title</a>
+            }
+            @if (next is not null)
+            {
+                <a class="next" href="theory/@next.Slug"><span class="muted">next →</span>@next.Title</a>
+            }
+        </nav>
+    </article>
+}
+else
+{
+    <PageTitle>theory · shelltype</PageTitle>
+
+    <section class="theory">
+        <header>
+            <h1><span class="accent">~$</span> man linux</h1>
+            <p class="muted">
+                The ideas behind the commands: how the filesystem is laid out, how processes and permissions work,
+                what the shell does with your command line. Each chapter takes a few minutes to read.
+            </p>
+            <div class="progress" title="chapters you have marked as read">
+                <div class="bar"><div class="fill" style="width: @(ReadPercent)%"></div></div>
+                <span>@ReadCount/@TheoryLibrary.All.Count read</span>
+            </div>
+        </header>
+
+        @if (Slug is not null)
+        {
+            <p class="muted">There is no chapter called "@Slug".</p>
+        }
+
+        @foreach (var group in TheoryLibrary.Groups)
+        {
+            <section class="group">
+                <h2>@group</h2>
+                <ol class="topics">
+                    @foreach (var topic in TheoryLibrary.All.Where(t => t.Group == group))
+                    {
+                        <li class="@(_read.Contains(topic.Slug) ? "read" : "")">
+                            <a href="theory/@topic.Slug">
+                                <span class="title">
+                                    <span class="check">@(_read.Contains(topic.Slug) ? "✓" : "")</span>
+                                    @topic.Title
+                                </span>
+                                <span class="topic-summary">@topic.Summary</span>
+                                <span class="minutes">@topic.Minutes min</span>
+                            </a>
+                        </li>
+                    }
+                </ol>
+            </section>
+        }
+    </section>
+}
+
+@code {
+    private const string ReadKey = "shelltype.theory.read";
+
+    private HashSet<string> _read = [];
+    private TheoryTopic? _topic;
+    private IReadOnlyList<TheoryBlock> _blocks = [];
+
+    [Parameter]
+    public string? Slug { get; set; }
+
+    private int ReadCount => TheoryLibrary.All.Count(t => _read.Contains(t.Slug));
+
+    private int ReadPercent => TheoryLibrary.All.Count == 0 ? 0 : ReadCount * 100 / TheoryLibrary.All.Count;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _read = await Storage.GetAsync<HashSet<string>>(ReadKey) ?? [];
+    }
+
+    protected override void OnParametersSet()
+    {
+        _topic = Slug is null ? null : TheoryLibrary.Find(Slug);
+        _blocks = _topic is null ? [] : TheoryMarkdown.Parse(_topic.Body);
+    }
+
+    private static int IndexOf(TheoryTopic topic)
+    {
+        for (var i = 0; i < TheoryLibrary.All.Count; i++)
+        {
+            if (TheoryLibrary.All[i] == topic)
+            {
+                return i;
+            }
+        }
+
+        return -1;
+    }
+
+    private async Task ToggleReadAsync(TheoryTopic topic)
+    {
+        if (!_read.Remove(topic.Slug))
+        {
+            _read.Add(topic.Slug);
+        }
+
+        await Storage.SetAsync(ReadKey, _read);
+    }
+}
