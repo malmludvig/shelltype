@@ -30,6 +30,7 @@ public static partial class CiscoLibrary
     private static IEnumerable<CommandEntry[]> Sources()
     {
         yield return Modes;
+        yield return Show;
     }
 
     private static CommandEntry C(string prompt, string text, string description, Difficulty difficulty) =>
