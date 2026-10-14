@@ -3,7 +3,7 @@ namespace ShellType.Models;
 /// <summary>How many steps an operation takes.</summary>
 public enum OperationLength
 {
-    /// <summary>3 to 4 steps.</summary>
+    /// <summary>2 to 4 steps.</summary>
     Short = 1,
 
     /// <summary>5 to 7 steps.</summary>

@@ -15,9 +15,9 @@ public class OperationLibraryTests
     }
 
     [Fact]
-    public void Operations_have_between_3_and_10_steps()
+    public void Operations_have_between_2_and_10_steps()
     {
-        Assert.All(OperationLibrary.All, o => Assert.InRange(o.Steps.Count, 3, 10));
+        Assert.All(OperationLibrary.All, o => Assert.InRange(o.Steps.Count, 2, 10));
     }
 
     [Fact]
@@ -39,7 +39,7 @@ public class OperationLibraryTests
     }
 
     [Theory]
-    [InlineData(3, OperationLength.Short)]
+    [InlineData(2, OperationLength.Short)]
     [InlineData(4, OperationLength.Short)]
     [InlineData(5, OperationLength.Medium)]
     [InlineData(7, OperationLength.Medium)]

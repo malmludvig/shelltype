@@ -10,7 +10,7 @@ public static class OperationLibrary
 {
     public static IReadOnlyList<Operation> All { get; } =
     [
-        // ---- short: 3 to 4 steps ----
+        // ---- short: 2 to 4 steps ----
         Op("kill a runaway process", "something is eating the cpu. find it and stop it.", Processes,
             ("top -b -n 1 | head -15", "Snapshot the busiest processes right now"),
             ("pgrep -a python3", "Get the PID and full command line of every python3 process"),
