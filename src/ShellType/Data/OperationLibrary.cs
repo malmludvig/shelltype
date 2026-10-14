@@ -345,6 +345,14 @@ public static class OperationLibrary
             ("sudo systemctl edit myapp", "Add the missing variable in an override"),
             ("sudo systemctl restart myapp", "Restart to pick it up")),
 
+        Op("fix a 502 bad gateway", "nginx answers 502. the backend behind it is the problem.", CommandCategory.System,
+            ("curl -I http://localhost", "Reproduce the 502"),
+            ("sudo tail -n 20 /var/log/nginx/error.log", "See which upstream nginx failed to reach"),
+            ("systemctl status php8.3-fpm", "Check the backend is running"),
+            ("ls -l /run/php/", "Check the socket nginx points to exists"),
+            ("sudo systemctl restart php8.3-fpm", "Restart the backend"),
+            ("curl -I http://localhost", "Confirm you get 200 now")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
