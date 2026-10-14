@@ -215,6 +215,12 @@ public static class OperationLibrary
             ("journalctl -u ssh --since yesterday", "Read ssh activity since yesterday"),
             ("sudo grep \"Accepted\" /var/log/auth.log | tail", "Show the latest successful logins")),
 
+        Op("debug a cron job that never ran", "the nightly job did nothing. did cron even start it?", CommandCategory.System,
+            ("systemctl status cron", "Check the cron daemon is running"),
+            ("crontab -l", "Confirm the job is scheduled"),
+            ("journalctl -u cron --since today", "See which jobs cron started today"),
+            ("grep CRON /var/log/syslog | tail", "Cross-check in syslog")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
