@@ -194,6 +194,11 @@ public static class OperationLibrary
             ("systemctl status redis-server", "Check it is running"),
             ("journalctl -u redis-server -f", "Follow new log lines as they arrive")),
 
+        Op("find today's errors", "how many errors has the system logged today, and when?", CommandCategory.System,
+            ("journalctl --since today -p err", "Show every error logged today"),
+            ("journalctl --since today -p err | wc -l", "Count them"),
+            ("journalctl --since \"08:00\" --until \"09:00\"", "Zoom in on the hour things went wrong")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
