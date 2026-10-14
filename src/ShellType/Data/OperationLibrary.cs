@@ -109,6 +109,11 @@ public static class OperationLibrary
             ("sha256sum tool.tar.gz", "Compute its checksum to compare with the published one"),
             ("ls -lh tool.tar.gz", "Check the file size")),
 
+        Op("rename a batch of files", "change every .jpeg file to .jpg.", Files,
+            ("ls *.jpeg", "See which files will be renamed"),
+            ("for f in *.jpeg; do mv \"$f\" \"${f%.jpeg}.jpg\"; done", "Rename each one, swapping the extension"),
+            ("ls *.jpg", "Check the result")),
+
         Op("zip a folder", "send a folder of photos as one file.", Archives,
             ("zip -r photos.zip photos/", "Pack the folder into a zip"),
             ("ls -lh photos.zip", "Check the size"),
