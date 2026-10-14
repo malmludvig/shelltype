@@ -214,6 +214,12 @@ else if (_session is not null)
             return CommandLibrary.Filter([category], Difficulty.Hard);
         }
 
+        if (config.Platform == Platform.Cisco)
+        {
+            var cisco = CiscoLibrary.Filter(config.MaxDifficulty);
+            return cisco.Count > 0 ? cisco : CiscoLibrary.Essentials;
+        }
+
         var pool = CommandLibrary.Filter(config.Categories, config.MaxDifficulty);
         return pool.Count > 0 ? pool : CommandLibrary.All;
     }
