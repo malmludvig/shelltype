@@ -166,6 +166,13 @@ public static class OperationLibrary
             ("ls -lh photos.zip", "Check the size"),
             ("unzip -l photos.zip", "List what is inside")),
 
+        Op("clone and run a project", "try out a project from github.", Git,
+            ("git clone https://github.com/user/app.git", "Download the repository"),
+            ("cd app", "Go into it"),
+            ("ls", "See what is in there"),
+            ("npm install", "Install the dependencies"),
+            ("npm start", "Run it")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
