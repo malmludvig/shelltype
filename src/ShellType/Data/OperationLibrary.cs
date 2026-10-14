@@ -304,6 +304,13 @@ public static class OperationLibrary
             ("systemctl list-timers | grep certbot", "Check the automatic renewal timer is scheduled"),
             ("curl -vI https://example.com 2>&1 | grep expire", "Double-check the expiry from the client side")),
 
+        Op("block a brute-force attacker", "someone is hammering ssh. find the ip and ban it.", Networking,
+            ("sudo grep \"Failed password\" /var/log/auth.log | tail", "Look at the latest failed logins"),
+            ("sudo grep \"Failed password\" /var/log/auth.log | awk '{print $(NF-3)}' | sort | uniq -c | sort -rn | head", "Count failed logins per IP"),
+            ("sudo fail2ban-client status sshd", "See what fail2ban has already banned"),
+            ("sudo fail2ban-client set sshd banip 203.0.113.7", "Ban the worst IP with fail2ban"),
+            ("sudo ufw deny from 203.0.113.7", "Block it in the firewall as well")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
