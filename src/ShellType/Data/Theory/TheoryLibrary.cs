@@ -31,5 +31,6 @@ public static partial class TheoryLibrary
         yield return Memory;
         yield return Scheduling;
         yield return Boot;
+        yield return Systemd;
     }
 }
