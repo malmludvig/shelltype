@@ -5,6 +5,9 @@
     <div class="group">
         <button class="@Active(S.Mode == TestMode.Time)" @onclick="() => Change(s => s.Mode = TestMode.Time)">time</button>
         <button class="@Active(S.Mode == TestMode.Commands)" @onclick="() => Change(s => s.Mode = TestMode.Commands)">commands</button>
+        <button class="@Active(S.Mode == TestMode.Operations)"
+                title="real tasks as sequences of commands"
+                @onclick="() => Change(s => s.Mode = TestMode.Operations)">operations</button>
     </div>
 
     <span class="divider"></span>
@@ -17,6 +20,17 @@
                 <button class="@Active(S.TimeSeconds == seconds)" @onclick="() => Change(s => s.TimeSeconds = seconds)">@seconds</button>
             }
         }
+        else if (S.Mode == TestMode.Operations)
+        {
+            @foreach (var length in Enum.GetValues<OperationLength>())
+            {
+                <button class="@Active(S.OperationLength == length)"
+                        title="@LengthHint(length)"
+                        @onclick="() => Change(s => s.OperationLength = length)">
+                    @length.ToString().ToLowerInvariant()
+                </button>
+            }
+        }
         else
         {
             @foreach (var count in TestConfig.CommandOptions)
@@ -26,29 +40,33 @@
         }
     </div>
 
-    <span class="divider"></span>
+    @* Operations are fixed sequences, so difficulty and categories do not apply. *@
+    @if (S.Mode != TestMode.Operations)
+    {
+        <span class="divider"></span>
 
-    <div class="group">
-        @foreach (var difficulty in Enum.GetValues<Difficulty>())
-        {
-            <button class="@Active(S.MaxDifficulty == difficulty)"
-                    title="@DifficultyHint(difficulty)"
-                    @onclick="() => Change(s => s.MaxDifficulty = difficulty)">
-                @difficulty.ToString().ToLowerInvariant()
+        <div class="group">
+            @foreach (var difficulty in Enum.GetValues<Difficulty>())
+            {
+                <button class="@Active(S.MaxDifficulty == difficulty)"
+                        title="@DifficultyHint(difficulty)"
+                        @onclick="() => Change(s => s.MaxDifficulty = difficulty)">
+                    @difficulty.ToString().ToLowerInvariant()
+                </button>
+            }
+        </div>
+
+        <span class="divider"></span>
+
+        <div class="group">
+            <button class="@Active(_showCategories)" @onclick="() => _showCategories = !_showCategories">
+                categories @(S.Categories.Count == 0 ? "(all)" : $"({S.Categories.Count})")
             </button>
-        }
-    </div>
-
-    <span class="divider"></span>
-
-    <div class="group">
-        <button class="@Active(_showCategories)" @onclick="() => _showCategories = !_showCategories">
-            categories @(S.Categories.Count == 0 ? "(all)" : $"({S.Categories.Count})")
-        </button>
-    </div>
+        </div>
+    }
 </div>
 
-@if (_showCategories && !Hidden)
+@if (_showCategories && !Hidden && S.Mode != TestMode.Operations)
 {
     <div class="categories">
         <button class="chip @Active(S.Categories.Count == 0)" @onclick="() => Change(s => s.Categories.Clear())">all</button>
@@ -79,6 +97,13 @@
         Difficulty.Easy => "short, simple commands",
         Difficulty.Medium => "easy + commands with flags and pipes",
         _ => "everything, including quotes, regexes and long paths",
+    };
+
+    private static string LengthHint(OperationLength length) => length switch
+    {
+        OperationLength.Short => "3-4 commands",
+        OperationLength.Medium => "5-7 commands",
+        _ => "8-10 commands",
     };
 
     private static void Toggle(UserSettings s, CommandCategory category)
