@@ -92,6 +92,32 @@ body.is-typing .bottom {
 @media (max-width: 640px) {
     .shell {
         padding: 1rem;
+        gap: 1.25rem;
+    }
+
+    .top {
+        gap: 0.5rem;
+    }
+
+    .logo {
+        font-size: 1.35rem;
+    }
+
+    /* All the pages do not fit side by side on a phone, so the menu scrolls sideways. */
+    nav {
+        width: 100%;
+        gap: 1.1rem;
+        overflow-x: auto;
+        white-space: nowrap;
+        scrollbar-width: none;
+    }
+
+    nav::-webkit-scrollbar {
+        display: none;
+    }
+
+    nav ::deep a {
+        padding: 0.4rem 0;
     }
 
     .keys {
