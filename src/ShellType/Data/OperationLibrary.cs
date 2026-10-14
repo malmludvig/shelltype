@@ -142,6 +142,11 @@ public static class OperationLibrary
             ("cd notes", "Go into it"),
             ("touch todo.txt", "Create an empty file")),
 
+        Op("update the system", "install the latest updates on a debian or ubuntu machine.", Packages,
+            ("sudo apt update", "Refresh the package lists"),
+            ("apt list --upgradable", "See what will be updated"),
+            ("sudo apt upgrade -y", "Install the updates")),
+
         Op("clean up old logs", "remove log files older than a week.", Search,
             ("find . -name \"*.log\" -mtime +7", "List the old log files first"),
             ("find . -name \"*.log\" -mtime +7 -delete", "Delete them")),
