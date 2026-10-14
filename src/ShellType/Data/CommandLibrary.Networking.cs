@@ -83,11 +83,14 @@ public static partial class CommandLibrary
 
         // NetworkManager
         ("nmcli device status", "List devices and their connection state", Easy),
+        ("nmcli device show eth0", "Show details for eth0", Easy),
         ("nmcli device wifi list", "List visible Wi-Fi networks", Easy),
         ("nmcli device wifi connect \"Home-WiFi\" password \"secret123\"", "Connect to a Wi-Fi network", Hard),
         ("nmcli connection show", "List saved connections", Easy),
+        ("nmcli connection show --active", "List active connections", Medium),
         ("nmcli general status", "Show overall NetworkManager status", Easy),
         ("nmcli connection up id \"Home-WiFi\"", "Activate a saved connection", Medium),
+        ("nmcli connection down id \"Home-WiFi\"", "Deactivate a connection", Medium),
         ("nmcli connection add type ethernet con-name \"Static-Eth\" ifname eth0 ip4 192.168.1.50/24 gw4 192.168.1.1", "Create a static Ethernet connection", Hard),
         ("nmcli connection modify \"Static-Eth\" ipv4.dns \"8.8.8.8 1.1.1.1\"", "Set DNS servers on a connection", Hard),
         ("nmcli connection delete \"Static-Eth\"", "Delete a saved connection", Medium));
