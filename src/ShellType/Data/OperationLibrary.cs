@@ -221,6 +221,13 @@ public static class OperationLibrary
             ("journalctl -u cron --since today", "See which jobs cron started today"),
             ("grep CRON /var/log/syslog | tail", "Cross-check in syslog")),
 
+        Op("save logs for a bug report", "export the app's recent logs and send them along.", Text,
+            ("journalctl -u myapp --since \"2 hours ago\" -o short-iso > myapp.log", "Write the last two hours of logs to a file"),
+            ("wc -l myapp.log", "See how many lines you got"),
+            ("grep -i error myapp.log | head", "Peek at the errors"),
+            ("gzip myapp.log", "Compress the file"),
+            ("ls -lh myapp.log.gz", "Check the size before attaching it")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
