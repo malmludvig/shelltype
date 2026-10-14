@@ -353,6 +353,12 @@ public static class OperationLibrary
             ("sudo systemctl restart php8.3-fpm", "Restart the backend"),
             ("curl -I http://localhost", "Confirm you get 200 now")),
 
+        Op("debug a restarting container", "a container keeps restarting every few seconds.", Packages,
+            ("docker ps -a", "See its status and restart count"),
+            ("docker logs --tail 50 api", "Read why it exits"),
+            ("docker inspect api --format '{{.State.ExitCode}}'", "Get the exit code (137 often means out of memory)"),
+            ("docker stats --no-stream", "Check memory and cpu use of the containers")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
