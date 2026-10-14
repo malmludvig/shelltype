@@ -71,6 +71,11 @@ public static class OperationLibrary
             ("tar -xzf release.tar.gz", "Extract it here"),
             ("ls release/", "Check what came out")),
 
+        Op("watch the system log", "something is acting up. follow the system log as it happens.", Text,
+            ("cd /var/log", "Go to the log directory"),
+            ("ls -lt | head", "See which logs were written to most recently"),
+            ("sudo tail -f syslog", "Follow new log lines live")),
+
         Op("size up a machine", "you just logged in to an unknown server. how big is it?", CommandCategory.System,
             ("nproc", "Count the cpu cores"),
             ("free -h", "See how much memory it has"),
