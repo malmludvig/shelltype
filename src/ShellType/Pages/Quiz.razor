@@ -45,7 +45,15 @@ else if (_session is not null)
         </div>
 
         <div class="kind">@KindLabel(q.Kind)</div>
-        <div class="prompt"><span class="ps">@q.Shell</span> @q.Prompt</div>
+        @if (q.Kind == QuestionKind.WhichCommand)
+        {
+            <div class="task">@q.Prompt</div>
+            <div class="prompt"><span class="ps">@q.Shell</span> <span class="blank">?</span></div>
+        }
+        else
+        {
+            <div class="prompt"><span class="ps">@q.Shell</span> @q.Prompt</div>
+        }
         @if (q.ErrorOutput is not null)
         {
             <div class="error-output">@q.ErrorOutput</div>
@@ -244,6 +252,7 @@ else if (_session is not null)
     {
         QuestionKind.WhatDoesItDo => "# what does this do?",
         QuestionKind.FixTheError => "# how do you fix this?",
+        QuestionKind.WhichCommand => "# which command does this?",
         _ => "# what is this command for?",
     };
 

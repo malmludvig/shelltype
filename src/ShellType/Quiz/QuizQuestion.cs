@@ -12,6 +12,9 @@ public enum QuestionKind
 
     /// <summary>Shown just a program name like <c>grep</c>, pick what it is for.</summary>
     WhatIsThisCommand,
+
+    /// <summary>Shown what a command does and the mode's prompt, pick the command.</summary>
+    WhichCommand,
 }
 
 /// <summary>A multiple-choice question.</summary>

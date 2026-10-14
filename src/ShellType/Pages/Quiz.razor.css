@@ -104,6 +104,16 @@
     color: var(--main);
 }
 
+/* "which command does this?" shows the task, then the prompt with a blank to fill in. */
+.task {
+    margin-top: 0.4rem;
+    font-size: 1.2rem;
+}
+
+.blank {
+    color: var(--sub);
+}
+
 .error-output {
     color: var(--error);
     font-size: 0.95rem;
