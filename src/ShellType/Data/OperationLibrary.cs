@@ -276,6 +276,13 @@ public static class OperationLibrary
             ("systemctl status myapp", "Check it is running"),
             ("journalctl -u myapp -f", "Follow its logs")),
 
+        Op("resolve a merge conflict", "merging the login branch conflicts. fix it and finish the merge.", Git,
+            ("git merge feature/login", "Start the merge"),
+            ("git status", "See which files conflict"),
+            ("vim src/auth.js", "Fix the conflict markers by hand"),
+            ("git add src/auth.js", "Mark the file as resolved"),
+            ("git commit", "Finish the merge commit")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
