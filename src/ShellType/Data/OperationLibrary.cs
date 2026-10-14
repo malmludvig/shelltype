@@ -307,6 +307,12 @@ public static class OperationLibrary
             ("sudo systemctl status ssh", "On the server: is sshd running?"),
             ("sudo journalctl -u ssh -n 20", "On the server: read sshd's latest messages")),
 
+        Op("fix ssh key permissions", "your key is installed but ssh still asks for a password.", Permissions,
+            ("ls -la ~/.ssh", "Check the permissions on the ssh files"),
+            ("chmod 700 ~/.ssh", "Only you may access the directory"),
+            ("chmod 600 ~/.ssh/authorized_keys", "Only you may read the key list"),
+            ("sudo tail /var/log/auth.log", "Check sshd stopped complaining")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
