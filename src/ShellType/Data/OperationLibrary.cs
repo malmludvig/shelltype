@@ -104,6 +104,11 @@ public static class OperationLibrary
             ("df -h", "See the disks and how full they are"),
             ("uptime", "See how long it has run and how loaded it is")),
 
+        Op("download and verify", "download a tool and make sure the file is not corrupted.", Networking,
+            ("curl -LO https://example.com/tool.tar.gz", "Download the file, following redirects"),
+            ("sha256sum tool.tar.gz", "Compute its checksum to compare with the published one"),
+            ("ls -lh tool.tar.gz", "Check the file size")),
+
         Op("zip a folder", "send a folder of photos as one file.", Archives,
             ("zip -r photos.zip photos/", "Pack the folder into a zip"),
             ("ls -lh photos.zip", "Check the size"),
