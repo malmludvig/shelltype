@@ -120,7 +120,10 @@ else if (_session is not null)
         }
     </section>
 
-    <p class="hint touch">tap an answer</p>
+    @if (_session.Phase == QuizPhase.Answering)
+    {
+        <p class="hint touch">tap an answer</p>
+    }
     <p class="hint keys">
         type to filter · <kbd>↑</kbd><kbd>↓</kbd> or <kbd>ctrl</kbd>+<kbd>j</kbd>/<kbd>k</kbd> to move ·
         <kbd>enter</kbd> to answer · <kbd>esc</kbd> to clear · <kbd>tab</kbd> new quiz
