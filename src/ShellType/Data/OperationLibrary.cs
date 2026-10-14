@@ -288,6 +288,13 @@ public static class OperationLibrary
             ("ip route", "Check there is a default route"),
             ("ping -c 3 1.1.1.1", "Test that traffic gets out")),
 
+        Op("fix the default route", "the lan works but nothing outside it does.", Networking,
+            ("ip route", "Look for a default route"),
+            ("ping -c 3 192.168.1.1", "Check the gateway answers"),
+            ("traceroute 1.1.1.1", "See where packets stop"),
+            ("sudo ip route add default via 192.168.1.1", "Add the missing default route"),
+            ("ping -c 3 1.1.1.1", "Confirm the internet is reachable")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
