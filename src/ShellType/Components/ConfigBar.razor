@@ -58,8 +58,8 @@
         </div>
     }
 
-    @* Operations are fixed sequences, so difficulty and categories do not apply. *@
-    @if (S.Mode != TestMode.Operations)
+    @* Operations and the essentials list are fixed, so difficulty and categories do not apply. *@
+    @if (S.EffectiveMode is not (TestMode.Operations or TestMode.Essentials))
     {
         <span class="divider"></span>
 
@@ -74,17 +74,21 @@
             }
         </div>
 
-        <span class="divider"></span>
+        @* The categories are Linux ones; the Cisco list is small enough to practice whole. *@
+        @if (ShowCategoryControls)
+        {
+            <span class="divider"></span>
 
-        <div class="group">
-            <button class="@Active(_showCategories)" @onclick="() => _showCategories = !_showCategories">
-                categories @(S.Categories.Count == 0 ? "(all)" : $"({S.Categories.Count})")
-            </button>
-        </div>
+            <div class="group">
+                <button class="@Active(_showCategories)" @onclick="() => _showCategories = !_showCategories">
+                    categories @(S.Categories.Count == 0 ? "(all)" : $"({S.Categories.Count})")
+                </button>
+            </div>
+        }
     }
 </div>
 
-@if (_showCategories && !Hidden && S.Mode != TestMode.Operations)
+@if (_showCategories && !Hidden && ShowCategoryControls)
 {
     <div class="categories">
         <button class="chip @Active(S.Categories.Count == 0)" @onclick="() => Change(s => s.Categories.Clear())">all</button>
@@ -107,6 +111,8 @@
     public EventCallback OnChanged { get; set; }
 
     private UserSettings S => SettingsService.Current;
+
+    private bool ShowCategoryControls => S.Platform == Platform.Linux && S.Mode != TestMode.Operations;
 
     private static string Active(bool on) => on ? "active" : "";
 
