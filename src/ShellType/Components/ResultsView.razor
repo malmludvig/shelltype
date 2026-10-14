@@ -31,7 +31,7 @@
     <div class="details">
         <div class="stat">
             <div class="label">test type</div>
-            <div class="value small">@Result.ModeLabel<br />@Result.Difficulty.ToString().ToLowerInvariant()</div>
+            <div class="value small">@Result.ModeLabel<br />@TestModes.DifficultyLabel(Result.Mode, Result.Difficulty)</div>
         </div>
         <div class="stat">
             <div class="label">raw</div>

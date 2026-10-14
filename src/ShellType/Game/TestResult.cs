@@ -27,7 +27,7 @@ public sealed record TestResult
     public required IReadOnlyList<SecondSample> Samples { get; init; }
     public required IReadOnlyList<CommandResult> Commands { get; init; }
 
-    public string ModeLabel => Mode == TestMode.Time ? $"time {ModeValue}" : $"commands {ModeValue}";
+    public string ModeLabel => TestModes.Label(Mode, ModeValue);
 
     /// <summary>A test this short or with this little typing does not count toward records.</summary>
     public bool IsValid => Duration.TotalSeconds >= 3 && Commands.Count > 0;

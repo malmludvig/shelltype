@@ -31,6 +31,7 @@ public sealed class UserSettings
     public int TimeSeconds { get; set; } = 30;
     public int CommandCount { get; set; } = 10;
     public Difficulty MaxDifficulty { get; set; } = Difficulty.Medium;
+    public OperationLength OperationLength { get; set; } = OperationLength.Short;
     public List<CommandCategory> Categories { get; set; } = [];
 
     public TestConfig ToTestConfig() => new()
@@ -39,6 +40,7 @@ public sealed class UserSettings
         TimeSeconds = TimeSeconds,
         CommandCount = CommandCount,
         MaxDifficulty = MaxDifficulty,
+        OperationLength = OperationLength,
         Categories = Categories.ToHashSet(),
         StopOnError = StopOnError,
         ConfidenceMode = ConfidenceMode,

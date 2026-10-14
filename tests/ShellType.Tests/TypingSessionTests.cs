@@ -37,6 +37,25 @@ public class TypingSessionTests
     }
 
     [Fact]
+    public void Operations_mode_finishes_after_the_last_step()
+    {
+        var config = new TestConfig { Mode = TestMode.Operations, CommandCount = 3 };
+        var session = Session(config, "ps", "kill 1", "ps -p 1");
+
+        foreach (var step in new[] { "ps", "kill 1" })
+        {
+            TypeAll(session, step);
+            session.Submit();
+        }
+
+        TypeAll(session, "ps -p 1");
+
+        Assert.Equal(SessionState.Finished, session.State);
+        Assert.Equal(["ps", "kill 1", "ps -p 1"], session.Attempts.Select(a => a.Target));
+        Assert.Equal("operations short", config.ModeLabel);
+    }
+
+    [Fact]
     public void Submit_moves_to_next_command()
     {
         var session = Session(new TestConfig(), "ls", "pwd");

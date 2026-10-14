@@ -31,7 +31,7 @@
             @foreach (var best in PersonalBests)
             {
                 <div class="best">
-                    <div class="label">@best.ModeLabel <span class="muted">@best.Difficulty.ToString().ToLowerInvariant()</span></div>
+                    <div class="label">@best.ModeLabel <span class="muted">@TestModes.DifficultyLabel(best.Mode, best.Difficulty)</span></div>
                     <div class="value">@Math.Round(best.Wpm)</div>
                     <div class="muted small">@Math.Round(best.Accuracy)% acc · @best.At.LocalDateTime.ToString("yyyy-MM-dd")</div>
                 </div>
@@ -73,7 +73,7 @@
                 {
                     <tr>
                         <td>@entry.At.LocalDateTime.ToString("yyyy-MM-dd HH:mm")</td>
-                        <td>@entry.ModeLabel <span class="muted">@entry.Difficulty.ToString().ToLowerInvariant()</span></td>
+                        <td>@entry.ModeLabel <span class="muted">@TestModes.DifficultyLabel(entry.Mode, entry.Difficulty)</span></td>
                         <td class="num accent">@Math.Round(entry.Wpm)</td>
                         <td class="num">@Math.Round(entry.Raw)</td>
                         <td class="num">@Math.Round(entry.Accuracy)%</td>

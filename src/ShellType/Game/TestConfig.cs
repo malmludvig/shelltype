@@ -6,6 +6,7 @@ public enum TestMode
 {
     Time,
     Commands,
+    Operations,
 }
 
 /// <summary>
@@ -20,6 +21,7 @@ public sealed record TestConfig
     public int TimeSeconds { get; init; } = 30;
     public int CommandCount { get; init; } = 10;
     public Difficulty MaxDifficulty { get; init; } = Difficulty.Medium;
+    public OperationLength OperationLength { get; init; } = OperationLength.Short;
 
     /// <summary>Categories to draw commands from. Empty means all of them.</summary>
     public IReadOnlySet<CommandCategory> Categories { get; init; } = new HashSet<CommandCategory>();
@@ -30,7 +32,29 @@ public sealed record TestConfig
     /// <summary>Backspace is disabled, so every mistake sticks.</summary>
     public bool ConfidenceMode { get; init; }
 
-    public int ModeValue => Mode == TestMode.Time ? TimeSeconds : CommandCount;
+    /// <summary>Commands and operations end after a set number of commands; time mode never runs out of them.</summary>
+    public bool IsFixedLength => Mode != TestMode.Time;
 
-    public string ModeLabel => Mode == TestMode.Time ? $"time {TimeSeconds}" : $"commands {CommandCount}";
+    public int ModeValue => Mode switch
+    {
+        TestMode.Time => TimeSeconds,
+        TestMode.Commands => CommandCount,
+        _ => (int)OperationLength,
+    };
+
+    public string ModeLabel => TestModes.Label(Mode, ModeValue);
+}
+
+public static class TestModes
+{
+    public static string Label(TestMode mode, int value) => mode switch
+    {
+        TestMode.Time => $"time {value}",
+        TestMode.Commands => $"commands {value}",
+        _ => $"operations {((OperationLength)value).ToString().ToLowerInvariant()}",
+    };
+
+    /// <summary>Operations are hand-written sequences, so the difficulty setting does not apply to them.</summary>
+    public static string DifficultyLabel(TestMode mode, Difficulty difficulty) =>
+        mode == TestMode.Operations ? "" : difficulty.ToString().ToLowerInvariant();
 }

@@ -31,7 +31,7 @@ public sealed class TypingSession
         _source = source;
         _time = time ?? TimeProvider.System;
 
-        var initial = config.Mode == TestMode.Commands ? config.CommandCount : Lookahead + 1;
+        var initial = config.IsFixedLength ? config.CommandCount : Lookahead + 1;
         for (var i = 0; i < initial; i++)
         {
             _attempts.Add(new CommandAttempt(_source.Next()));
@@ -90,7 +90,7 @@ public sealed class TypingSession
 
         _keystrokes.Add(new Keystroke(at, correct));
 
-        if (Config.Mode == TestMode.Commands && CurrentIndex == _attempts.Count - 1 && Current.IsCorrect)
+        if (Config.IsFixedLength && CurrentIndex == _attempts.Count - 1 && Current.IsCorrect)
         {
             Submit();
         }
@@ -135,7 +135,7 @@ public sealed class TypingSession
         _keystrokes.Add(new Keystroke(at, Current.IsCorrect));
         Current.Submit(at);
 
-        if (Config.Mode == TestMode.Commands && CurrentIndex == _attempts.Count - 1)
+        if (Config.IsFixedLength && CurrentIndex == _attempts.Count - 1)
         {
             Finish();
             return;

@@ -17,7 +17,7 @@ public sealed record HistoryEntry(
     double Seconds)
 {
     [JsonIgnore]
-    public string ModeLabel => Mode == TestMode.Time ? $"time {ModeValue}" : $"commands {ModeValue}";
+    public string ModeLabel => TestModes.Label(Mode, ModeValue);
 }
 
 /// <summary>Running totals for one command across every test.</summary>
