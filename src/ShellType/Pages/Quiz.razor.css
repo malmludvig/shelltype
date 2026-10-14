@@ -440,6 +440,16 @@ kbd {
         color: var(--bg);
     }
 
+    /* Show the verdict and explanation above the cards, so they are visible without scrolling. */
+    .result {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .feedback {
+        order: -1;
+    }
+
     .verdict {
         font-size: 1.15rem;
     }
