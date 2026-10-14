@@ -227,7 +227,7 @@ else if (_session is not null)
         }
 
         var result = StatsCalculator.Compute(_session);
-        _previousBest = await History.GetPersonalBestAsync(result.Mode, result.ModeValue, result.Difficulty);
+        _previousBest = await History.GetPersonalBestAsync(result.Platform, result.Mode, result.ModeValue, result.Difficulty);
         _isPersonalBest = await History.RecordAsync(result);
         _result = result;
         await JS.InvokeVoidAsync("shellType.ui.setTyping", false);

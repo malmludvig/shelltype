@@ -14,10 +14,11 @@ public sealed record HistoryEntry(
     double Raw,
     double Accuracy,
     double Consistency,
-    double Seconds)
+    double Seconds,
+    Platform Platform = Platform.Linux)
 {
     [JsonIgnore]
-    public string ModeLabel => TestModes.Label(Mode, ModeValue);
+    public string ModeLabel => TestModes.Label(Mode, ModeValue, Platform);
 }
 
 /// <summary>Running totals for one command across every test.</summary>
@@ -58,11 +59,13 @@ public sealed class HistoryService(BrowserStorage storage)
         return _commands;
     }
 
-    /// <summary>Best WPM for this exact mode, value and difficulty, if any.</summary>
-    public async Task<double?> GetPersonalBestAsync(TestMode mode, int modeValue, Difficulty difficulty)
+    /// <summary>Best WPM for this exact platform, mode, value and difficulty, if any.</summary>
+    public async Task<double?> GetPersonalBestAsync(Platform platform, TestMode mode, int modeValue, Difficulty difficulty)
     {
         var history = await GetHistoryAsync();
-        var matching = history.Where(h => h.Mode == mode && h.ModeValue == modeValue && h.Difficulty == difficulty).ToList();
+        var matching = history
+            .Where(h => h.Platform == platform && h.Mode == mode && h.ModeValue == modeValue && h.Difficulty == difficulty)
+            .ToList();
         return matching.Count == 0 ? null : matching.Max(h => h.Wpm);
     }
 
@@ -74,7 +77,7 @@ public sealed class HistoryService(BrowserStorage storage)
             return false;
         }
 
-        var previousBest = await GetPersonalBestAsync(result.Mode, result.ModeValue, result.Difficulty);
+        var previousBest = await GetPersonalBestAsync(result.Platform, result.Mode, result.ModeValue, result.Difficulty);
 
         var history = (List<HistoryEntry>)await GetHistoryAsync();
         history.Add(new HistoryEntry(
@@ -86,7 +89,8 @@ public sealed class HistoryService(BrowserStorage storage)
             Math.Round(result.RawWpm, 2),
             Math.Round(result.Accuracy, 2),
             Math.Round(result.Consistency, 2),
-            Math.Round(result.Duration.TotalSeconds, 2)));
+            Math.Round(result.Duration.TotalSeconds, 2),
+            result.Platform));
         if (history.Count > MaxEntries)
         {
             history.RemoveRange(0, history.Count - MaxEntries);
