@@ -290,6 +290,13 @@ public static class OperationLibrary
             ("docker logs web", "Read its output"),
             ("docker stop web", "Stop it when you are done")),
 
+        Op("rename across a project", "a function was renamed. update every file that uses it.", Search,
+            ("grep -rl \"oldName\" src/", "List the files that use the old name"),
+            ("grep -rl \"oldName\" src/ | xargs sed -i 's/oldName/newName/g'", "Replace it in all of them"),
+            ("git diff --stat", "See how many files changed"),
+            ("grep -rn \"oldName\" src/", "Make sure nothing was missed"),
+            ("git commit -am \"Rename oldName to newName\"", "Commit the rename")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
