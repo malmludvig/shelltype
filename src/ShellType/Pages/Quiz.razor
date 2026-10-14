@@ -8,8 +8,10 @@
 <PageTitle>quiz · shelltype</PageTitle>
 
 <div class="config">
-    <div class="group">
+    <div class="group modes">
         <button class="@Active(_mode == QuizMode.Mixed)" @onclick="() => Restart(QuizMode.Mixed)">mixed</button>
+        <button class="@Active(_mode == QuizMode.Basics)" title="what is this command for? 250 common commands"
+                @onclick="() => Restart(QuizMode.Basics)">basics</button>
         <button class="@Active(_mode == QuizMode.Commands)" @onclick="() => Restart(QuizMode.Commands)">what does it do?</button>
         <button class="@Active(_mode == QuizMode.Errors)" @onclick="() => Restart(QuizMode.Errors)">fix the error</button>
     </div>
@@ -42,7 +44,7 @@ else if (_session is not null)
             }
         </div>
 
-        <div class="kind">@(q.Kind == QuestionKind.WhatDoesItDo ? "# what does this do?" : "# how do you fix this?")</div>
+        <div class="kind">@KindLabel(q.Kind)</div>
         <div class="prompt"><span class="ps">~$</span> @q.Prompt</div>
         @if (q.ErrorOutput is not null)
         {
@@ -64,6 +66,7 @@ else if (_session is not null)
                         var position = i;
                         <li class="option @(i == _session.Selected ? "selected" : "")" @onclick="() => Pick(position)">
                             <span class="pointer">@(i == _session.Selected ? "▌" : "")</span>
+                            <span class="letter">@Letter(option.Index)</span>
                             <span class="text">
                                 @{ var marks = option.Highlights.ToHashSet(); }
                                 @for (var c = 0; c < option.Text.Length; c++)
@@ -88,6 +91,7 @@ else if (_session is not null)
                     var css = i == q.AnswerIndex ? "right" : i == answer.ChosenIndex ? "wrong" : "";
                     <li class="option @css">
                         <span class="pointer">@(i == q.AnswerIndex ? "✓" : i == answer.ChosenIndex ? "✗" : "")</span>
+                        <span class="letter">@(i == q.AnswerIndex ? "✓" : i == answer.ChosenIndex ? "✗" : Letter(i))</span>
                         <span class="text">@q.Options[i]</span>
                     </li>
                 }
@@ -103,11 +107,17 @@ else if (_session is not null)
                 }
             </div>
             <p class="explanation"># @q.Explanation</p>
-            <p class="continue">press <kbd>enter</kbd> to continue</p>
+            <div class="next-bar">
+                <button class="next" @onclick="Continue">
+                    @(_session.Index == _session.Questions.Count - 1 ? "see results" : "next question") →
+                    <kbd>enter</kbd>
+                </button>
+            </div>
         }
     </section>
 
-    <p class="hint">
+    <p class="hint touch">tap an answer</p>
+    <p class="hint keys">
         type to filter · <kbd>↑</kbd><kbd>↓</kbd> or <kbd>ctrl</kbd>+<kbd>j</kbd>/<kbd>k</kbd> to move ·
         <kbd>enter</kbd> to answer · <kbd>esc</kbd> to clear · <kbd>tab</kbd> new quiz
     </p>
@@ -207,6 +217,21 @@ else if (_session is not null)
         _session.Submit();
         await CheckFinishedAsync();
     }
+
+    private async Task Continue()
+    {
+        _session?.Submit();
+        await CheckFinishedAsync();
+    }
+
+    private static string KindLabel(QuestionKind kind) => kind switch
+    {
+        QuestionKind.WhatDoesItDo => "# what does this do?",
+        QuestionKind.FixTheError => "# how do you fix this?",
+        _ => "# what is this command for?",
+    };
+
+    private static char Letter(int index) => (char)('A' + index);
 
     /// <summary>When the quiz has just ended, compare against and update the stored high score.</summary>
     private async Task CheckFinishedAsync()
