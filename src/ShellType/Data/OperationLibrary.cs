@@ -204,6 +204,12 @@ public static class OperationLibrary
             ("sudo dmesg -T --level=err,warn", "Show only kernel errors and warnings"),
             ("journalctl -k -b --grep usb", "Search this boot's kernel log for usb")),
 
+        Op("was it killed for memory?", "the api process vanished. check if the oom killer took it.", Processes,
+            ("journalctl -k | grep -i \"out of memory\"", "Look for out-of-memory events in the kernel log"),
+            ("sudo dmesg -T | grep -i oom", "See which process the oom killer picked"),
+            ("systemctl status api", "Check whether systemd restarted the service"),
+            ("journalctl -u api --since \"1 hour ago\"", "Read what the service logged before it died")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
