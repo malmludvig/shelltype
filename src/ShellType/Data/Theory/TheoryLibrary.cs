@@ -46,5 +46,6 @@ public static partial class TheoryLibrary
         yield return Regex;
         yield return Networking;
         yield return Dns;
+        yield return PortsAndFirewalls;
     }
 }
