@@ -190,6 +190,10 @@ public static class OperationLibrary
             ("journalctl -b -1 -p warning", "Show warnings and worse from the previous boot"),
             ("journalctl -b -1 -n 30 --no-pager", "Read the last lines before it went down")),
 
+        Op("follow a service live", "watch redis log in real time while you test.", CommandCategory.System,
+            ("systemctl status redis-server", "Check it is running"),
+            ("journalctl -u redis-server -f", "Follow new log lines as they arrive")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
