@@ -37,5 +37,6 @@ public static partial class TheoryLibrary
         yield return ProcAndSys;
         yield return Packages;
         yield return Shell;
+        yield return ExpansionAndQuoting;
     }
 }
