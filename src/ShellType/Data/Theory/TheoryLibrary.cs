@@ -22,5 +22,6 @@ public static partial class TheoryLibrary
         yield return EverythingIsAFile;
         yield return Paths;
         yield return InodesAndLinks;
+        yield return DisksAndMounting;
     }
 }
