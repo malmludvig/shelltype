@@ -76,6 +76,11 @@ public static class OperationLibrary
             ("ls -lt | head", "See which logs were written to most recently"),
             ("sudo tail -f syslog", "Follow new log lines live")),
 
+        Op("see what is listening", "check which ports are open and whether ssh answers.", Networking,
+            ("ss -tuln", "List every listening tcp and udp port"),
+            ("sudo lsof -i :22", "See which process owns port 22"),
+            ("nc -zv localhost 22", "Check the port actually accepts connections")),
+
         Op("size up a machine", "you just logged in to an unknown server. how big is it?", CommandCategory.System,
             ("nproc", "Count the cpu cores"),
             ("free -h", "See how much memory it has"),
