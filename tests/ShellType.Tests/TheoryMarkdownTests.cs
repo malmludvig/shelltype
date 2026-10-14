@@ -30,6 +30,16 @@ public class TheoryMarkdownTests
     }
 
     [Fact]
+    public void Parses_numbered_lists()
+    {
+        var blocks = TheoryMarkdown.Parse("1. first\n2. second\n- bullet");
+
+        Assert.Collection(blocks,
+            b => Assert.Equal(2, Assert.IsType<ListBlock>(b) is { Ordered: true } list ? list.Items.Count : 0),
+            b => Assert.False(Assert.IsType<ListBlock>(b).Ordered));
+    }
+
+    [Fact]
     public void Parses_inline_code_and_bold()
     {
         var inlines = TheoryMarkdown.ParseInline("run `ls -l` to see **permissions** here");

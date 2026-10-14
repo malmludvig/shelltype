@@ -18,6 +18,14 @@
             case CodeBlock codeBlock:
                 <pre><code>@codeBlock.Code</code></pre>
                 break;
+            case ListBlock { Ordered: true } list:
+                <ol>
+                    @foreach (var item in list.Items)
+                    {
+                        <li>@RenderInline(item)</li>
+                    }
+                </ol>
+                break;
             case ListBlock list:
                 <ul>
                     @foreach (var item in list.Items)
