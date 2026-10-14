@@ -199,6 +199,11 @@ public static class OperationLibrary
             ("journalctl --since today -p err | wc -l", "Count them"),
             ("journalctl --since \"08:00\" --until \"09:00\"", "Zoom in on the hour things went wrong")),
 
+        Op("read kernel messages", "a disk or usb device acts up. ask the kernel.", CommandCategory.System,
+            ("sudo dmesg -T | tail -20", "Show the latest kernel messages with readable times"),
+            ("sudo dmesg -T --level=err,warn", "Show only kernel errors and warnings"),
+            ("journalctl -k -b --grep usb", "Search this boot's kernel log for usb")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
