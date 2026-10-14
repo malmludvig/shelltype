@@ -138,6 +138,7 @@ else if (_session is not null)
     private int? _highScore;
     private bool _isHighScore;
     private bool _saved;
+    private bool _scrollToFeedback;
 
     private string ScoreKey => $"{_mode}-{_length}";
 
@@ -153,6 +154,12 @@ else if (_session is not null)
         {
             _self = DotNetObjectReference.Create(this);
             await JS.InvokeVoidAsync("shellType.keyboard.register", _self);
+        }
+
+        if (_scrollToFeedback)
+        {
+            _scrollToFeedback = false;
+            await JS.InvokeVoidAsync("shellType.ui.reveal", ".quiz .feedback");
         }
     }
 
@@ -219,6 +226,8 @@ else if (_session is not null)
         // Clicking selects that option and answers it, same as moving there and pressing Enter.
         _session.Move(position - _session.Selected);
         _session.Submit();
+        // A tapped card may sit low on a phone screen; bring the explanation into view.
+        _scrollToFeedback = _session.Phase == QuizPhase.Revealed;
         await CheckFinishedAsync();
     }
 
