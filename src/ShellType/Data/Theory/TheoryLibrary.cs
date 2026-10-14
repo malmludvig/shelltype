@@ -28,5 +28,6 @@ public static partial class TheoryLibrary
         yield return SpecialPermissions;
         yield return Processes;
         yield return SignalsAndJobs;
+        yield return Memory;
     }
 }
