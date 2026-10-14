@@ -7,6 +7,16 @@ namespace ShellType.Tests;
 public class TheoryLibraryTests
 {
     [Fact]
+    public void There_are_30_chapters_in_reading_order()
+    {
+        Assert.Equal(30, TheoryLibrary.All.Count);
+
+        // The pager walks All in order, so it must match the order of the groups on the page.
+        var groupOrder = TheoryLibrary.All.Select(t => Array.IndexOf(TheoryLibrary.Groups, t.Group)).ToList();
+        Assert.Equal(groupOrder.Order(), groupOrder);
+    }
+
+    [Fact]
     public void Every_chapter_is_at_least_a_page_long()
     {
         Assert.All(TheoryLibrary.All, t => Assert.True(t.WordCount >= 500, $"{t.Slug} has only {t.WordCount} words"));
