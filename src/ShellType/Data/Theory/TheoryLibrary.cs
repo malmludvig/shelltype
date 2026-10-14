@@ -44,5 +44,6 @@ public static partial class TheoryLibrary
         yield return Scripting;
         yield return TextTools;
         yield return Regex;
+        yield return Networking;
     }
 }
