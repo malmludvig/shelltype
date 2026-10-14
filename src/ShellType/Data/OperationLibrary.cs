@@ -228,6 +228,12 @@ public static class OperationLibrary
             ("gzip myapp.log", "Compress the file"),
             ("ls -lh myapp.log.gz", "Check the size before attaching it")),
 
+        Op("out of inodes", "\"no space left on device\" but df shows free space.", Files,
+            ("df -h /var", "Confirm there is free space in bytes"),
+            ("df -i /var", "Check inodes: millions of tiny files can use them all up"),
+            ("sudo find /var -xdev -type f | cut -d/ -f3 | sort | uniq -c | sort -rn | head", "Count files per directory to find the culprit"),
+            ("sudo find /var/lib/php/sessions -type f -mtime +2 -delete", "Delete the old session files")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
