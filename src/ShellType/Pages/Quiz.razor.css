@@ -430,6 +430,23 @@ kbd {
         font-size: 0.85rem;
     }
 
+    /* After answering the cards are only for reading, so they can be smaller. */
+    .reveal {
+        gap: 0.4rem;
+    }
+
+    .reveal .option {
+        min-height: 0;
+        padding: 0.5rem 0.8rem;
+        font-size: 0.85rem;
+    }
+
+    .reveal .letter {
+        width: 1.5rem;
+        height: 1.5rem;
+        font-size: 0.75rem;
+    }
+
     .reveal .option.right .letter {
         background: var(--main);
         color: var(--bg);
