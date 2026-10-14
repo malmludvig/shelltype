@@ -118,6 +118,10 @@ window.shellType = (() => {
             setCssVar(name, value) {
                 document.documentElement.style.setProperty(name, value);
             },
+            // Scroll just enough to bring an element on screen; does nothing if it already is.
+            reveal(selector) {
+                document.querySelector(selector)?.scrollIntoView({ block: "nearest", behavior: "smooth" });
+            },
             // Glide the smooth caret to the character marked .caret. Big jumps (a new
             // command, a restart) snap instead of sweeping across the line.
             moveCaret() {
