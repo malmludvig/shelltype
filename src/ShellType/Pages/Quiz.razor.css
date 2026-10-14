@@ -441,6 +441,10 @@ kbd {
         font-size: 0.85rem;
     }
 
+    .reveal .option:not(.right):not(.wrong) {
+        opacity: 0.55;
+    }
+
     .reveal .letter {
         width: 1.5rem;
         height: 1.5rem;
