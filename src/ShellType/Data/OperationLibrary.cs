@@ -234,6 +234,11 @@ public static class OperationLibrary
             ("sudo find /var -xdev -type f | cut -d/ -f3 | sort | uniq -c | sort -rn | head", "Count files per directory to find the culprit"),
             ("sudo find /var/lib/php/sessions -type f -mtime +2 -delete", "Delete the old session files")),
 
+        Op("deleted file still uses space", "you removed a huge log but the disk is still full.", Files,
+            ("sudo lsof +L1", "List open files that have already been deleted"),
+            ("sudo systemctl restart rsyslog", "Restart the process holding the file so the space is released"),
+            ("df -h /", "Check that the space came back")),
+
         // ---- medium: 5 to 7 steps ----
         Op("open the firewall for a web server", "the site works locally but not from outside. check the firewall.", Networking,
             ("curl -I http://localhost", "Confirm the server answers locally"),
