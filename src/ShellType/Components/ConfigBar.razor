@@ -2,6 +2,15 @@
 @inject SettingsService SettingsService
 
 <div class="config @(Hidden ? "hidden" : "")">
+    <div class="group platform">
+        <button class="@Active(S.Platform == Platform.Linux)" title="linux shell commands"
+                @onclick="() => Change(s => SetPlatform(s, Platform.Linux))">linux</button>
+        <button class="@Active(S.Platform == Platform.Cisco)" title="cisco ios commands for routers and switches"
+                @onclick="() => Change(s => SetPlatform(s, Platform.Cisco))">cisco ios</button>
+    </div>
+
+    <span class="divider"></span>
+
     <div class="group">
         <button class="@Active(S.Mode == TestMode.Time)" @onclick="() => Change(s => s.Mode = TestMode.Time)">time</button>
         <button class="@Active(S.Mode == TestMode.Commands)" @onclick="() => Change(s => s.Mode = TestMode.Commands)">commands</button>
@@ -105,6 +114,12 @@
         OperationLength.Medium => "5-7 commands",
         _ => "8-10 commands",
     };
+
+    private static void SetPlatform(UserSettings s, Platform platform)
+    {
+        s.Platform = platform;
+        s.Mode = s.EffectiveMode;
+    }
 
     private static void Toggle(UserSettings s, CommandCategory category)
     {
