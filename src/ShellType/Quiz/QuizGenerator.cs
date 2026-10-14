@@ -9,6 +9,9 @@ public enum QuizMode
     Commands,
     Errors,
     Basics,
+
+    /// <summary>The 50 most common Cisco IOS commands, asked both ways round.</summary>
+    Cisco,
 }
 
 /// <summary>Builds a shuffled set of quiz questions.</summary>
@@ -24,6 +27,15 @@ public static class QuizGenerator
         if (mode == QuizMode.Basics)
         {
             return Shuffle(BasicCommands.All, random).Take(count).Select(b => FromBasic(b, random)).ToList();
+        }
+
+        if (mode == QuizMode.Cisco)
+        {
+            // Alternate the two directions: what does this do, and which command does this.
+            return Shuffle(CiscoLibrary.Essentials, random)
+                .Take(count)
+                .Select((c, i) => i % 2 == 0 ? FromCisco(c, random) : WhichCisco(c, random))
+                .ToList();
         }
 
         var (commandCount, errorCount) = mode switch
