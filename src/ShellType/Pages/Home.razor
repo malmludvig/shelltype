@@ -160,7 +160,20 @@ else if (_session is not null)
         }
 
         _operation = null;
-        var generator = new CommandGenerator(await BuildPoolAsync(config));
+        ICommandSource generator;
+        if (config.Mode == TestMode.Essentials)
+        {
+            // Every essential command exactly once, in a fresh random order.
+            _banner = null;
+            var all = CiscoLibrary.Essentials;
+            config = config with { CommandCount = all.Count };
+            generator = new ReplaySource(all.OrderBy(_ => Random.Shared.Next()).ToList(), new CommandGenerator(all));
+        }
+        else
+        {
+            generator = new CommandGenerator(await BuildPoolAsync(config));
+        }
+
         ICommandSource source = repeat && _session is not null
             ? new ReplaySource(_session.Attempts.Select(a => a.Command).ToList(), generator)
             : generator;
