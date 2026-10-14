@@ -254,6 +254,14 @@ public static class OperationLibrary
             ("ls /mnt/usb", "Look at the files"),
             ("sudo umount /mnt/usb", "Unmount it before pulling the stick out")),
 
+        Op("add a swap file", "a small vps keeps running out of memory. give it 2 GB of swap.", CommandCategory.System,
+            ("sudo fallocate -l 2G /swapfile", "Reserve a 2 GB file"),
+            ("sudo chmod 600 /swapfile", "Make it readable only by root"),
+            ("sudo mkswap /swapfile", "Format it as swap"),
+            ("sudo swapon /swapfile", "Turn it on"),
+            ("swapon --show", "Check the swap is active"),
+            ("echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab", "Turn it on at every boot")),
+
         // ---- long: 8 to 10 steps ----
         Op("open a database port with iptables", "postgres is unreachable from the app servers. walk the firewall rules.", Networking,
             ("sudo systemctl status postgresql", "Make sure the database is actually running"),
