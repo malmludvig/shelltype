@@ -34,5 +34,6 @@ public static partial class TheoryLibrary
         yield return Systemd;
         yield return Logging;
         yield return Kernel;
+        yield return ProcAndSys;
     }
 }
