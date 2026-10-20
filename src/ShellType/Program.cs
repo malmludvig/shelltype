@@ -11,5 +11,6 @@ builder.Services.AddSingleton(TimeProvider.System);
 builder.Services.AddSingleton<BrowserStorage>();
 builder.Services.AddSingleton<SettingsService>();
 builder.Services.AddSingleton<HistoryService>();
+builder.Services.AddSingleton<ClaudeProgressService>();
 
 await builder.Build().RunAsync();
