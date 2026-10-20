@@ -9,6 +9,8 @@
                 @onclick="() => Change(s => SetPlatform(s, Platform.Cisco))">cisco ios</button>
         <button class="@Active(S.Platform == Platform.Claude)" title="claude code slash commands, cli and flags"
                 @onclick="() => Change(s => SetPlatform(s, Platform.Claude))">claude code</button>
+        <button class="@Active(S.Platform == Platform.Linq)" title="c# linq statements over lists and arrays"
+                @onclick="() => Change(s => SetPlatform(s, Platform.Linq))">c# linq</button>
     </div>
 
     <span class="divider"></span>
