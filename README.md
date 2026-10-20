@@ -21,6 +21,7 @@ Instead of random words you type real command lines (flags, pipes, paths and quo
 - **Claude Code:** switch the platform to learn [Claude Code](https://code.claude.com/docs/en/commands). Slash commands are typed at Claude's `>` prompt and the `claude` cli and flags at `~$`, with time and commands tests, 16 workflow operations (freeing up context, reviewing before a push, running Claude in CI, shipping a feature end to end) and an *all* mode that runs through every typeable command
 - **Claude Code cheat sheet:** the *claude* page lists 156 slash commands, skills, shortcuts, prompt prefixes, cli commands, flags, permission modes and files, searchable with everyday words (`undo` finds `/rewind`), with examples, a command of the day, known-marking, per-group progress, flashcards in five Leitner boxes, a day streak and export, import and reset of your progress
 - **Claude Code quiz:** *claude code* asks both ways round (what does it do, which one does this), *scenarios* has 24 real situations and *type it* has you type the command from memory, accepting aliases and the macOS keys
+- **C# LINQ:** switch the platform to practice simple LINQ statements like `var adults = people.Where(p => p.Age >= 18);` at a `csharp>` prompt. 74 statements in 12 groups (filtering, projection, ordering, grouping, joins, query syntax and more), with time and commands tests, 12 operations where each statement builds on the last, an *all* mode and a *c# linq* quiz
 - **200+ commands** in 11 categories: navigation, files, text, search, processes, networking, permissions, packages, archives, system and git
 - **Three difficulty levels**, from `pwd` to `awk -F, '{sum += $3} END {print sum}' sales.csv`
 - **Learn as you type:** every command shows a short `# comment` explaining it
@@ -68,6 +69,7 @@ src/ShellType/
   Data/        command catalogue (one file per category), operations, basic commands, error scenarios and theory chapters
   Data/Cisco/  the Cisco IOS commands and operations
   Data/Claude/ the Claude Code cheat sheet, scenarios and operations
+  Data/Linq/   the C# LINQ statements and operations
   Game/        UI-free engine: TypingSession, CommandAttempt, StatsCalculator, FlashcardDeck
   Quiz/        quiz engine: QuizSession, QuizGenerator, FuzzyMatcher, ClaudeAnswers
   Theory/      the small Markdown parser theory chapters are written in
