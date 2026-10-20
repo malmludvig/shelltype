@@ -35,6 +35,7 @@ public static partial class LinqLibrary
     private static IEnumerable<(string Group, CommandEntry[] Commands)> Sources()
     {
         yield return ("filtering", Filtering);
+        yield return ("projection", Projection);
     }
 
     // The categories are Linux ones; LINQ statements all count as text processing.
