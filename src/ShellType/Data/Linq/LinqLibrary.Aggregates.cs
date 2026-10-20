@@ -28,4 +28,13 @@ public static partial class LinqLibrary
         L("var third = numbers.ElementAt(2);", "The element at an index, counting from zero", Easy),
         L("var safe = numbers.DefaultIfEmpty(0);", "Use a default value when the sequence is empty", Medium),
     ];
+
+    private static readonly CommandEntry[] Quantifiers =
+    [
+        L("var hasAny = orders.Any();", "Is there at least one element?", Easy),
+        L("var anyKids = people.Any(p => p.Age < 18);", "Does at least one element match the condition?", Easy),
+        L("var allPositive = numbers.All(n => n > 0);", "Do all elements match the condition? True for an empty sequence", Easy),
+        L("var hasSeven = numbers.Contains(7);", "Is this exact value in the sequence?", Easy),
+        L("var same = numbers.SequenceEqual(other);", "Are both sequences equal, element by element and in order?", Medium),
+    ];
 }
