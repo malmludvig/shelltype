@@ -198,6 +198,7 @@ else if (_session is not null)
             {
                 Platform.Cisco => CiscoLibrary.Operations,
                 Platform.Claude => ClaudeLibrary.Operations,
+                Platform.Linq => LinqLibrary.Operations,
                 _ => OperationLibrary.All,
             };
             var candidates = library.Where(o => o.Length == config.OperationLength && o != _operation).ToList();
