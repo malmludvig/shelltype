@@ -23,4 +23,11 @@ public static partial class LinqLibrary
         L("var spent = orders.GroupBy(o => o.PersonId).Select(g => new { g.Key, Total = g.Sum(o => o.Total) });", "Total amount spent per customer", Hard),
         L("var byLength = words.ToLookup(w => w.Length);", "Build a lookup: like GroupBy, but evaluated at once and indexable by key", Medium),
     ];
+
+    private static readonly CommandEntry[] Joining =
+    [
+        L("var receipts = orders.Join(people, o => o.PersonId, p => p.Id, (o, p) => new { p.Name, o.Total });", "Inner join: match each order to its person by id", Hard),
+        L("var withOrders = people.GroupJoin(orders, p => p.Id, o => o.PersonId, (p, os) => new { p.Name, Count = os.Count() });", "Group join: every person with the orders that belong to them", Hard),
+        L("var labelled = numbers.Zip(words, (n, w) => $\"{n}: {w}\");", "Combine two sequences pairwise with your own function", Medium),
+    ];
 }
