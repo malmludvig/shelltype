@@ -66,6 +66,7 @@ public static class TestModes
         {
             Platform.Cisco => $"cisco {label}",
             Platform.Claude => $"claude {label}",
+            Platform.Linq => $"linq {label}",
             _ => label,
         };
     }
