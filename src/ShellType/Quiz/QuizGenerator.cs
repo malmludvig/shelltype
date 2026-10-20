@@ -56,6 +56,14 @@ public static class QuizGenerator
                 .ToList();
         }
 
+        if (mode == QuizMode.Linq)
+        {
+            return Shuffle(LinqLibrary.Essentials, random)
+                .Take(count)
+                .Select((c, i) => i % 2 == 0 ? FromLinq(c, random) : WhichLinq(c, random))
+                .ToList();
+        }
+
         switch (mode)
         {
             case QuizMode.Claude:
