@@ -38,6 +38,7 @@ public static partial class LinqLibrary
         yield return ("projection", Projection);
         yield return ("ordering", Ordering);
         yield return ("partitioning", Partitioning);
+        yield return ("aggregation", Aggregation);
     }
 
     // The categories are Linux ones; LINQ statements all count as text processing.
