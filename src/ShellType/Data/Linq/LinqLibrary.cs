@@ -13,12 +13,9 @@ public static partial class LinqLibrary
 
     /// <summary>
     /// The collections every statement works on, element by element, shown above the test and the quiz.
-    /// It is real C#: every statement and operation compiles against it.
+    /// It is real C#: with Person(Id, Name, Age, City) and Order(Id, PersonId, Total, Date) records, every statement and operation compiles against it.
     /// </summary>
     public const string Data = """
-        record Person(int Id, string Name, int Age, string City);
-        record Order(int Id, int PersonId, decimal Total, DateOnly Date);
-
         int[] numbers = [4, 8, 15, 16, 23, 42, 7, 3];
         int[] other = [3, 7, 10, 15, 99];
         string[] words = ["apple", "kiwi", "banana", "fig", "cherry", "Kiwi"];
