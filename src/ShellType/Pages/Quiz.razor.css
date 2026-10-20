@@ -572,3 +572,31 @@ kbd {
     color: var(--sub);
     font-size: 0.85rem;
 }
+
+/* The answer button and tap hint are for phones; a keyboard just presses enter. */
+.type-hint.touch,
+.next-bar.touch {
+    display: none;
+}
+
+.next:disabled {
+    opacity: 0.5;
+}
+
+@media (max-width: 640px), (pointer: coarse) {
+    .type-hint.keys {
+        display: none;
+    }
+
+    .type-hint.touch,
+    .next-bar.touch {
+        display: block;
+    }
+
+    /* A big target, since tapping it is what opens the keyboard. */
+    .prompt.typed {
+        padding: 0.6rem 0.75rem;
+        border-radius: var(--radius);
+        background: var(--bg-alt);
+    }
+}

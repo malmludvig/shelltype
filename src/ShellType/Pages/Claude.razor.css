@@ -426,6 +426,12 @@ textarea:focus {
         flex: 1;
         padding: 0.9rem 0.5rem;
         touch-action: manipulation;
+        white-space: nowrap;
+    }
+
+    /* The arrows only need room for the arrow, which leaves the rating buttons room for their words. */
+    .card-actions button[title] {
+        flex: 0 0 2.75rem;
     }
 
     .card-actions kbd {

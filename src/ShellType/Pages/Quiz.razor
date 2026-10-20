@@ -17,12 +17,16 @@
         <button class="@Active(_mode == QuizMode.Errors)" @onclick="() => Restart(QuizMode.Errors)">fix the error</button>
         <button class="@Active(_mode == QuizMode.Cisco)" title="the 50 most common cisco ios commands"
                 @onclick="() => Restart(QuizMode.Cisco)">cisco ios</button>
+    </div>
+    <span class="divider"></span>
+    @* Its own group, so on a phone the claude modes get a row of their own instead of hiding off screen. *@
+    <div class="group modes">
         <button class="@Active(_mode == QuizMode.Claude)" title="claude code commands, shortcuts and concepts, both ways round"
                 @onclick="() => Restart(QuizMode.Claude)">claude code</button>
         <button class="@Active(_mode == QuizMode.ClaudeScenarios)" title="real situations: which claude code command solves it?"
-                @onclick="() => Restart(QuizMode.ClaudeScenarios)">claude scenarios</button>
+                @onclick="() => Restart(QuizMode.ClaudeScenarios)">scenarios</button>
         <button class="@Active(_mode == QuizMode.ClaudeTyped)" title="type the claude code command from memory"
-                @onclick="() => Restart(QuizMode.ClaudeTyped)">type claude</button>
+                @onclick="() => Restart(QuizMode.ClaudeTyped)">type it</button>
     </div>
     <span class="divider"></span>
     <div class="group">
@@ -100,7 +104,11 @@ else if (_session is not null)
 
         @if (_session.Phase == QuizPhase.Answering && q.IsTyped)
         {
-            <p class="type-hint">type the command and press <kbd>enter</kbd></p>
+            <p class="type-hint keys">type the command and press <kbd>enter</kbd></p>
+            <p class="type-hint touch">tap the prompt to type</p>
+            <div class="next-bar touch">
+                <button class="next" @onclick="Continue" disabled="@(_session.Query.Trim().Length == 0)">answer →</button>
+            </div>
         }
         else if (_session.Phase == QuizPhase.Answering)
         {
