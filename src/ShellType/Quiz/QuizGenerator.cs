@@ -12,6 +12,15 @@ public enum QuizMode
 
     /// <summary>The 50 most common Cisco IOS commands, asked both ways round.</summary>
     Cisco,
+
+    /// <summary>Claude Code commands, shortcuts and concepts, asked both ways round.</summary>
+    Claude,
+
+    /// <summary>Real situations, answered with the Claude Code command that solves them.</summary>
+    ClaudeScenarios,
+
+    /// <summary>Shown what a Claude Code command does, type it from memory.</summary>
+    ClaudeTyped,
 }
 
 /// <summary>Builds a shuffled set of quiz questions.</summary>
@@ -19,6 +28,12 @@ public static class QuizGenerator
 {
     public const int OptionCount = 4;
     public static readonly int[] LengthOptions = [10, 20];
+
+    /// <summary>How long a time attack lasts.</summary>
+    public static readonly TimeSpan TimeAttack = TimeSpan.FromSeconds(60);
+
+    /// <summary>Enough questions that nobody runs out during a time attack.</summary>
+    public const int TimeAttackQuestions = 200;
 
     public static IReadOnlyList<QuizQuestion> Create(QuizMode mode, int count, Random? random = null)
     {
@@ -36,6 +51,20 @@ public static class QuizGenerator
                 .Take(count)
                 .Select((c, i) => i % 2 == 0 ? FromCisco(c, random) : WhichCisco(c, random))
                 .ToList();
+        }
+
+        switch (mode)
+        {
+            case QuizMode.Claude:
+                // Alternate the two directions, like the Cisco quiz.
+                return Shuffle(ClaudeLibrary.All, random)
+                    .Take(count)
+                    .Select((c, i) => i % 2 == 0 ? FromClaude(c, random) : WhichClaude(c, random))
+                    .ToList();
+            case QuizMode.ClaudeScenarios:
+                return Shuffle(ClaudeLibrary.Scenarios, random).Take(count).Select(s => FromScenario(s, random)).ToList();
+            case QuizMode.ClaudeTyped:
+                return Shuffle(ClaudeLibrary.All, random).Take(count).Select(TypeClaude).ToList();
         }
 
         var (commandCount, errorCount) = mode switch
@@ -133,6 +162,92 @@ public static class QuizGenerator
         Shuffle(CiscoLibrary.Essentials.Where(c => c.Prompt == command.Prompt), random)
             .Concat(Shuffle(CiscoLibrary.Essentials, random))
             .Where(c => c != command);
+
+    /// <summary>Shown a Claude Code command, shortcut or concept, pick what it does.</summary>
+    public static QuizQuestion FromClaude(ClaudeCommand command, Random random)
+    {
+        var options = Shuffle(ClaudeDistractors(command, random).Select(c => c.Description)
+            .Take(OptionCount - 1)
+            .Append(command.Description), random);
+        return new QuizQuestion(
+            QuestionKind.WhatDoesItDo,
+            command.Name,
+            null,
+            options,
+            IndexOf(options, command.Description),
+            ClaudeExplanation(command, $"{command.Key} is one of the {ClaudeKinds.Label(command.Kind)}."),
+            command.Prompt,
+            ClaudeKinds.Label(command.Kind));
+    }
+
+    /// <summary>Shown what a Claude Code command does, pick the command. The prompt hints at its kind.</summary>
+    public static QuizQuestion WhichClaude(ClaudeCommand command, Random random)
+    {
+        var options = Shuffle(ClaudeDistractors(command, random).Select(c => c.Key)
+            .Take(OptionCount - 1)
+            .Append(command.Key), random);
+        return new QuizQuestion(
+            QuestionKind.WhichCommand,
+            command.Description,
+            null,
+            options,
+            IndexOf(options, command.Key),
+            ClaudeExplanation(command, $"{command.Name}, one of the {ClaudeKinds.Label(command.Kind)}."),
+            command.Prompt,
+            ClaudeKinds.Label(command.Kind));
+    }
+
+    /// <summary>Shown a real situation, pick the command that solves it.</summary>
+    public static QuizQuestion FromScenario(ClaudeScenario scenario, Random random)
+    {
+        var command = ClaudeLibrary.Find(scenario.Answer)
+            ?? throw new InvalidOperationException($"No Claude Code command {scenario.Answer}.");
+        var options = Shuffle(ClaudeDistractors(command, random).Select(c => c.Key)
+            .Take(OptionCount - 1)
+            .Append(command.Key), random);
+        return new QuizQuestion(
+            QuestionKind.Scenario,
+            scenario.Situation,
+            null,
+            options,
+            IndexOf(options, command.Key),
+            $"{command.Key}: {scenario.Why}",
+            ClaudeCommand.ClaudePrompt,
+            ClaudeKinds.Label(command.Kind));
+    }
+
+    /// <summary>Shown what a Claude Code command does, type the command.</summary>
+    public static QuizQuestion TypeClaude(ClaudeCommand command)
+    {
+        var accepted = ClaudeAnswers.Accepted(command);
+        var also = accepted.Count > 1 ? $" Accepted: {string.Join(", ", accepted)}." : "";
+        return new QuizQuestion(
+            QuestionKind.TypeIt,
+            command.Description,
+            null,
+            [command.Key],
+            0,
+            ClaudeExplanation(command, $"{command.Name}, one of the {ClaudeKinds.Label(command.Kind)}.") + also,
+            command.Prompt,
+            ClaudeKinds.Label(command.Kind),
+            accepted);
+    }
+
+    /// <summary>Whether a typed answer is right; Claude Code commands also accept aliases and placeholders.</summary>
+    public static bool IsTypedCorrect(string typed, QuizQuestion question) =>
+        ClaudeLibrary.Find(question.Answer) is { } command
+            ? ClaudeAnswers.IsCorrect(typed, command)
+            : question.Accepted?.Contains(ClaudeAnswers.Normalize(typed)) == true;
+
+    private static string ClaudeExplanation(ClaudeCommand command, string text) =>
+        command.Note is { } note ? $"{text} {note}." : text;
+
+    // The same kind is the easiest to mix up: slash commands with slash commands, keys with keys.
+    private static IEnumerable<ClaudeCommand> ClaudeDistractors(ClaudeCommand command, Random random) =>
+        Shuffle(ClaudeLibrary.All.Where(c => c.Kind == command.Kind), random)
+            .Concat(Shuffle(ClaudeLibrary.All, random))
+            .Where(c => c != command)
+            .Distinct();
 
     public static QuizQuestion FromError(ErrorScenario scenario, Random random)
     {

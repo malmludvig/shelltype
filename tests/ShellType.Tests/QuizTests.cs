@@ -32,6 +32,8 @@ public class QuizGeneratorTests
     [InlineData(QuizMode.Errors)]
     [InlineData(QuizMode.Basics)]
     [InlineData(QuizMode.Cisco)]
+    [InlineData(QuizMode.Claude)]
+    [InlineData(QuizMode.ClaudeScenarios)]
     public void Creates_the_requested_number_of_valid_questions(QuizMode mode)
     {
         var questions = QuizGenerator.Create(mode, 10, new Random(3));

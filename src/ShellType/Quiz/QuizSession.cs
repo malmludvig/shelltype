@@ -15,14 +15,18 @@ public enum QuizPhase
 public sealed record VisibleOption(int Index, string Text, IReadOnlyList<int> Highlights);
 
 /// <summary>What happened on one question, for the results screen.</summary>
-public sealed record QuizAnswer(QuizQuestion Question, int ChosenIndex, int Points, TimeSpan Time)
+/// <param name="ChosenIndex">The option picked; for a typed question 0 when right and -1 when wrong.</param>
+/// <param name="Typed">What was typed, for a typed question.</param>
+public sealed record QuizAnswer(QuizQuestion Question, int ChosenIndex, int Points, TimeSpan Time, string? Typed = null)
 {
     public bool Correct => ChosenIndex == Question.AnswerIndex;
 }
 
 /// <summary>
 /// Runs a quiz. Options are picked fzf-style: type to fuzzy-filter, move the selection,
-/// press Enter. Fast answers earn a bonus and a streak of right answers builds a combo.
+/// press Enter. Typed questions are answered by typing the command and pressing Enter.
+/// Fast answers earn a bonus and a streak of right answers builds a combo.
+/// With a time limit the quiz ends when the time is up, however many questions are left.
 /// </summary>
 public sealed class QuizSession
 {
@@ -32,9 +36,13 @@ public sealed class QuizSession
 
     private readonly TimeProvider _time;
     private readonly List<QuizAnswer> _answers = [];
+    private readonly long _started;
     private long _questionStarted;
 
-    public QuizSession(IReadOnlyList<QuizQuestion> questions, TimeProvider? time = null)
+    public QuizSession(
+        IReadOnlyList<QuizQuestion> questions,
+        TimeProvider? time = null,
+        TimeSpan? timeLimit = null)
     {
         if (questions.Count == 0)
         {
@@ -43,8 +51,17 @@ public sealed class QuizSession
 
         Questions = questions;
         _time = time ?? TimeProvider.System;
+        TimeLimit = timeLimit;
+        _started = _time.GetTimestamp();
         StartQuestion();
     }
+
+    /// <summary>How long a time attack lasts, or null for a quiz that runs through every question.</summary>
+    public TimeSpan? TimeLimit { get; }
+
+    public TimeSpan? Remaining => TimeLimit is { } limit
+        ? limit - _time.GetElapsedTime(_started) is var left && left > TimeSpan.Zero ? left : TimeSpan.Zero
+        : null;
 
     public IReadOnlyList<QuizQuestion> Questions { get; }
     public int Index { get; private set; }
@@ -62,6 +79,18 @@ public sealed class QuizSession
     public IReadOnlyList<QuizAnswer> Answers => _answers;
     public QuizAnswer? LastAnswer => _answers.Count > 0 ? _answers[^1] : null;
     public int CorrectCount => _answers.Count(a => a.Correct);
+
+    /// <summary>How many questions the score is out of: all of them, or in a time attack the ones answered.</summary>
+    public int Total => TimeLimit is null ? Questions.Count : _answers.Count;
+
+    /// <summary>Ends a time attack once the time is up. Call it regularly while the quiz runs.</summary>
+    public void Tick()
+    {
+        if (Phase != QuizPhase.Finished && Remaining == TimeSpan.Zero)
+        {
+            Phase = QuizPhase.Finished;
+        }
+    }
 
     /// <summary>Score multiplier for the next right answer: x1, x1.5, x2, x2.5, x3.</summary>
     public double Multiplier => 1 + Math.Min(Streak, MaxComboLevel) * 0.5;
@@ -116,6 +145,13 @@ public sealed class QuizSession
     {
         switch (Phase)
         {
+            case QuizPhase.Answering when Current.IsTyped:
+                if (Query.Trim().Length > 0)
+                {
+                    Answer(QuizGenerator.IsTypedCorrect(Query, Current) ? Current.AnswerIndex : -1, Query.Trim());
+                }
+
+                break;
             case QuizPhase.Answering when Visible.Count > 0:
                 Answer(Visible[Selected].Index);
                 break;
@@ -125,7 +161,7 @@ public sealed class QuizSession
         }
     }
 
-    private void Answer(int chosen)
+    private void Answer(int chosen, string? typed = null)
     {
         var elapsed = _time.GetElapsedTime(_questionStarted);
         var points = 0;
@@ -142,13 +178,13 @@ public sealed class QuizSession
             Streak = 0;
         }
 
-        _answers.Add(new QuizAnswer(Current, chosen, points, elapsed));
+        _answers.Add(new QuizAnswer(Current, chosen, points, elapsed, typed));
         Phase = QuizPhase.Revealed;
     }
 
     private void Next()
     {
-        if (Index == Questions.Count - 1)
+        if (Index == Questions.Count - 1 || Remaining == TimeSpan.Zero)
         {
             Phase = QuizPhase.Finished;
             return;
