@@ -42,4 +42,13 @@ public static partial class LinqLibrary
         L("var ids = numbers.Cast<long>();", "Cast every element to another type; throws on elements that do not fit", Medium),
         L("var indexed = words.Index();", "Pair each element with its index, as (Index, Item) tuples (.NET 9 and later)", Medium),
     ];
+
+    private static readonly CommandEntry[] QuerySyntax =
+    [
+        L("var evens = from n in numbers where n % 2 == 0 select n;", "Query syntax: the same as numbers.Where(n => n % 2 == 0)", Medium),
+        L("var names = from p in people orderby p.Name select p.Name;", "Query syntax with orderby: sorted names", Medium),
+        L("var groups = from p in people group p by p.City;", "Query syntax: group by a key, same as GroupBy", Medium),
+        L("var report = from o in orders join p in people on o.PersonId equals p.Id select new { p.Name, o.Total };", "Query syntax join: note equals, not ==", Hard),
+        L("var adults = from p in people let years = p.Age where years >= 18 select p.Name;", "let stores a value inside a query so you can use it later", Hard),
+    ];
 }
