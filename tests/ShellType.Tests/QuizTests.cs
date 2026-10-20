@@ -32,6 +32,7 @@ public class QuizGeneratorTests
     [InlineData(QuizMode.Errors)]
     [InlineData(QuizMode.Basics)]
     [InlineData(QuizMode.Cisco)]
+    [InlineData(QuizMode.Linq)]
     [InlineData(QuizMode.Claude)]
     [InlineData(QuizMode.ClaudeScenarios)]
     public void Creates_the_requested_number_of_valid_questions(QuizMode mode)

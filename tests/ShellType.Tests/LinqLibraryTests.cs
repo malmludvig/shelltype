@@ -1,5 +1,7 @@
 using ShellType.Data;
+using ShellType.Game;
 using ShellType.Models;
+using ShellType.Quiz;
 
 namespace ShellType.Tests;
 
@@ -62,4 +64,27 @@ public class LinqLibraryTests
         Assert.Equal(names.Count, names.Distinct().Count());
     }
 
+    [Fact]
+    public void Linq_quiz_asks_both_ways_round_with_a_topic()
+    {
+        var questions = QuizGenerator.Create(QuizMode.Linq, 20, new Random(5));
+
+        Assert.Equal(10, questions.Count(q => q.Kind == QuestionKind.WhatDoesItDo));
+        Assert.Equal(10, questions.Count(q => q.Kind == QuestionKind.WhichCommand));
+        Assert.All(questions, q =>
+        {
+            var command = q.Kind == QuestionKind.WhichCommand
+                ? LinqLibrary.Essentials.Single(c => c.Description == q.Prompt)
+                : LinqLibrary.Essentials.Single(c => c.Text == q.Prompt);
+            Assert.Equal(LinqLibrary.Prompt, q.Shell);
+            Assert.Equal(LinqLibrary.GroupOf(command), q.Topic);
+            Assert.Equal(q.Kind == QuestionKind.WhichCommand ? command.Text : command.Description, q.Answer);
+        });
+    }
+
+    [Fact]
+    public void Linq_tests_get_their_own_label()
+    {
+        Assert.Equal("linq time 30", TestModes.Label(TestMode.Time, 30, Platform.Linq));
+    }
 }
