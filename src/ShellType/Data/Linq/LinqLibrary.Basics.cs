@@ -35,4 +35,15 @@ public static partial class LinqLibrary
         L("var latest = orders.OrderByDescending(o => o.Date).ThenByDescending(o => o.Total);", "Newest orders first; on the same date, the biggest first", Hard),
         L("var backwards = words.Reverse();", "Reverse the order of the elements", Easy),
     ];
+
+    private static readonly CommandEntry[] Partitioning =
+    [
+        L("var firstThree = numbers.Take(3);", "Take the first three elements", Easy),
+        L("var rest = numbers.Skip(3);", "Skip the first three and keep the rest", Easy),
+        L("var page = people.Skip(20).Take(10);", "Paging: skip two pages of ten and take the third", Medium),
+        L("var lastTwo = numbers.TakeLast(2);", "Take the last two elements", Easy),
+        L("var leading = numbers.TakeWhile(n => n < 10);", "Take elements until the condition first fails, then stop", Medium),
+        L("var afterHeader = lines.SkipWhile(l => l.StartsWith(\"#\"));", "Skip elements while the condition holds, keep everything after", Hard),
+        L("var batches = numbers.Chunk(3);", "Split into arrays of at most three elements each", Medium),
+    ];
 }
