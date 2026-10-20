@@ -165,7 +165,12 @@ else if (_session is not null)
         {
             // Every essential command exactly once, in a fresh random order.
             _banner = null;
-            var all = config.Platform == Platform.Claude ? ClaudeLibrary.Essentials : CiscoLibrary.Essentials;
+            var all = config.Platform switch
+            {
+                Platform.Claude => ClaudeLibrary.Essentials,
+                Platform.Linq => LinqLibrary.Essentials,
+                _ => CiscoLibrary.Essentials,
+            };
             config = config with { CommandCount = all.Count };
             generator = new ReplaySource(all.OrderBy(_ => Random.Shared.Next()).ToList(), new CommandGenerator(all));
         }
