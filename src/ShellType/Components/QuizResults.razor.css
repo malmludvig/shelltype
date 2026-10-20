@@ -43,6 +43,9 @@
 }
 
 .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
     margin: 2rem 0;
 }
 
@@ -102,6 +105,43 @@ h2 {
 
 .prompt {
     word-break: break-all;
+}
+
+.task {
+    color: var(--text);
+}
+
+/* ---------- right answers per topic ---------- */
+
+.topics {
+    display: grid;
+    grid-template-columns: auto minmax(4rem, 1fr) auto;
+    align-items: center;
+    gap: 0.4rem 1rem;
+    font-size: 0.85rem;
+    margin-bottom: 1.5rem;
+}
+
+.topic {
+    color: var(--sub);
+}
+
+.meter {
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--bg-alt);
+    overflow: hidden;
+}
+
+.meter i {
+    display: block;
+    height: 100%;
+    background: var(--main);
+}
+
+.tally {
+    color: var(--text);
+    text-align: right;
 }
 
 .ps {

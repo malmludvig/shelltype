@@ -40,6 +40,13 @@
     background: var(--bg);
 }
 
+.banner {
+    text-align: center;
+    color: var(--sub);
+    font-size: 0.85rem;
+    margin: 1rem 0 0;
+}
+
 /* ---------- question ---------- */
 
 .quiz {
@@ -162,13 +169,6 @@
     color: var(--sub);
     font-size: 0.8rem;
 }
-
-@keyframes blink {
-    50% {
-        opacity: 0;
-    }
-}
-
 ul {
     list-style: none;
     padding: 0;
@@ -535,4 +535,40 @@ kbd {
         display: block;
         margin-top: 1.5rem;
     }
+}
+
+/* ---------- time attack and typed answers ---------- */
+
+.timer {
+    color: var(--main);
+}
+
+.timer.low {
+    color: var(--error);
+}
+
+.prompt.typed {
+    cursor: text;
+}
+
+.prompt.typed .ps {
+    margin-right: 0.6em;
+}
+
+.prompt.typed .text {
+    white-space: pre;
+}
+
+.prompt.typed .cursor {
+    display: inline-block;
+    width: 0.55em;
+    height: 1.1em;
+    vertical-align: text-bottom;
+    background: var(--caret);
+    animation: blink 1s steps(1) infinite;
+}
+
+.type-hint {
+    color: var(--sub);
+    font-size: 0.85rem;
 }

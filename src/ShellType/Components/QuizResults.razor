@@ -1,4 +1,4 @@
-@* End-of-quiz summary: score, accuracy, best combo and a review of every question. *@
+@* End-of-quiz summary: score, accuracy, best combo, a per-topic breakdown and a review of every question. *@
 @using ShellType.Quiz
 
 <section class="results">
@@ -9,7 +9,7 @@
         </div>
         <div class="stat big">
             <div class="label">correct</div>
-            <div class="value">@Session.CorrectCount/@Session.Questions.Count</div>
+            <div class="value">@Session.CorrectCount/@Session.Total</div>
         </div>
         <div class="stat big">
             <div class="label">best combo</div>
@@ -28,7 +28,24 @@
 
     <div class="actions">
         <button @onclick="OnRestart">play again → <kbd>enter</kbd></button>
+        @if (Session.Answers.Any(a => !a.Correct))
+        {
+            <button @onclick="OnRetryMissed">retry the @Session.Answers.Count(a => !a.Correct) you missed</button>
+        }
     </div>
+
+    @if (Topics.Count > 1)
+    {
+        <h2>by topic</h2>
+        <div class="topics">
+            @foreach (var (topic, right, total) in Topics)
+            {
+                <span class="topic">@topic</span>
+                <span class="meter"><i style="width:@(100 * right / total)%"></i></span>
+                <span class="tally">@right/@total</span>
+            }
+        </div>
+    }
 
     <h2>review</h2>
     <ol class="review">
@@ -38,7 +55,14 @@
             <li class="@(answer.Correct ? "ok" : "bad")">
                 <span class="mark">@(answer.Correct ? "✓" : "✗")</span>
                 <div>
-                    <div class="prompt"><span class="ps">~$</span> @q.Prompt</div>
+                    @if (q.AsksForCommand)
+                    {
+                        <div class="task">@q.Prompt</div>
+                    }
+                    else
+                    {
+                        <div class="prompt"><span class="ps">@q.Shell</span> @q.Prompt</div>
+                    }
                     @if (q.ErrorOutput is not null)
                     {
                         <div class="error">@q.ErrorOutput</div>
@@ -46,7 +70,7 @@
                     <div class="answer">→ @q.Answer</div>
                     @if (!answer.Correct)
                     {
-                        <div class="yours">you: @q.Options[answer.ChosenIndex]</div>
+                        <div class="yours">you: @(answer.Typed ?? q.Options[answer.ChosenIndex])</div>
                     }
                 </div>
                 <span class="points">@(answer.Points > 0 ? $"+{answer.Points}" : "")</span>
@@ -67,4 +91,16 @@
 
     [Parameter]
     public EventCallback OnRestart { get; set; }
+
+    [Parameter]
+    public EventCallback OnRetryMissed { get; set; }
+
+    /// <summary>Right answers per topic, for quizzes whose questions span several, like the Claude Code one.</summary>
+    private IReadOnlyList<(string Topic, int Right, int Total)> Topics =>
+        Session.Answers
+            .Where(a => a.Question.Topic is not null)
+            .GroupBy(a => a.Question.Topic!)
+            .Select(g => (g.Key, g.Count(a => a.Correct), g.Count()))
+            .OrderBy(t => t.Item1)
+            .ToList();
 }

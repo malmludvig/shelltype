@@ -3,6 +3,7 @@
 @implements IAsyncDisposable
 @inject IJSRuntime JS
 @inject BrowserStorage Storage
+@inject ClaudeProgressService ClaudeProgress
 @inject TimeProvider Time
 
 <PageTitle>quiz · shelltype</PageTitle>
@@ -16,26 +17,47 @@
         <button class="@Active(_mode == QuizMode.Errors)" @onclick="() => Restart(QuizMode.Errors)">fix the error</button>
         <button class="@Active(_mode == QuizMode.Cisco)" title="the 50 most common cisco ios commands"
                 @onclick="() => Restart(QuizMode.Cisco)">cisco ios</button>
+        <button class="@Active(_mode == QuizMode.Claude)" title="claude code commands, shortcuts and concepts, both ways round"
+                @onclick="() => Restart(QuizMode.Claude)">claude code</button>
+        <button class="@Active(_mode == QuizMode.ClaudeScenarios)" title="real situations: which claude code command solves it?"
+                @onclick="() => Restart(QuizMode.ClaudeScenarios)">claude scenarios</button>
+        <button class="@Active(_mode == QuizMode.ClaudeTyped)" title="type the claude code command from memory"
+                @onclick="() => Restart(QuizMode.ClaudeTyped)">type claude</button>
     </div>
     <span class="divider"></span>
     <div class="group">
         @foreach (var length in QuizGenerator.LengthOptions)
         {
-            <button class="@Active(_length == length)" @onclick="() => Restart(length: length)">@length</button>
+            <button class="@Active(!_timed && _length == length)" @onclick="() => Restart(length: length, timed: false)">@length</button>
         }
+        <button class="@Active(_timed)" title="answer as many as you can in 60 seconds"
+                @onclick="() => Restart(timed: true)">60s</button>
     </div>
 </div>
 
+@if (_banner is not null)
+{
+    <p class="banner">@_banner</p>
+}
+
 @if (_session is { Phase: QuizPhase.Finished })
 {
-    <QuizResults Session="_session" HighScore="_highScore" IsHighScore="_isHighScore" OnRestart="() => Restart()" />
+    <QuizResults Session="_session" HighScore="_highScore" IsHighScore="_isHighScore"
+                 OnRestart="() => Restart()" OnRetryMissed="RetryMissed" />
 }
 else if (_session is not null)
 {
     var q = _session.Current;
     <section class="quiz">
         <div class="status">
-            <span class="progress">@(_session.Index + 1)/@_session.Questions.Count</span>
+            @if (_session.Remaining is { } left)
+            {
+                <span class="progress timer @(left.TotalSeconds <= 10 ? "low" : "")">@Math.Ceiling(left.TotalSeconds)s</span>
+            }
+            else
+            {
+                <span class="progress">@(_session.Index + 1)/@_session.Questions.Count</span>
+            }
             <span class="score" @key="_session.Score">@_session.Score</span>
             @if (_session.Streak > 0)
             {
@@ -47,7 +69,22 @@ else if (_session is not null)
         </div>
 
         <div class="kind">@KindLabel(q.Kind)</div>
-        @if (q.Kind == QuestionKind.WhichCommand)
+        @if (q.IsTyped)
+        {
+            <div class="task">@q.Prompt</div>
+            <div class="prompt typed" @onclick="FocusInput">
+                <span class="ps">@q.Shell</span>
+                @if (_session.Phase == QuizPhase.Answering)
+                {
+                    <span class="text">@_session.Query</span><span class="cursor"></span>
+                }
+                else
+                {
+                    <span class="text">@_session.LastAnswer?.Typed</span>
+                }
+            </div>
+        }
+        else if (q.AsksForCommand)
         {
             <div class="task">@q.Prompt</div>
             <div class="prompt"><span class="ps">@q.Shell</span> <span class="blank">?</span></div>
@@ -61,7 +98,11 @@ else if (_session is not null)
             <div class="error-output">@q.ErrorOutput</div>
         }
 
-        @if (_session.Phase == QuizPhase.Answering)
+        @if (_session.Phase == QuizPhase.Answering && q.IsTyped)
+        {
+            <p class="type-hint">type the command and press <kbd>enter</kbd></p>
+        }
+        else if (_session.Phase == QuizPhase.Answering)
         {
             <div class="picker">
                 <div class="query">
@@ -96,6 +137,18 @@ else if (_session is not null)
         else if (_session.LastAnswer is { } answer)
         {
             <div class="result">
+                @if (q.IsTyped)
+                {
+                    <ul class="reveal">
+                        <li class="option right">
+                            <span class="pointer">✓</span>
+                            <span class="letter">✓</span>
+                            <span class="text">@q.Answer</span>
+                        </li>
+                    </ul>
+                }
+                else
+                {
                 <ul class="reveal">
                     @for (var i = 0; i < q.Options.Count; i++)
                     {
@@ -107,6 +160,7 @@ else if (_session is not null)
                         </li>
                     }
                 </ul>
+                }
                 <div class="feedback @(answer.Correct ? "good" : "bad")">
                     <div class="verdict @(answer.Correct ? "good" : "bad")">
                         @if (answer.Correct)
@@ -130,13 +184,22 @@ else if (_session is not null)
         }
     </section>
 
-    @if (_session.Phase == QuizPhase.Answering)
+    @if (_session.Phase == QuizPhase.Answering && !q.IsTyped)
     {
         <p class="hint touch">tap an answer</p>
     }
     <p class="hint keys">
-        type to filter · <kbd>↑</kbd><kbd>↓</kbd> or <kbd>ctrl</kbd>+<kbd>j</kbd>/<kbd>k</kbd> to move ·
-        <kbd>enter</kbd> to answer · <kbd>esc</kbd> to clear · <kbd>tab</kbd> new quiz
+        @if (q.IsTyped)
+        {
+            <span>type the command · <kbd>enter</kbd> to answer · <kbd>esc</kbd> to clear · <kbd>tab</kbd> new quiz</span>
+        }
+        else
+        {
+            <span>
+                type to filter · <kbd>↑</kbd><kbd>↓</kbd> or <kbd>ctrl</kbd>+<kbd>j</kbd>/<kbd>k</kbd> to move ·
+                <kbd>enter</kbd> to answer · <kbd>esc</kbd> to clear · <kbd>tab</kbd> new quiz
+            </span>
+        }
     </p>
 }
 
@@ -152,13 +215,58 @@ else if (_session is not null)
     private bool _isHighScore;
     private bool _saved;
     private bool _scrollToFeedback;
+    private bool _timed;
+    private bool _retry;
+    private int _recorded;
+    private string? _banner;
+    private Timer? _timer;
 
-    private string ScoreKey => $"{_mode}-{_length}";
+    /// <summary><c>?missed=claude</c> starts a quiz over the Claude Code questions you got wrong before.</summary>
+    [SupplyParameterFromQuery]
+    public string? Missed { get; set; }
+
+    /// <summary><c>?mode=claude</c> opens the quiz on that mode.</summary>
+    [SupplyParameterFromQuery(Name = "mode")]
+    public string? StartMode { get; set; }
+
+    private string ScoreKey => _timed ? $"{_mode}-60s" : $"{_mode}-{_length}";
+
+    private bool IsClaude => _mode is QuizMode.Claude or QuizMode.ClaudeScenarios or QuizMode.ClaudeTyped;
 
     protected override async Task OnInitializedAsync()
     {
         _highScores = await Storage.GetAsync<Dictionary<string, int>>(HighScoreKey) ?? [];
-        Restart();
+        if (Enum.TryParse<QuizMode>(StartMode, ignoreCase: true, out var startMode))
+        {
+            _mode = startMode;
+        }
+
+        if (Missed == "claude" && await MissedClaudeQuestionsAsync() is { Count: > 0 } missed)
+        {
+            _mode = QuizMode.Claude;
+            Start(missed, retry: true);
+            _banner = $"practicing the {missed.Count} claude code questions you missed";
+            return;
+        }
+
+        if (Missed == "claude")
+        {
+            _mode = QuizMode.Claude;
+            _banner = "nothing missed yet, here is a regular claude code quiz";
+        }
+
+        Restart(_mode);
+    }
+
+    private async Task<IReadOnlyList<QuizQuestion>> MissedClaudeQuestionsAsync()
+    {
+        var progress = await ClaudeProgress.GetAsync();
+        return progress.Missed
+            .Select(ClaudeLibrary.Find)
+            .OfType<ClaudeCommand>()
+            .OrderBy(_ => Random.Shared.Next())
+            .Select((c, i) => i % 2 == 0 ? QuizGenerator.FromClaude(c, Random.Shared) : QuizGenerator.WhichClaude(c, Random.Shared))
+            .ToList();
     }
 
     protected override async Task OnAfterRenderAsync(bool firstRender)
@@ -186,6 +294,7 @@ else if (_session is not null)
 
         if (key == "Tab" || (key == "Enter" && _session.Phase == QuizPhase.Finished))
         {
+            _banner = null;
             Restart();
             StateHasChanged();
             return;
@@ -255,20 +364,32 @@ else if (_session is not null)
         QuestionKind.WhatDoesItDo => "# what does this do?",
         QuestionKind.FixTheError => "# how do you fix this?",
         QuestionKind.WhichCommand => "# which command does this?",
+        QuestionKind.Scenario => "# what do you use?",
+        QuestionKind.TypeIt => "# type the command that does this",
         _ => "# what is this command for?",
     };
+
+    private async Task FocusInput() => await JS.InvokeVoidAsync("shellType.ui.focusInput");
 
     private static char Letter(int index) => (char)('A' + index);
 
     /// <summary>When the quiz has just ended, compare against and update the stored high score.</summary>
     private async Task CheckFinishedAsync()
     {
+        await RecordClaudeAnswersAsync();
         if (_session is not { Phase: QuizPhase.Finished } || _saved)
         {
             return;
         }
 
         _saved = true;
+        StopTimer();
+        if (_retry)
+        {
+            // A retry of missed questions is practice, not a run for the high score.
+            return;
+        }
+
         _highScore = _highScores.TryGetValue(ScoreKey, out var previous) ? previous : null;
         _isHighScore = _session.Score > previous;
         if (_isHighScore)
@@ -278,20 +399,91 @@ else if (_session is not null)
         }
     }
 
-    private void Restart(QuizMode? mode = null, int? length = null)
+    /// <summary>Claude Code answers count as practice: misses are kept for the missed quiz and the day streak grows.</summary>
+    private async Task RecordClaudeAnswersAsync()
+    {
+        if (_session is null || !IsClaude || _recorded >= _session.Answers.Count)
+        {
+            return;
+        }
+
+        var fresh = _session.Answers.Skip(_recorded).ToList();
+        _recorded = _session.Answers.Count;
+        await ClaudeProgress.PracticeAsync(p =>
+        {
+            foreach (var answer in fresh)
+            {
+                // Scenario and which-command answers are keys; what-does-it-do questions show the name.
+                var command = ClaudeLibrary.Find(answer.Question.Answer)
+                    ?? ClaudeLibrary.All.FirstOrDefault(c => c.Name == answer.Question.Prompt);
+                if (command is not null)
+                {
+                    p.RecordAnswer(command.Key, answer.Correct);
+                }
+            }
+        });
+    }
+
+    private void Restart(QuizMode? mode = null, int? length = null, bool? timed = null)
     {
         _mode = mode ?? _mode;
         _length = length ?? _length;
-        _session = new QuizSession(QuizGenerator.Create(_mode, _length), Time);
+        _timed = timed ?? _timed;
+        if (mode is not null || length is not null || timed is not null)
+        {
+            _banner = null;
+        }
+
+        Start(QuizGenerator.Create(_mode, _timed ? QuizGenerator.TimeAttackQuestions : _length), retry: false);
+    }
+
+    private void RetryMissed()
+    {
+        if (_session is null)
+        {
+            return;
+        }
+
+        var missed = _session.Answers.Where(a => !a.Correct).Select(a => a.Question).OrderBy(_ => Random.Shared.Next()).ToList();
+        if (missed.Count > 0)
+        {
+            _banner = $"retrying the {missed.Count} you missed";
+            Start(missed, retry: true);
+        }
+    }
+
+    private void Start(IReadOnlyList<QuizQuestion> questions, bool retry)
+    {
+        StopTimer();
+        var timed = _timed && !retry;
+        _session = new QuizSession(questions, Time, timed ? QuizGenerator.TimeAttack : null);
+        _retry = retry;
+        _recorded = 0;
         _saved = false;
         _isHighScore = false;
         _highScore = null;
+        if (timed)
+        {
+            _timer = new Timer(_ => InvokeAsync(async () =>
+            {
+                _session?.Tick();
+                await CheckFinishedAsync();
+                StateHasChanged();
+            }), null, TimeSpan.FromMilliseconds(250), TimeSpan.FromMilliseconds(250));
+        }
+    }
+
+    private void StopTimer()
+    {
+        _timer?.Dispose();
+        _timer = null;
     }
 
     private static string Active(bool on) => on ? "active" : "";
 
     public async ValueTask DisposeAsync()
     {
+        StopTimer();
         try
         {
             await JS.InvokeVoidAsync("shellType.keyboard.unregister");
