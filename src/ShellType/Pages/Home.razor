@@ -37,6 +37,12 @@ else if (_session is not null)
             </div>
         }
 
+        @if (_session.Config.Platform == Platform.Linq)
+        {
+            @* Every statement works on the same few collections, so say what they are. *@
+            <div class="linq-data"><span class="name">data</span> <span class="goal">// @LinqLibrary.Data</span></div>
+        }
+
         <LiveStats Session="_session" ShowWpm="Settings.ShowLiveWpm" />
         <TerminalView Session="_session" Settings="Settings" />
 

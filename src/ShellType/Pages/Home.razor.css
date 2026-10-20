@@ -46,6 +46,17 @@
     color: var(--sub);
 }
 
+/* The collections the LINQ statements work on: quieter than an operation's goal. */
+.linq-data {
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    color: var(--sub);
+}
+
+.linq-data .name {
+    color: var(--main);
+}
+
 .hint {
     text-align: center;
     color: var(--sub);
