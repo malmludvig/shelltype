@@ -62,6 +62,38 @@ public static partial class LinqLibrary
             ("var named = recent.Select(o => new { byId[o.PersonId].Name, o.Total });", "Look up each order's person"),
             ("var sorted = named.OrderBy(n => n.Name);", "Group visually by sorting on name"),
             ("foreach (var n in sorted) Console.WriteLine($\"{n.Name} {n.Total}\");", "Print every line")),
+
+        // ---- long: 8 to 10 steps ----
+        Op("best customers", "find the five customers who spent the most this year.",
+            ("var thisYear = orders.Where(o => o.Date.Year == 2026);", "Only count this year's orders"),
+            ("var perPerson = thisYear.GroupBy(o => o.PersonId);", "One group of orders per customer"),
+            ("var totals = perPerson.Select(g => new { PersonId = g.Key, Spent = g.Sum(o => o.Total) });", "Add up each customer's orders"),
+            ("var ranked = totals.OrderByDescending(t => t.Spent);", "Biggest spender first"),
+            ("var top = ranked.Take(5);", "Keep the top five"),
+            ("var named = top.Join(people, t => t.PersonId, p => p.Id, (t, p) => new { p.Name, t.Spent });", "Join in the names"),
+            ("var result = named.ToList();", "Run the whole query once"),
+            ("foreach (var r in result) Console.WriteLine($\"{r.Name}: {r.Spent:C}\");", "Print each name and amount as currency")),
+
+        Op("age report", "summarize the ages: count, youngest, oldest, average and the adults per city.",
+            ("var count = people.Count;", "A List has a Count property; no need for Count()"),
+            ("var youngest = people.Min(p => p.Age);", "The lowest age"),
+            ("var oldest = people.MaxBy(p => p.Age);", "The oldest person, not just the age"),
+            ("var average = people.Average(p => p.Age);", "The mean age, as a double"),
+            ("var adults = people.Where(p => p.Age >= 18);", "Only the adults from here on"),
+            ("var perCity = adults.CountBy(p => p.City);", "Adults per city, as key/value pairs"),
+            ("Console.WriteLine($\"{count} people, {youngest}-{oldest!.Age}, avg {average:F1}\");", "Print the summary line"),
+            ("foreach (var (city, n) in perCity) Console.WriteLine($\"{city}: {n}\");", "Then one line per city")),
+
+        Op("compare two lists", "see what changed between last week's numbers and this week's.",
+            ("var added = numbers.Except(other);", "In this week's list but not last week's"),
+            ("var removed = other.Except(numbers);", "In last week's list but not this week's"),
+            ("var kept = numbers.Intersect(other);", "In both lists"),
+            ("var everything = numbers.Union(other);", "Every number in either list, once"),
+            ("var changed = added.Any() || removed.Any();", "Did anything change at all?"),
+            ("if (!changed) return;", "Nothing to report"),
+            ("Console.WriteLine($\"+{added.Count()} -{removed.Count()}\");", "How many were added and removed"),
+            ("Console.WriteLine(string.Join(\" \", kept.Order()));", "Print the ones that stayed, sorted"),
+            ("Console.WriteLine(everything.Count());", "And the total number of distinct values")),
     ];
 
     private static Operation Op(string name, string goal, params (string Text, string Description)[] steps) =>
