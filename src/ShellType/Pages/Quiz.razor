@@ -17,6 +17,8 @@
         <button class="@Active(_mode == QuizMode.Errors)" @onclick="() => Restart(QuizMode.Errors)">fix the error</button>
         <button class="@Active(_mode == QuizMode.Cisco)" title="the 50 most common cisco ios commands"
                 @onclick="() => Restart(QuizMode.Cisco)">cisco ios</button>
+        <button class="@Active(_mode == QuizMode.Linq)" title="simple c# linq statements, both ways round"
+                @onclick="() => Restart(QuizMode.Linq)">c# linq</button>
     </div>
     <span class="divider"></span>
     @* Its own group, so on a phone the claude modes get a row of their own instead of hiding off screen. *@
