@@ -16,6 +16,9 @@ public enum QuizMode
     /// <summary>Claude Code commands, shortcuts and concepts, asked both ways round.</summary>
     Claude,
 
+    /// <summary>Simple C# LINQ statements, asked both ways round.</summary>
+    Linq,
+
     /// <summary>Real situations, answered with the Claude Code command that solves them.</summary>
     ClaudeScenarios,
 
@@ -161,6 +164,51 @@ public static class QuizGenerator
     private static IEnumerable<CommandEntry> CiscoDistractors(CommandEntry command, Random random) =>
         Shuffle(CiscoLibrary.Essentials.Where(c => c.Prompt == command.Prompt), random)
             .Concat(Shuffle(CiscoLibrary.Essentials, random))
+            .Where(c => c != command);
+
+    /// <summary>Shown a LINQ statement, pick what it does.</summary>
+    public static QuizQuestion FromLinq(CommandEntry command, Random random)
+    {
+        var group = LinqLibrary.GroupOf(command);
+        var options = Shuffle(LinqDistractors(command, group, random).Select(c => c.Description)
+            .Where(d => d != command.Description)
+            .Distinct()
+            .Take(OptionCount - 1)
+            .Append(command.Description), random);
+        return new QuizQuestion(
+            QuestionKind.WhatDoesItDo,
+            command.Text,
+            null,
+            options,
+            IndexOf(options, command.Description),
+            $"{command.Text} uses one of the {group} operators.",
+            command.Prompt,
+            group);
+    }
+
+    /// <summary>Shown what a LINQ statement does, pick the statement.</summary>
+    public static QuizQuestion WhichLinq(CommandEntry command, Random random)
+    {
+        var group = LinqLibrary.GroupOf(command);
+        var options = Shuffle(LinqDistractors(command, group, random).Select(c => c.Text)
+            .Distinct()
+            .Take(OptionCount - 1)
+            .Append(command.Text), random);
+        return new QuizQuestion(
+            QuestionKind.WhichCommand,
+            command.Description,
+            null,
+            options,
+            IndexOf(options, command.Text),
+            $"{command.Text} is one of the {group} operators.",
+            command.Prompt,
+            group);
+    }
+
+    // Statements from the same group, like OrderBy and ThenBy, are the easiest to mix up.
+    private static IEnumerable<CommandEntry> LinqDistractors(CommandEntry command, string group, Random random) =>
+        Shuffle(LinqLibrary.Essentials.Where(c => LinqLibrary.GroupOf(c) == group), random)
+            .Concat(Shuffle(LinqLibrary.Essentials, random))
             .Where(c => c != command);
 
     /// <summary>Shown a Claude Code command, shortcut or concept, pick what it does.</summary>
