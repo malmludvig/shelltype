@@ -30,4 +30,16 @@ public static partial class LinqLibrary
         L("var withOrders = people.GroupJoin(orders, p => p.Id, o => o.PersonId, (p, os) => new { p.Name, Count = os.Count() });", "Group join: every person with the orders that belong to them", Hard),
         L("var labelled = numbers.Zip(words, (n, w) => $\"{n}: {w}\");", "Combine two sequences pairwise with your own function", Medium),
     ];
+
+    private static readonly CommandEntry[] Conversion =
+    [
+        L("var list = numbers.ToList();", "Run the query now and store the result in a List<T>", Easy),
+        L("var array = words.ToArray();", "Run the query now and store the result in an array", Easy),
+        L("var byId = people.ToDictionary(p => p.Id);", "Build a dictionary keyed by a property; duplicate keys throw", Medium),
+        L("var ages = people.ToDictionary(p => p.Name, p => p.Age);", "Build a dictionary with your own key and value", Medium),
+        L("var cities = people.Select(p => p.City).ToHashSet();", "Collect into a HashSet for fast lookups without duplicates", Medium),
+        L("var csv = string.Join(\",\", numbers);", "Not LINQ itself, but how you join a sequence into one string", Easy),
+        L("var ids = numbers.Cast<long>();", "Cast every element to another type; throws on elements that do not fit", Medium),
+        L("var indexed = words.Index();", "Pair each element with its index, as (Index, Item) tuples (.NET 9 and later)", Medium),
+    ];
 }
