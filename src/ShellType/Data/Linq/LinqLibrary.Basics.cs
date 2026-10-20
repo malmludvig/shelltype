@@ -25,4 +25,14 @@ public static partial class LinqLibrary
         L("var letters = words.SelectMany(w => w.ToCharArray());", "Flatten: every word becomes its characters, all in one sequence", Medium),
         L("var pairs = numbers.Zip(words);", "Pair up two sequences element by element into tuples", Medium),
     ];
+
+    private static readonly CommandEntry[] Ordering =
+    [
+        L("var sorted = numbers.Order();", "Sort the numbers in ascending order (.NET 7 and later)", Easy),
+        L("var byAge = people.OrderBy(p => p.Age);", "Sort by a key, smallest first", Easy),
+        L("var oldestFirst = people.OrderByDescending(p => p.Age);", "Sort by a key, largest first", Easy),
+        L("var byCity = people.OrderBy(p => p.City).ThenBy(p => p.Name);", "Sort by city, and by name within the same city", Medium),
+        L("var latest = orders.OrderByDescending(o => o.Date).ThenByDescending(o => o.Total);", "Newest orders first; on the same date, the biggest first", Hard),
+        L("var backwards = words.Reverse();", "Reverse the order of the elements", Easy),
+    ];
 }
