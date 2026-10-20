@@ -1,0 +1,420 @@
+@page "/claude"
+@implements IAsyncDisposable
+@inject ClaudeProgressService ProgressService
+@inject SettingsService SettingsService
+@inject NavigationManager Nav
+@inject IJSRuntime JS
+
+<PageTitle>claude code · shelltype</PageTitle>
+
+<section class="claude">
+    <header>
+        <h1><span class="accent">&gt;</span> claude code</h1>
+        <p class="muted">
+            Slash commands, shortcuts, the claude cli and its flags, permission modes and the files behind them.
+            Mark what you know, drill the rest with flashcards, then type them or take the quiz.
+        </p>
+
+        @if (_progress is not null)
+        {
+            <div class="summary">
+                <div class="progress" title="entries you have marked as known">
+                    <div class="bar"><div class="fill" style="width: @(KnownPercent)%"></div></div>
+                    <span>@KnownCount/@ClaudeLibrary.All.Count known</span>
+                </div>
+                <span class="streak" title="days in a row you have practiced claude code">
+                    @Streak @(Streak == 1 ? "day" : "days") in a row
+                </span>
+            </div>
+
+            <div class="practice">
+                <button @onclick="PracticeTypingAsync">type them →</button>
+                <a href="quiz?mode=claude">take the quiz →</a>
+                @if (_progress.Missed.Count > 0)
+                {
+                    <a href="quiz?missed=claude">quiz the @_progress.Missed.Count you missed →</a>
+                }
+            </div>
+        }
+    </header>
+
+    <nav class="views">
+        <button class="@Active(_view == View.Sheet)" @onclick="() => Show(View.Sheet)">cheat sheet</button>
+        <button class="@Active(_view == View.Cards)" @onclick="() => Show(View.Cards)">flashcards</button>
+        <button class="@Active(_view == View.Progress)" @onclick="() => Show(View.Progress)">progress</button>
+    </nav>
+
+    @if (_progress is null)
+    {
+        <p class="muted">loading...</p>
+    }
+    else if (_view == View.Sheet)
+    {
+        <div class="daily">
+            <span class="muted">command of the day</span>
+            <code>@Daily.Name</code>
+            <span>@Daily.Description</span>
+        </div>
+
+        <input class="search" type="search" placeholder="search, e.g. undo, context or image..."
+               @bind="_query" @bind:event="oninput" aria-label="search claude code commands" />
+
+        <div class="chips">
+            <button class="chip @Active(_kind is null)" @onclick="() => _kind = null">
+                all <span class="count">@KnownCount/@ClaudeLibrary.All.Count</span>
+            </button>
+            @foreach (var kind in Enum.GetValues<ClaudeKind>())
+            {
+                var all = ClaudeLibrary.All.Count(c => c.Kind == kind);
+                var known = ClaudeLibrary.All.Count(c => c.Kind == kind && _progress.IsKnown(c.Key));
+                <button class="chip @Active(_kind == kind) @(known == all ? "done" : "")" @onclick="() => _kind = kind">
+                    @ClaudeKinds.Label(kind) <span class="count">@known/@all</span>
+                </button>
+            }
+        </div>
+
+        <div class="options">
+            <label><input type="checkbox" @bind="_hideKnown" /> hide what I know</label>
+            <label><input type="checkbox" @bind="_compact" /> compact</label>
+        </div>
+
+        @foreach (var group in Groups)
+        {
+            <section class="kind">
+                <h2>@ClaudeKinds.Label(group.Key) <span class="muted">(@group.Count())</span></h2>
+                <dl class="@(_compact ? "compact" : "")">
+                    @foreach (var command in group)
+                    {
+                        var isKnown = _progress.IsKnown(command.Key);
+                        <div class="entry @(isKnown ? "known" : "")">
+                            <dt>
+                                <code>@command.Name</code>
+                                @if (command.Note is not null)
+                                {
+                                    <span class="note">@command.Note</span>
+                                }
+                            </dt>
+                            <dd>
+                                <span>@command.Description</span>
+                                @if (!_compact && command.Example is not null)
+                                {
+                                    <span class="example"><span class="ps">@command.Prompt</span> @command.Example</span>
+                                }
+                            </dd>
+                            <button class="know @(isKnown ? "on" : "")" title="@(isKnown ? "mark as not known" : "mark as known")"
+                                    aria-pressed="@isKnown" @onclick="() => ToggleKnownAsync(command)">
+                                @(isKnown ? "✓ known" : "know it")
+                            </button>
+                        </div>
+                    }
+                </dl>
+            </section>
+        }
+
+        @if (!Groups.Any())
+        {
+            <p class="muted">nothing matches "@_query"</p>
+        }
+    }
+    else if (_view == View.Cards)
+    {
+        <div class="chips">
+            <button class="chip @Active(_cardKind is null)" @onclick="() => BuildDeck(null)">all</button>
+            @foreach (var kind in Enum.GetValues<ClaudeKind>())
+            {
+                <button class="chip @Active(_cardKind == kind)" @onclick="() => BuildDeck(kind)">@ClaudeKinds.Label(kind)</button>
+            }
+        </div>
+
+        @if (_deck is { IsEmpty: false })
+        {
+            var card = _deck.Current;
+            <p class="card-meta muted">
+                @ClaudeKinds.Label(card.Kind) · card @(_deck.Index + 1) of @_deck.Cards.Count ·
+                box @_progress.BoxOf(card.Key)/@ClaudeProgress.MaxBox
+            </p>
+            <div class="card @(_deck.Flipped ? "back" : "")" @onclick="Flip" role="button"
+                 aria-label="flashcard, click to flip">
+                @if (_deck.Flipped)
+                {
+                    <p class="answer">@card.Description</p>
+                    @if (card.Note is not null)
+                    {
+                        <p class="muted">@card.Note</p>
+                    }
+                    @if (card.Example is not null)
+                    {
+                        <p class="example"><span class="ps">@card.Prompt</span> @card.Example</p>
+                    }
+                }
+                else
+                {
+                    <code class="front">@card.Name</code>
+                    <span class="muted flip-hint">what does it do?</span>
+                }
+            </div>
+            <div class="card-actions">
+                <button @onclick="Previous" title="previous card">←</button>
+                <button class="missed" @onclick="() => RateAsync(false)">didn't know <kbd>1</kbd></button>
+                <button @onclick="Flip">flip <kbd>space</kbd></button>
+                <button class="knew" @onclick="() => RateAsync(true)">knew it <kbd>2</kbd></button>
+                <button @onclick="Next" title="next card">→</button>
+            </div>
+            <p class="hint muted">
+                Cards you know move up a box and come back less often; a card you miss goes back to box 1 and returns
+                in a few cards.
+            </p>
+        }
+    }
+    else
+    {
+        <div class="progress-view">
+            <h2>flashcard boxes</h2>
+            <div class="boxes">
+                @for (var box = 1; box <= ClaudeProgress.MaxBox; box++)
+                {
+                    var inBox = box;
+                    var count = ClaudeLibrary.All.Count(c => _progress.BoxOf(c.Key) == inBox);
+                    <div class="box">
+                        <div class="value">@count</div>
+                        <div class="muted">box @inBox</div>
+                    </div>
+                }
+            </div>
+
+            <h2>move your progress</h2>
+            <p class="muted">
+                Everything is saved in this browser only. Copy it out to keep a backup or to carry it to another
+                browser, and paste it back in there.
+            </p>
+            <div class="buttons">
+                <button @onclick="ExportAsync">copy progress</button>
+                <button @onclick="ImportAsync">import pasted progress</button>
+            </div>
+            <textarea @bind="_transfer" @bind:event="oninput" rows="4" spellcheck="false"
+                      placeholder="paste exported progress here" aria-label="exported progress"></textarea>
+
+            <h2>start over</h2>
+            @if (_confirmReset)
+            {
+                <p>This forgets what you know, your flashcard boxes, missed questions and your day streak.</p>
+                <div class="buttons">
+                    <button class="danger" @onclick="ResetAsync">yes, reset</button>
+                    <button @onclick="() => _confirmReset = false">cancel</button>
+                </div>
+            }
+            else
+            {
+                <div class="buttons">
+                    <button @onclick="() => _confirmReset = true">reset claude code progress</button>
+                </div>
+            }
+        </div>
+    }
+
+    @if (_message is not null)
+    {
+        <p class="message" role="status">@_message</p>
+    }
+</section>
+
+@code {
+    private enum View
+    {
+        Sheet,
+        Cards,
+        Progress,
+    }
+
+    private DotNetObjectReference<Claude>? _self;
+    private ClaudeProgress? _progress;
+    private View _view = View.Sheet;
+    private string _query = "";
+    private ClaudeKind? _kind;
+    private bool _hideKnown;
+    private bool _compact;
+    private ClaudeKind? _cardKind;
+    private FlashcardDeck? _deck;
+    private string _transfer = "";
+    private bool _confirmReset;
+    private string? _message;
+
+    /// <summary><c>?view=cards</c> or <c>?view=progress</c> opens that view.</summary>
+    [SupplyParameterFromQuery(Name = "view")]
+    public string? StartView { get; set; }
+
+    private int KnownCount => _progress is null ? 0 : ClaudeLibrary.All.Count(c => _progress.IsKnown(c.Key));
+
+    private int KnownPercent => KnownCount * 100 / ClaudeLibrary.All.Count;
+
+    private int Streak => _progress?.CurrentStreak(ProgressService.Today) ?? 0;
+
+    /// <summary>The same entry all day for everyone, changing at midnight.</summary>
+    private ClaudeCommand Daily => ClaudeLibrary.All[ProgressService.Today.DayNumber % ClaudeLibrary.All.Count];
+
+    private IEnumerable<IGrouping<ClaudeKind, ClaudeCommand>> Groups =>
+        ClaudeLibrary.All
+            .Where(c => _kind is null || c.Kind == _kind)
+            .Where(c => !_hideKnown || !_progress!.IsKnown(c.Key))
+            .Where(Matches)
+            .GroupBy(c => c.Kind);
+
+    protected override async Task OnInitializedAsync()
+    {
+        _progress = await ProgressService.GetAsync();
+        _view = StartView switch
+        {
+            "cards" => View.Cards,
+            "progress" => View.Progress,
+            _ => View.Sheet,
+        };
+        BuildDeck(null);
+    }
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            _self = DotNetObjectReference.Create(this);
+            await JS.InvokeVoidAsync("shellType.cards.register", _self);
+        }
+    }
+
+    [JSInvokable]
+    public async Task OnCardKey(string action)
+    {
+        if (_view != View.Cards)
+        {
+            return;
+        }
+
+        switch (action)
+        {
+            case "Flip":
+                Flip();
+                break;
+            case "Next":
+                Next();
+                break;
+            case "Previous":
+                Previous();
+                break;
+            case "Missed":
+                await RateAsync(false);
+                break;
+            case "Knew":
+                await RateAsync(true);
+                break;
+        }
+
+        StateHasChanged();
+    }
+
+    private bool Matches(ClaudeCommand command)
+    {
+        if (string.IsNullOrWhiteSpace(_query))
+        {
+            return true;
+        }
+
+        var query = _query.Trim();
+        return new[] { command.Name, command.Description, command.Note, command.Example, command.Keywords }
+            .Concat(command.Aliases)
+            .Any(text => text?.Contains(query, StringComparison.OrdinalIgnoreCase) == true);
+    }
+
+    private void Show(View view)
+    {
+        _view = view;
+        _message = null;
+    }
+
+    private async Task ToggleKnownAsync(ClaudeCommand command)
+    {
+        await ProgressService.UpdateAsync(p => p.SetKnown(command.Key, !p.IsKnown(command.Key)));
+    }
+
+    private void BuildDeck(ClaudeKind? kind)
+    {
+        _cardKind = kind;
+        _deck = new FlashcardDeck(ClaudeLibrary.All.Where(c => kind is null || c.Kind == kind), _progress!);
+    }
+
+    private void Flip() => _deck?.Flip();
+
+    private void Next() => _deck?.Next();
+
+    private void Previous() => _deck?.Previous();
+
+    private async Task RateAsync(bool knew)
+    {
+        if (_deck is { IsEmpty: false } deck)
+        {
+            await ProgressService.PracticeAsync(p => deck.Rate(p, knew));
+        }
+    }
+
+    private async Task PracticeTypingAsync()
+    {
+        await SettingsService.UpdateAsync(s =>
+        {
+            s.Platform = Platform.Claude;
+            if (s.Mode == TestMode.Operations)
+            {
+                s.Mode = TestMode.Commands;
+            }
+        });
+        Nav.NavigateTo("");
+    }
+
+    private async Task ExportAsync()
+    {
+        _transfer = await ProgressService.ExportAsync();
+        var copied = await JS.InvokeAsync<bool>("shellType.ui.copy", _transfer);
+        _message = copied ? "progress copied to the clipboard" : "could not reach the clipboard; copy the text in the box";
+    }
+
+    private async Task ImportAsync()
+    {
+        if (string.IsNullOrWhiteSpace(_transfer))
+        {
+            _message = "paste exported progress in the box first";
+            return;
+        }
+
+        if (!await ProgressService.ImportAsync(_transfer))
+        {
+            _message = "that is not exported progress; paste exactly what you copied";
+            return;
+        }
+
+        _progress = await ProgressService.GetAsync();
+        _transfer = "";
+        BuildDeck(_cardKind);
+        _message = "progress imported";
+    }
+
+    private async Task ResetAsync()
+    {
+        await ProgressService.ResetAsync();
+        _progress = await ProgressService.GetAsync();
+        _confirmReset = false;
+        BuildDeck(_cardKind);
+        _message = "claude code progress reset";
+    }
+
+    private static string Active(bool on) => on ? "active" : "";
+
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await JS.InvokeVoidAsync("shellType.cards.unregister");
+        }
+        catch (JSDisconnectedException)
+        {
+        }
+
+        _self?.Dispose();
+    }
+}

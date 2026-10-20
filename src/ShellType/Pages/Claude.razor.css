@@ -1,0 +1,434 @@
+.claude {
+    max-width: 52rem;
+    margin: 0 auto;
+}
+
+h1 {
+    font-size: 1.6rem;
+    margin: 0 0 0.5rem;
+}
+
+header p {
+    line-height: 1.7;
+    font-size: 0.95rem;
+}
+
+h2 {
+    font-size: 1.1rem;
+    color: var(--main);
+    margin: 0.5rem 0;
+}
+
+/* ---------- known, streak and practice links ---------- */
+
+.summary {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem 2rem;
+}
+
+.progress {
+    flex: 1;
+    min-width: 14rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    color: var(--sub);
+    font-size: 0.85rem;
+}
+
+.bar {
+    flex: 1;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--bg-alt);
+    overflow: hidden;
+}
+
+.fill {
+    height: 100%;
+    background: var(--main);
+    transition: width 0.3s;
+}
+
+.streak {
+    color: var(--main);
+    font-size: 0.85rem;
+}
+
+.practice {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem 1.5rem;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+}
+
+.practice button {
+    color: var(--sub);
+    padding: 0;
+}
+
+.practice button:hover {
+    color: var(--text);
+}
+
+/* ---------- views ---------- */
+
+.views {
+    display: flex;
+    gap: 0.25rem;
+    width: fit-content;
+    margin: 1.75rem 0 1.25rem;
+    padding: 0.4rem 0.75rem;
+    background: var(--bg-alt);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+}
+
+.views button,
+.chip {
+    color: var(--sub);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.3rem;
+}
+
+.views button:hover,
+.chip:hover {
+    color: var(--text);
+}
+
+.views button.active {
+    color: var(--main);
+}
+
+/* ---------- cheat sheet ---------- */
+
+.daily {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.75rem;
+    padding: 0.8rem 1rem;
+    border-left: 3px solid var(--main);
+    background: var(--bg-alt);
+    border-radius: var(--radius);
+    font-size: 0.85rem;
+}
+
+.daily code {
+    color: var(--main);
+}
+
+.search {
+    width: 100%;
+    margin: 1rem 0;
+    padding: 0.7rem 1rem;
+    font: inherit;
+    color: var(--text);
+    background: var(--bg-alt);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    outline: none;
+}
+
+.search:focus {
+    border-color: var(--main);
+}
+
+.chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+    font-size: 0.8rem;
+}
+
+.chip {
+    background: var(--bg-alt);
+}
+
+.chip.active {
+    color: var(--bg);
+    background: var(--main);
+}
+
+.chip .count {
+    opacity: 0.7;
+    margin-left: 0.25rem;
+}
+
+.chip.done:not(.active) .count {
+    color: var(--main);
+    opacity: 1;
+}
+
+.options {
+    display: flex;
+    gap: 1.5rem;
+    margin: 1rem 0 1.5rem;
+    color: var(--sub);
+    font-size: 0.8rem;
+}
+
+.options input {
+    accent-color: var(--main);
+}
+
+.kind {
+    margin-bottom: 2rem;
+}
+
+.kind h2 {
+    border-bottom: 2px solid var(--bg-alt);
+    padding-bottom: 0.4rem;
+}
+
+dl {
+    margin: 0;
+}
+
+.entry {
+    padding: 0.6rem 0;
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr) auto;
+    gap: 1rem;
+    align-items: baseline;
+}
+
+.compact .entry {
+    padding: 0.25rem 0;
+}
+
+.entry.known dt code {
+    color: var(--main);
+}
+
+dt code {
+    color: var(--text);
+    white-space: pre-wrap;
+    word-break: break-all;
+}
+
+.note {
+    display: block;
+    color: var(--sub);
+    font-size: 0.75rem;
+    margin-top: 0.2rem;
+}
+
+dd {
+    margin: 0;
+    color: var(--sub);
+    font-size: 0.85rem;
+    line-height: 1.5;
+}
+
+.example {
+    display: block;
+    margin-top: 0.3rem;
+    color: var(--text);
+    word-break: break-all;
+}
+
+.ps {
+    color: var(--sub);
+}
+
+.know {
+    color: var(--sub);
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    border-radius: 0.3rem;
+    background: var(--bg-alt);
+    white-space: nowrap;
+}
+
+.know:hover {
+    color: var(--text);
+}
+
+.know.on {
+    color: var(--bg);
+    background: var(--main);
+}
+
+/* ---------- flashcards ---------- */
+
+.card-meta {
+    font-size: 0.8rem;
+    margin: 1.25rem 0 0.5rem;
+}
+
+.card {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 0.75rem;
+    min-height: 13rem;
+    padding: 2rem 1.5rem;
+    text-align: center;
+    background: var(--bg-alt);
+    border-radius: var(--radius);
+    border-top: 3px solid var(--sub);
+    cursor: pointer;
+    user-select: none;
+}
+
+.card.back {
+    border-top-color: var(--main);
+}
+
+.card .front {
+    color: var(--main);
+    font-size: 1.6rem;
+    word-break: break-all;
+}
+
+.card p {
+    margin: 0;
+    line-height: 1.6;
+}
+
+.card .answer {
+    font-size: 1.05rem;
+}
+
+.flip-hint {
+    font-size: 0.8rem;
+}
+
+.card-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.5rem;
+    margin: 1rem 0;
+}
+
+.card-actions button,
+.buttons button {
+    color: var(--sub);
+    padding: 0.55rem 1rem;
+    border-radius: var(--radius);
+    background: var(--bg-alt);
+    font-size: 0.85rem;
+}
+
+.card-actions button:hover,
+.buttons button:hover {
+    color: var(--bg);
+    background: var(--text);
+}
+
+.card-actions .knew {
+    color: var(--main);
+}
+
+.card-actions .missed,
+.buttons .danger {
+    color: var(--error);
+}
+
+kbd {
+    font-family: inherit;
+    font-size: 0.75em;
+    background: var(--sub);
+    color: var(--bg);
+    padding: 0.05rem 0.35rem;
+    border-radius: 0.25rem;
+    margin-left: 0.4rem;
+}
+
+.hint {
+    font-size: 0.8rem;
+    text-align: center;
+}
+
+/* ---------- progress ---------- */
+
+.progress-view h2 {
+    margin-top: 1.5rem;
+}
+
+.progress-view p {
+    font-size: 0.85rem;
+    line-height: 1.6;
+}
+
+.boxes {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 0.5rem;
+}
+
+.box {
+    padding: 0.75rem;
+    text-align: center;
+    background: var(--bg-alt);
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+}
+
+.box .value {
+    color: var(--main);
+    font-size: 1.6rem;
+}
+
+.buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0.75rem 0;
+}
+
+textarea {
+    width: 100%;
+    padding: 0.7rem 1rem;
+    font: inherit;
+    font-size: 0.8rem;
+    color: var(--text);
+    background: var(--bg-alt);
+    border: 1px solid transparent;
+    border-radius: var(--radius);
+    outline: none;
+    resize: vertical;
+}
+
+textarea:focus {
+    border-color: var(--main);
+}
+
+.message {
+    color: var(--main);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+@media (max-width: 640px) {
+    .entry {
+        grid-template-columns: minmax(0, 1fr) auto;
+        gap: 0.2rem 1rem;
+    }
+
+    .entry dd {
+        grid-column: 1;
+        grid-row: 2;
+    }
+
+    .entry .know {
+        grid-row: 1;
+        grid-column: 2;
+    }
+
+    .card-actions button {
+        flex: 1;
+        padding: 0.9rem 0.5rem;
+        touch-action: manipulation;
+    }
+
+    .card-actions kbd {
+        display: none;
+    }
+}

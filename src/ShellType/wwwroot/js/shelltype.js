@@ -112,6 +112,14 @@ window.shellType = (() => {
             },
         },
         ui: {
+            // Typed quiz answers need the on-screen keyboard on phones, so a tap focuses the input.
+            focusInput() {
+                focusSink();
+            },
+            // The Clipboard API needs a secure context; report whether the copy worked.
+            async copy(text) {
+                try { await navigator.clipboard.writeText(text); return true; } catch { return false; }
+            },
             setTheme(name) {
                 document.documentElement.dataset.theme = name;
             },
@@ -171,6 +179,31 @@ window.shellType = (() => {
                     osc.start();
                     osc.stop(ctx.currentTime + 0.09);
                 } catch { }
+            },
+        },
+        // Flashcard keys on the claude page: space or enter flips, arrows move, 1 and 2 rate the card.
+        cards: {
+            handler: null,
+            onKey(e) {
+                const self = window.shellType.cards;
+                if (!self.handler || isFormField(e.target) || e.target.closest?.("button, a") || e.ctrlKey || e.metaKey || e.altKey) {
+                    return;
+                }
+
+                const keys = { " ": "Flip", Enter: "Flip", ArrowRight: "Next", ArrowLeft: "Previous", 1: "Missed", 2: "Knew" };
+                const action = keys[e.key];
+                if (action) {
+                    e.preventDefault();
+                    self.handler.invokeMethodAsync("OnCardKey", action);
+                }
+            },
+            register(dotNetRef) {
+                this.handler = dotNetRef;
+                document.addEventListener("keydown", this.onKey);
+            },
+            unregister() {
+                this.handler = null;
+                document.removeEventListener("keydown", this.onKey);
             },
         },
         keyboard: {
