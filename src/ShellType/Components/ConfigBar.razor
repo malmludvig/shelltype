@@ -33,6 +33,12 @@
                     title="every claude code command you can type, once each"
                     @onclick="() => Change(s => s.Mode = TestMode.Essentials)">all @ClaudeLibrary.Essentials.Count</button>
         }
+        else if (S.Platform == Platform.Linq)
+        {
+            <button class="@Active(S.Mode == TestMode.Essentials)"
+                    title="every linq statement, once each"
+                    @onclick="() => Change(s => s.Mode = TestMode.Essentials)">all @LinqLibrary.Essentials.Count</button>
+        }
     </div>
 
     @if (S.EffectiveMode != TestMode.Essentials)
@@ -84,7 +90,7 @@
             }
         </div>
 
-        @* The categories are Linux ones; the Cisco and Claude Code lists are small enough to practice whole. *@
+        @* The categories are Linux ones; the Cisco, Claude Code and LINQ lists are small enough to practice whole. *@
         @if (ShowCategoryControls)
         {
             <span class="divider"></span>
