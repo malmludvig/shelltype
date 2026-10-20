@@ -8,4 +8,7 @@ public enum Platform
 
     /// <summary>The Cisco IOS command line on routers and switches.</summary>
     Cisco,
+
+    /// <summary>Claude Code: slash commands at its prompt and the claude cli in the terminal.</summary>
+    Claude,
 }
