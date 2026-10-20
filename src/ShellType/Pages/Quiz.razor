@@ -55,6 +55,11 @@ else if (_session is not null)
 {
     var q = _session.Current;
     <section class="quiz">
+        @if (_mode == QuizMode.Linq)
+        {
+            <LinqData />
+        }
+
         <div class="status">
             @if (_session.Remaining is { } left)
             {

@@ -1,0 +1,21 @@
+.linq-data {
+    margin-bottom: 1rem;
+    font-size: 0.8rem;
+    color: var(--sub);
+}
+
+.linq-data .name {
+    color: var(--main);
+}
+
+/* Wide lines scroll inside the block instead of widening the page on a phone. */
+.linq-data pre {
+    margin: 0.5rem 0 0;
+    padding: 0.75rem 1rem;
+    overflow-x: auto;
+    background: var(--bg-alt);
+    color: var(--text);
+    border-radius: 0.5rem;
+    line-height: 1.5;
+    font-family: inherit;
+}

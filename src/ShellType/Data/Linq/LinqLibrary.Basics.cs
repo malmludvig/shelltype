@@ -40,7 +40,7 @@ public static partial class LinqLibrary
     [
         L("var firstThree = numbers.Take(3);", "Take the first three elements", Easy),
         L("var rest = numbers.Skip(3);", "Skip the first three and keep the rest", Easy),
-        L("var page = people.Skip(20).Take(10);", "Paging: skip two pages of ten and take the third", Medium),
+        L("var page = people.Skip(2).Take(2);", "Paging: skip the first page of two people and take the second", Medium),
         L("var lastTwo = numbers.TakeLast(2);", "Take the last two elements", Easy),
         L("var leading = numbers.TakeWhile(n => n < 10);", "Take elements until the condition first fails, then stop", Medium),
         L("var afterHeader = lines.SkipWhile(l => l.StartsWith(\"#\"));", "Skip elements while the condition holds, keep everything after", Hard),

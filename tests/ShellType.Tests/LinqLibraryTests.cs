@@ -33,6 +33,19 @@ public class LinqLibraryTests
         });
     }
 
+    [Theory]
+    [InlineData("int[] numbers =")]
+    [InlineData("int[] other =")]
+    [InlineData("string[] words =")]
+    [InlineData("string[] lines =")]
+    [InlineData("object[] items =")]
+    [InlineData("List<Person> people =")]
+    [InlineData("List<Order> orders =")]
+    public void The_data_shows_every_collection_in_full(string declaration)
+    {
+        Assert.Contains(declaration, LinqLibrary.Data);
+    }
+
     [Fact]
     public void Every_difficulty_has_statements()
     {

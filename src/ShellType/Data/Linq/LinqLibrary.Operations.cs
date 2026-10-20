@@ -41,9 +41,9 @@ public static partial class LinqLibrary
             ("var top = ranked.First();", "The city with the most people"),
             ("Console.WriteLine($\"{top.City}: {top.Count}\");", "Print it")),
 
-        Op("page through people", "show page 3 of the people list, ten per page, sorted by name.",
-            ("var pageSize = 10;", "How many to show on a page"),
-            ("var pageNumber = 3;", "The page to show, counting from 1"),
+        Op("page through people", "show page 2 of the people list, two per page, sorted by name.",
+            ("var pageSize = 2;", "How many to show on a page"),
+            ("var pageNumber = 2;", "The page to show, counting from 1"),
             ("var sorted = people.OrderBy(p => p.Name);", "Paging only makes sense in a stable order"),
             ("var page = sorted.Skip((pageNumber - 1) * pageSize).Take(pageSize);", "Skip the earlier pages, take one page"),
             ("var pages = (people.Count + pageSize - 1) / pageSize;", "Total number of pages, rounded up"),
