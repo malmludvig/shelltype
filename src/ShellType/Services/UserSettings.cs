@@ -48,7 +48,7 @@ public sealed class UserSettings
         ConfidenceMode = ConfidenceMode,
     };
 
-    /// <summary>The essentials list only exists for Cisco, so on Linux it falls back to a commands test.</summary>
+    /// <summary>The essentials list only exists for Cisco and Claude Code, so on Linux it falls back to a commands test.</summary>
     public TestMode EffectiveMode =>
-        Mode == TestMode.Essentials && Platform != Platform.Cisco ? TestMode.Commands : Mode;
+        Mode == TestMode.Essentials && Platform == Platform.Linux ? TestMode.Commands : Mode;
 }

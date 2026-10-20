@@ -61,8 +61,13 @@ public static class TestModes
             _ => $"operations {((OperationLength)value).ToString().ToLowerInvariant()}",
         };
 
-        // Linux is the default, so only Cisco tests get a prefix.
-        return platform == Platform.Cisco ? $"cisco {label}" : label;
+        // Linux is the default, so only the other platforms get a prefix.
+        return platform switch
+        {
+            Platform.Cisco => $"cisco {label}",
+            Platform.Claude => $"claude {label}",
+            _ => label,
+        };
     }
 
     /// <summary>Operations and the full essentials list are fixed, so the difficulty setting does not apply to them.</summary>

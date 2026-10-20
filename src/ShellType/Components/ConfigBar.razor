@@ -7,6 +7,8 @@
                 @onclick="() => Change(s => SetPlatform(s, Platform.Linux))">linux</button>
         <button class="@Active(S.Platform == Platform.Cisco)" title="cisco ios commands for routers and switches"
                 @onclick="() => Change(s => SetPlatform(s, Platform.Cisco))">cisco ios</button>
+        <button class="@Active(S.Platform == Platform.Claude)" title="claude code slash commands, cli and flags"
+                @onclick="() => Change(s => SetPlatform(s, Platform.Claude))">claude code</button>
     </div>
 
     <span class="divider"></span>
@@ -22,6 +24,12 @@
             <button class="@Active(S.Mode == TestMode.Essentials)"
                     title="every one of the 50 most common cisco commands, once each"
                     @onclick="() => Change(s => s.Mode = TestMode.Essentials)">all 50</button>
+        }
+        else if (S.Platform == Platform.Claude)
+        {
+            <button class="@Active(S.Mode == TestMode.Essentials)"
+                    title="every claude code command you can type, once each"
+                    @onclick="() => Change(s => s.Mode = TestMode.Essentials)">all @ClaudeLibrary.Essentials.Count</button>
         }
     </div>
 
@@ -74,7 +82,7 @@
             }
         </div>
 
-        @* The categories are Linux ones; the Cisco list is small enough to practice whole. *@
+        @* The categories are Linux ones; the Cisco and Claude Code lists are small enough to practice whole. *@
         @if (ShowCategoryControls)
         {
             <span class="divider"></span>

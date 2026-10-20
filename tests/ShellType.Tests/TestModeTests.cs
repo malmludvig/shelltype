@@ -12,6 +12,8 @@ public class TestModeTests
     [InlineData(TestMode.Commands, 10, Platform.Cisco, "cisco commands 10")]
     [InlineData(TestMode.Essentials, 50, Platform.Cisco, "cisco all 50")]
     [InlineData(TestMode.Operations, 2, Platform.Cisco, "cisco operations medium")]
+    [InlineData(TestMode.Time, 60, Platform.Claude, "claude time 60")]
+    [InlineData(TestMode.Essentials, 110, Platform.Claude, "claude all 110")]
     public void Labels_name_the_mode_and_the_platform(TestMode mode, int value, Platform platform, string expected)
     {
         Assert.Equal(expected, TestModes.Label(mode, value, platform));
@@ -33,5 +35,8 @@ public class TestModeTests
         settings.Platform = Platform.Cisco;
         Assert.Equal(TestMode.Essentials, settings.ToTestConfig().Mode);
         Assert.Equal(Platform.Cisco, settings.ToTestConfig().Platform);
+
+        settings.Platform = Platform.Claude;
+        Assert.Equal(TestMode.Essentials, settings.ToTestConfig().Mode);
     }
 }

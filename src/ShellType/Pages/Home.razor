@@ -165,7 +165,7 @@ else if (_session is not null)
         {
             // Every essential command exactly once, in a fresh random order.
             _banner = null;
-            var all = CiscoLibrary.Essentials;
+            var all = config.Platform == Platform.Claude ? ClaudeLibrary.Essentials : CiscoLibrary.Essentials;
             config = config with { CommandCount = all.Count };
             generator = new ReplaySource(all.OrderBy(_ => Random.Shared.Next()).ToList(), new CommandGenerator(all));
         }
@@ -189,7 +189,12 @@ else if (_session is not null)
         if (!repeat || _operation is null)
         {
             // Pick a different operation than last time, so "next test" always moves on.
-            var library = config.Platform == Platform.Cisco ? CiscoLibrary.Operations : OperationLibrary.All;
+            var library = config.Platform switch
+            {
+                Platform.Cisco => CiscoLibrary.Operations,
+                Platform.Claude => ClaudeLibrary.Operations,
+                _ => OperationLibrary.All,
+            };
             var candidates = library.Where(o => o.Length == config.OperationLength && o != _operation).ToList();
             _operation = candidates[Random.Shared.Next(candidates.Count)];
         }
@@ -232,6 +237,12 @@ else if (_session is not null)
         {
             var cisco = CiscoLibrary.Filter(config.MaxDifficulty);
             return cisco.Count > 0 ? cisco : CiscoLibrary.Essentials;
+        }
+
+        if (config.Platform == Platform.Claude)
+        {
+            var claude = ClaudeLibrary.Filter(config.MaxDifficulty);
+            return claude.Count > 0 ? claude : ClaudeLibrary.Essentials;
         }
 
         var pool = CommandLibrary.Filter(config.Categories, config.MaxDifficulty);
