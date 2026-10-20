@@ -28,7 +28,7 @@
         </div>
         @if (Settings.ShowDescriptions)
         {
-            <div class="comment"># @current.Command.Description</div>
+            <div class="comment">@CommentMark(current.Command) @current.Command.Description</div>
         }
     }
 
@@ -66,6 +66,9 @@
             await JS.InvokeVoidAsync("shellType.ui.moveCaret");
         }
     }
+
+    // C# has // comments, the shells and IOS have #.
+    private static string CommentMark(CommandEntry command) => command.Prompt == LinqLibrary.Prompt ? "//" : "#";
 
     private RenderFragment RenderChars(CommandAttempt attempt, bool showCaret)
     {
