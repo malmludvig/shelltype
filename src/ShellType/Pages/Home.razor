@@ -251,6 +251,12 @@ else if (_session is not null)
             return claude.Count > 0 ? claude : ClaudeLibrary.Essentials;
         }
 
+        if (config.Platform == Platform.Linq)
+        {
+            var linq = LinqLibrary.Filter(config.MaxDifficulty);
+            return linq.Count > 0 ? linq : LinqLibrary.Essentials;
+        }
+
         var pool = CommandLibrary.Filter(config.Categories, config.MaxDifficulty);
         return pool.Count > 0 ? pool : CommandLibrary.All;
     }
