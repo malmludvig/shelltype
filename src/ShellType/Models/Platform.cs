@@ -11,4 +11,7 @@ public enum Platform
 
     /// <summary>Claude Code: slash commands at its prompt and the claude cli in the terminal.</summary>
     Claude,
+
+    /// <summary>C# LINQ statements, typed at a C# REPL prompt.</summary>
+    Linq,
 }
