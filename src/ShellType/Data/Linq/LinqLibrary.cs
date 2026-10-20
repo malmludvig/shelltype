@@ -41,6 +41,7 @@ public static partial class LinqLibrary
         yield return ("aggregation", Aggregation);
         yield return ("elements", Elements);
         yield return ("quantifiers", Quantifiers);
+        yield return ("sets", Sets);
     }
 
     // The categories are Linux ones; LINQ statements all count as text processing.
