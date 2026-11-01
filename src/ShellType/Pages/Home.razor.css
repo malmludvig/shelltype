@@ -34,7 +34,7 @@
     flex-wrap: wrap;
     gap: 0.25rem 1rem;
     align-items: baseline;
-    margin-bottom: 1rem;
+    margin-bottom: 0.5rem;
     font-size: 0.9rem;
 }
 
@@ -63,5 +63,5 @@ kbd {
 
 /* The LINQ data sits below the upcoming statements, with some room to tell them apart. */
 .test ::deep .linq-data {
-    margin: 1.5rem 0 0;
+    margin: 1rem 0 0;
 }

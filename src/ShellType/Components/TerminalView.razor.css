@@ -21,8 +21,9 @@
     min-width: 0;
 }
 
+/* Room for one finished line from the start: they are 0.8em at a line height of 1.6. */
 .history {
-    min-height: 1.6em;
+    min-height: 1.28em;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
@@ -50,7 +51,7 @@
 }
 
 .line.current {
-    margin: 0.35em 0 0.1em;
+    margin: 0.2em 0 0.1em;
 }
 
 .comment {

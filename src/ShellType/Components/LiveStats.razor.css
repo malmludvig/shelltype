@@ -1,4 +1,8 @@
+/* Floats just above the test, over the config bar that fades out while typing, so it takes no room of its own. */
 .live {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
     display: flex;
     gap: 1.5rem;
     align-items: baseline;
