@@ -29,6 +29,9 @@ else if (_session is not null)
             </div>
         }
 
+        @* The timer goes first, so whatever explains the commands sits right above the prompt. *@
+        <LiveStats Session="_session" ShowWpm="Settings.ShowLiveWpm" />
+
         @if (_operation is not null)
         {
             <div class="operation">
@@ -37,18 +40,13 @@ else if (_session is not null)
             </div>
         }
 
-        <LiveStats Session="_session" ShowWpm="Settings.ShowLiveWpm" />
-
         @if (_session.Config.Platform == Platform.Linq)
         {
-            @* Every statement works on the same few collections, so say what they are, right above the prompt. *@
+            @* Every statement works on the same few collections, so say what they are. *@
             <LinqData />
-            <TerminalView Session="_session" Settings="Settings" HistoryLines="1" />
         }
-        else
-        {
-            <TerminalView Session="_session" Settings="Settings" />
-        }
+
+        <TerminalView Session="_session" Settings="Settings" />
 
         @if (!_focused)
         {

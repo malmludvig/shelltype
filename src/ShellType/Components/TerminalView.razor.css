@@ -22,7 +22,7 @@
 }
 
 .history {
-    min-height: calc(1.6em * var(--history-lines, 2));
+    min-height: 1.6em;
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
