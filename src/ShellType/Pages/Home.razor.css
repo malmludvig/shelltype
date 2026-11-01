@@ -60,3 +60,8 @@ kbd {
     padding: 0.05rem 0.35rem;
     border-radius: 0.25rem;
 }
+
+/* The LINQ data sits below the upcoming statements, with some room to tell them apart. */
+.test ::deep .linq-data {
+    margin: 1.5rem 0 0;
+}
