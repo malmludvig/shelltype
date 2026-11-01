@@ -37,14 +37,18 @@ else if (_session is not null)
             </div>
         }
 
+        <LiveStats Session="_session" ShowWpm="Settings.ShowLiveWpm" />
+
         @if (_session.Config.Platform == Platform.Linq)
         {
-            @* Every statement works on the same few collections, so say what they are. *@
+            @* Every statement works on the same few collections, so say what they are, right above the prompt. *@
             <LinqData />
+            <TerminalView Session="_session" Settings="Settings" HistoryLines="1" />
         }
-
-        <LiveStats Session="_session" ShowWpm="Settings.ShowLiveWpm" />
-        <TerminalView Session="_session" Settings="Settings" />
+        else
+        {
+            <TerminalView Session="_session" Settings="Settings" />
+        }
 
         @if (!_focused)
         {

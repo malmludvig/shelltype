@@ -1,7 +1,7 @@
 @* The "terminal" where commands are typed: a little history, the active prompt and what's next. *@
 
 <div class="terminal caret-@Settings.Caret.ToString().ToLowerInvariant() @(Settings.SmoothCaret ? "smooth" : "") @(Session.State == SessionState.Running ? "running" : "")">
-    <div class="history">
+    <div class="history" style="--history-lines: @HistoryLines">
         @foreach (var attempt in Session.Completed.TakeLast(HistoryLines))
         {
             <div class="line done @(attempt.IsCorrect ? "ok" : "bad")">
@@ -47,7 +47,6 @@
 </div>
 
 @code {
-    private const int HistoryLines = 2;
     private const int UpcomingLines = 3;
 
     [Parameter, EditorRequired]
@@ -55,6 +54,10 @@
 
     [Parameter, EditorRequired]
     public UserSettings Settings { get; set; } = default!;
+
+    /// <summary>How many finished commands stay visible above the prompt; the space for them is kept from the start.</summary>
+    [Parameter]
+    public int HistoryLines { get; set; } = 2;
 
     [Inject]
     private IJSRuntime JS { get; set; } = default!;
