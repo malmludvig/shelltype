@@ -11,6 +11,8 @@
                 @onclick="() => Change(s => SetPlatform(s, Platform.Claude))">claude code</button>
         <button class="@Active(S.Platform == Platform.Linq)" title="c# linq statements over lists and arrays"
                 @onclick="() => Change(s => SetPlatform(s, Platform.Linq))">c# linq</button>
+        <button class="@Active(S.Platform == Platform.Git)" title="the git cli, from git init to git bisect"
+                @onclick="() => Change(s => SetPlatform(s, Platform.Git))">git</button>
     </div>
 
     <span class="divider"></span>
@@ -38,6 +40,12 @@
             <button class="@Active(S.Mode == TestMode.Essentials)"
                     title="every linq statement, once each"
                     @onclick="() => Change(s => s.Mode = TestMode.Essentials)">all @LinqLibrary.Essentials.Count</button>
+        }
+        else if (S.Platform == Platform.Git)
+        {
+            <button class="@Active(S.Mode == TestMode.Essentials)"
+                    title="every git command, once each"
+                    @onclick="() => Change(s => s.Mode = TestMode.Essentials)">all @GitLibrary.Essentials.Count</button>
         }
     </div>
 
@@ -90,7 +98,7 @@
             }
         </div>
 
-        @* The categories are Linux ones; the Cisco, Claude Code and LINQ lists are small enough to practice whole. *@
+        @* The categories are Linux ones; the Cisco, Claude Code, LINQ and git lists are small enough to practice whole. *@
         @if (ShowCategoryControls)
         {
             <span class="divider"></span>

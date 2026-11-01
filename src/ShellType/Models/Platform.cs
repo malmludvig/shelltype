@@ -14,4 +14,7 @@ public enum Platform
 
     /// <summary>C# LINQ statements, typed at a C# REPL prompt.</summary>
     Linq,
+
+    /// <summary>The git cli, typed at a shell prompt inside a repository.</summary>
+    Git,
 }

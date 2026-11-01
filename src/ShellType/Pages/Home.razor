@@ -175,6 +175,7 @@ else if (_session is not null)
             {
                 Platform.Claude => ClaudeLibrary.Essentials,
                 Platform.Linq => LinqLibrary.Essentials,
+                Platform.Git => GitLibrary.Essentials,
                 _ => CiscoLibrary.Essentials,
             };
             config = config with { CommandCount = all.Count };
@@ -205,6 +206,7 @@ else if (_session is not null)
                 Platform.Cisco => CiscoLibrary.Operations,
                 Platform.Claude => ClaudeLibrary.Operations,
                 Platform.Linq => LinqLibrary.Operations,
+                Platform.Git => GitLibrary.Operations,
                 _ => OperationLibrary.All,
             };
             var candidates = library.Where(o => o.Length == config.OperationLength && o != _operation).ToList();
@@ -261,6 +263,12 @@ else if (_session is not null)
         {
             var linq = LinqLibrary.Filter(config.MaxDifficulty);
             return linq.Count > 0 ? linq : LinqLibrary.Essentials;
+        }
+
+        if (config.Platform == Platform.Git)
+        {
+            var git = GitLibrary.Filter(config.MaxDifficulty);
+            return git.Count > 0 ? git : GitLibrary.Essentials;
         }
 
         var pool = CommandLibrary.Filter(config.Categories, config.MaxDifficulty);

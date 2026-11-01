@@ -19,6 +19,8 @@
                 @onclick="() => Restart(QuizMode.Cisco)">cisco ios</button>
         <button class="@Active(_mode == QuizMode.Linq)" title="simple c# linq statements, both ways round"
                 @onclick="() => Restart(QuizMode.Linq)">c# linq</button>
+        <button class="@Active(_mode == QuizMode.Git)" title="git commands, both ways round"
+                @onclick="() => Restart(QuizMode.Git)">git</button>
     </div>
     <span class="divider"></span>
     @* Its own group, so on a phone the claude modes get a row of their own instead of hiding off screen. *@

@@ -19,6 +19,9 @@ public enum QuizMode
     /// <summary>Simple C# LINQ statements, asked both ways round.</summary>
     Linq,
 
+    /// <summary>Git commands, asked both ways round.</summary>
+    Git,
+
     /// <summary>Real situations, answered with the Claude Code command that solves them.</summary>
     ClaudeScenarios,
 
@@ -61,6 +64,14 @@ public static class QuizGenerator
             return Shuffle(LinqLibrary.Essentials, random)
                 .Take(count)
                 .Select((c, i) => i % 2 == 0 ? FromLinq(c, random) : WhichLinq(c, random))
+                .ToList();
+        }
+
+        if (mode == QuizMode.Git)
+        {
+            return Shuffle(GitLibrary.Essentials, random)
+                .Take(count)
+                .Select((c, i) => i % 2 == 0 ? FromGit(c, random) : WhichGit(c, random))
                 .ToList();
         }
 
@@ -217,6 +228,51 @@ public static class QuizGenerator
     private static IEnumerable<CommandEntry> LinqDistractors(CommandEntry command, string group, Random random) =>
         Shuffle(LinqLibrary.Essentials.Where(c => LinqLibrary.GroupOf(c) == group), random)
             .Concat(Shuffle(LinqLibrary.Essentials, random))
+            .Where(c => c != command);
+
+    /// <summary>Shown a git command, pick what it does.</summary>
+    public static QuizQuestion FromGit(CommandEntry command, Random random)
+    {
+        var group = GitLibrary.GroupOf(command);
+        var options = Shuffle(GitDistractors(command, group, random).Select(c => c.Description)
+            .Where(d => d != command.Description)
+            .Distinct()
+            .Take(OptionCount - 1)
+            .Append(command.Description), random);
+        return new QuizQuestion(
+            QuestionKind.WhatDoesItDo,
+            command.Text,
+            null,
+            options,
+            IndexOf(options, command.Description),
+            $"{command.Text} is one of the {group} commands.",
+            command.Prompt,
+            group);
+    }
+
+    /// <summary>Shown what a git command does, pick the command.</summary>
+    public static QuizQuestion WhichGit(CommandEntry command, Random random)
+    {
+        var group = GitLibrary.GroupOf(command);
+        var options = Shuffle(GitDistractors(command, group, random).Select(c => c.Text)
+            .Distinct()
+            .Take(OptionCount - 1)
+            .Append(command.Text), random);
+        return new QuizQuestion(
+            QuestionKind.WhichCommand,
+            command.Description,
+            null,
+            options,
+            IndexOf(options, command.Text),
+            $"{command.Text} is one of the {group} commands.",
+            command.Prompt,
+            group);
+    }
+
+    // Commands from the same group, like reset --soft and reset --hard, are the easiest to mix up.
+    private static IEnumerable<CommandEntry> GitDistractors(CommandEntry command, string group, Random random) =>
+        Shuffle(GitLibrary.Essentials.Where(c => GitLibrary.GroupOf(c) == group), random)
+            .Concat(Shuffle(GitLibrary.Essentials, random))
             .Where(c => c != command);
 
     /// <summary>Shown a Claude Code command, shortcut or concept, pick what it does.</summary>
