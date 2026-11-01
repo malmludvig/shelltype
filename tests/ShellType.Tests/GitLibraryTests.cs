@@ -55,6 +55,32 @@ public class GitLibraryTests
     }
 
     [Fact]
+    public void Every_category_has_commands_at_every_difficulty()
+    {
+        foreach (var category in Enum.GetValues<GitCategory>())
+        {
+            var commands = GitLibrary.Filter([category], Difficulty.Hard);
+            Assert.All(commands, c => Assert.Equal(category, GitLibrary.CategoryOf(c)));
+            foreach (var difficulty in Enum.GetValues<Difficulty>())
+            {
+                Assert.Contains(commands, c => c.Difficulty == difficulty);
+            }
+        }
+
+        Assert.Equal(GitLibrary.Essentials.Count, GitLibrary.Filter([], Difficulty.Hard).Count);
+        Assert.Equal(GitCategory.Branching, GitLibrary.CategoryOf(GitLibrary.Essentials.Single(c => c.Text == "git switch -c feature/login")));
+        Assert.Equal("remotes & undo", GitLibrary.Label(GitCategory.RemotesAndUndo));
+    }
+
+    [Fact]
+    public void Category_filter_respects_the_difficulty()
+    {
+        var easyBranching = GitLibrary.Filter([GitCategory.Branching], Difficulty.Easy);
+        Assert.NotEmpty(easyBranching);
+        Assert.All(easyBranching, c => Assert.Equal(Difficulty.Easy, c.Difficulty));
+    }
+
+    [Fact]
     public void Every_length_has_several_git_operations()
     {
         foreach (var length in Enum.GetValues<OperationLength>())

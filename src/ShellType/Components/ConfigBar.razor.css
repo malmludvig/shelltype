@@ -46,14 +46,28 @@ button.active {
     background: var(--bg);
 }
 
+/* Difficulty, centered on a row of its own, with the categories below it. */
+.filters {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    margin: 0.75rem auto 0;
+    font-size: 0.8rem;
+    transition: opacity 0.3s;
+}
+
+.filters.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .categories {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 0.4rem;
-    margin: 0.75rem auto 0;
     max-width: 46rem;
-    font-size: 0.8rem;
 }
 
 .chip {

@@ -24,6 +24,31 @@ public static partial class GitLibrary
     public static IReadOnlyList<CommandEntry> Filter(Difficulty maxDifficulty) =>
         Essentials.Where(c => c.Difficulty <= maxDifficulty).ToList();
 
+    /// <summary>The commands in the given categories up to a difficulty. An empty category set means every category.</summary>
+    public static IReadOnlyList<CommandEntry> Filter(IReadOnlyCollection<GitCategory> categories, Difficulty maxDifficulty) =>
+        Grouped.Value
+            .Where(g => (categories.Count == 0 || categories.Contains(CategoryOf(g.Group))) && g.Command.Difficulty <= maxDifficulty)
+            .Select(g => g.Command)
+            .ToList();
+
+    /// <summary>The category a command belongs to, e.g. <see cref="GitCategory.Branching"/> for <c>git switch -c</c>.</summary>
+    public static GitCategory CategoryOf(CommandEntry command) => CategoryOf(GroupOf(command));
+
+    /// <summary>The name a category is shown with, e.g. "remotes &amp; undo".</summary>
+    public static string Label(GitCategory category) => category switch
+    {
+        GitCategory.Basics => "basics",
+        GitCategory.Branching => "branching",
+        _ => "remotes & undo",
+    };
+
+    private static GitCategory CategoryOf(string group) => group switch
+    {
+        "branching" or "merging" => GitCategory.Branching,
+        "remotes" or "undoing" or "advanced" => GitCategory.RemotesAndUndo,
+        _ => GitCategory.Basics,
+    };
+
     /// <summary>The group a command belongs to, e.g. "branching" or "undoing".</summary>
     public static string GroupOf(CommandEntry command) =>
         Grouped.Value.FirstOrDefault(g => g.Command == command).Group ?? "git";

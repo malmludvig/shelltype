@@ -82,51 +82,56 @@
         </div>
     }
 
-    @* Operations and the essentials list are fixed, so difficulty and categories do not apply. *@
-    @if (S.EffectiveMode is not (TestMode.Operations or TestMode.Essentials))
+    @* Operations and the essentials list are fixed, so difficulty does not apply. Platforms with categories get it on a row of its own below. *@
+    @if (ShowDifficulty && !HasCategories)
     {
         <span class="divider"></span>
-
-        <div class="group">
-            @foreach (var difficulty in Enum.GetValues<Difficulty>())
-            {
-                <button class="@Active(S.MaxDifficulty == difficulty)"
-                        title="@DifficultyHint(difficulty)"
-                        @onclick="() => Change(s => s.MaxDifficulty = difficulty)">
-                    @difficulty.ToString().ToLowerInvariant()
-                </button>
-            }
-        </div>
-
-        @* The categories are Linux ones; the Cisco, Claude Code, LINQ and git lists are small enough to practice whole. *@
-        @if (ShowCategoryControls)
-        {
-            <span class="divider"></span>
-
-            <div class="group">
-                <button class="@Active(_showCategories)" @onclick="() => _showCategories = !_showCategories">
-                    categories @(S.Categories.Count == 0 ? "(all)" : $"({S.Categories.Count})")
-                </button>
-            </div>
-        }
+        @DifficultyPicker
     }
 </div>
 
-@if (_showCategories && !Hidden && ShowCategoryControls)
+@if (ShowDifficulty && HasCategories)
 {
-    <div class="categories">
-        <button class="chip @Active(S.Categories.Count == 0)" @onclick="() => Change(s => s.Categories.Clear())">all</button>
-        @foreach (var category in Enum.GetValues<CommandCategory>())
-        {
-            <button class="chip @Active(S.Categories.Contains(category))" @onclick="() => Change(s => Toggle(s, category))">
-                @category.ToString().ToLowerInvariant()
-            </button>
-        }
+    @* Kept in place while typing, only faded out, so the test does not jump up when it starts. *@
+    <div class="filters @(Hidden ? "hidden" : "")">
+        @DifficultyPicker
+
+        <div class="categories">
+            @if (S.Platform == Platform.Git)
+            {
+                <button class="chip @Active(S.GitCategories.Count == 0)" @onclick="() => Change(s => s.GitCategories.Clear())">all</button>
+                @foreach (var category in Enum.GetValues<GitCategory>())
+                {
+                    <button class="chip @Active(S.GitCategories.Contains(category))" @onclick="() => Change(s => Toggle(s.GitCategories, category))">
+                        @GitLibrary.Label(category)
+                    </button>
+                }
+            }
+            else
+            {
+                <button class="chip @Active(S.Categories.Count == 0)" @onclick="() => Change(s => s.Categories.Clear())">all</button>
+                @foreach (var category in Enum.GetValues<CommandCategory>())
+                {
+                    <button class="chip @Active(S.Categories.Contains(category))" @onclick="() => Change(s => Toggle(s.Categories, category))">
+                        @category.ToString().ToLowerInvariant()
+                    </button>
+                }
+            }
+        </div>
     </div>
 }
 
 @code {
-    private bool _showCategories;
+    private RenderFragment DifficultyPicker => @<div class="group">
+        @foreach (var difficulty in Enum.GetValues<Difficulty>())
+        {
+            <button class="@Active(S.MaxDifficulty == difficulty)"
+                    title="@DifficultyHint(difficulty)"
+                    @onclick="() => Change(s => s.MaxDifficulty = difficulty)">
+                @difficulty.ToString().ToLowerInvariant()
+            </button>
+        }
+    </div>;
 
     [Parameter]
     public bool Hidden { get; set; }
@@ -136,7 +141,10 @@
 
     private UserSettings S => SettingsService.Current;
 
-    private bool ShowCategoryControls => S.Platform == Platform.Linux && S.Mode != TestMode.Operations;
+    private bool ShowDifficulty => S.EffectiveMode is not (TestMode.Operations or TestMode.Essentials);
+
+    // The Cisco, Claude Code and LINQ lists are small enough to practice whole.
+    private bool HasCategories => S.Platform is Platform.Linux or Platform.Git;
 
     private static string Active(bool on) => on ? "active" : "";
 
@@ -160,17 +168,17 @@
         s.Mode = s.EffectiveMode;
     }
 
-    private static void Toggle(UserSettings s, CommandCategory category)
+    private static void Toggle<T>(List<T> selected, T category) where T : struct, Enum
     {
-        if (!s.Categories.Remove(category))
+        if (!selected.Remove(category))
         {
-            s.Categories.Add(category);
+            selected.Add(category);
         }
 
         // Selecting every category is the same as "all".
-        if (s.Categories.Count == Enum.GetValues<CommandCategory>().Length)
+        if (selected.Count == Enum.GetValues<T>().Length)
         {
-            s.Categories.Clear();
+            selected.Clear();
         }
     }
 

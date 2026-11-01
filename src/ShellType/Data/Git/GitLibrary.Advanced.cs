@@ -16,6 +16,9 @@ public static partial class GitLibrary
         G("git rebase --continue", "Carry on rebasing after you have fixed a conflict", Medium),
         G("git rebase --abort", "Give up a rebase and go back to before it started", Medium),
         G("git cherry-pick a1b2c3d", "Copy a single commit onto the current branch", Medium),
+        G("git cherry-pick a1b2c3d..e4f5a6b", "Copy a range of commits onto the current branch, leaving out the first one", Hard),
+        G("git merge -X theirs feature", "Merge and settle every conflict in favor of the other branch", Hard),
+        G("git rebase --onto main old-base feature", "Move the commits feature made after old-base so they start from main", Hard),
     ];
 
     private static readonly CommandEntry[] Remotes =

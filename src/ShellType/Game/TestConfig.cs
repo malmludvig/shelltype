@@ -30,6 +30,9 @@ public sealed record TestConfig
     /// <summary>Categories to draw commands from. Empty means all of them.</summary>
     public IReadOnlySet<CommandCategory> Categories { get; init; } = new HashSet<CommandCategory>();
 
+    /// <summary>Git categories to draw commands from. Empty means all of them.</summary>
+    public IReadOnlySet<GitCategory> GitCategories { get; init; } = new HashSet<GitCategory>();
+
     /// <summary>Wrong characters are rejected; you cannot move on until you type the right one.</summary>
     public bool StopOnError { get; init; }
 

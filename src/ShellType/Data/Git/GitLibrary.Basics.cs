@@ -70,5 +70,6 @@ public static partial class GitLibrary
         G("git branch -d feature", "Delete a branch that has been merged", Easy),
         G("git branch -D experiment", "Force delete a branch, even if it is not merged", Medium),
         G("git branch --merged", "List the branches already merged into the current one", Medium),
+        G("git branch --set-upstream-to=origin/feature", "Make origin/feature the branch the current one pulls from and pushes to", Hard),
     ];
 }

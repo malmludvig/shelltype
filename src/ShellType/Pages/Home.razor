@@ -269,7 +269,7 @@ else if (_session is not null)
 
         if (config.Platform == Platform.Git)
         {
-            var git = GitLibrary.Filter(config.MaxDifficulty);
+            var git = GitLibrary.Filter(config.GitCategories, config.MaxDifficulty);
             return git.Count > 0 ? git : GitLibrary.Essentials;
         }
 

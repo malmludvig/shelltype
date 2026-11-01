@@ -34,6 +34,7 @@ public sealed class UserSettings
     public Difficulty MaxDifficulty { get; set; } = Difficulty.Medium;
     public OperationLength OperationLength { get; set; } = OperationLength.Short;
     public List<CommandCategory> Categories { get; set; } = [];
+    public List<GitCategory> GitCategories { get; set; } = [];
 
     public TestConfig ToTestConfig() => new()
     {
@@ -44,6 +45,7 @@ public sealed class UserSettings
         MaxDifficulty = MaxDifficulty,
         OperationLength = OperationLength,
         Categories = Categories.ToHashSet(),
+        GitCategories = GitCategories.ToHashSet(),
         StopOnError = StopOnError,
         ConfidenceMode = ConfidenceMode,
     };
