@@ -15,5 +15,6 @@ public static partial class CiscoLibrary
         C("Router(config)#", "hostname R1", "Name the device; the new name shows up in the prompt at once", Easy),
         C(Exec, "copy running-config startup-config", "Save the active configuration to NVRAM so it survives a reboot", Medium),
         C(Exec, "reload", "Restart the device; unsaved changes to the running config are lost", Easy),
+        C(Config, "no ip domain-lookup", "Stop IOS from treating a mistyped command as a hostname to look up", Medium),
     ];
 }

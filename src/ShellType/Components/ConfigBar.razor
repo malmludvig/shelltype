@@ -107,6 +107,16 @@
                     </button>
                 }
             }
+            else if (S.Platform == Platform.Cisco)
+            {
+                <button class="chip @Active(S.CiscoCategories.Count == 0)" @onclick="() => Change(s => s.CiscoCategories.Clear())">all</button>
+                @foreach (var category in Enum.GetValues<CiscoCategory>())
+                {
+                    <button class="chip @Active(S.CiscoCategories.Contains(category))" @onclick="() => Change(s => Toggle(s.CiscoCategories, category))">
+                        @CiscoLibrary.Label(category)
+                    </button>
+                }
+            }
             else
             {
                 <button class="chip @Active(S.Categories.Count == 0)" @onclick="() => Change(s => s.Categories.Clear())">all</button>
@@ -143,8 +153,8 @@
 
     private bool ShowDifficulty => S.EffectiveMode is not (TestMode.Operations or TestMode.Essentials);
 
-    // The Cisco, Claude Code and LINQ lists are small enough to practice whole.
-    private bool HasCategories => S.Platform is Platform.Linux or Platform.Git;
+    // The Claude Code and LINQ lists are small enough to practice whole.
+    private bool HasCategories => S.Platform is Platform.Linux or Platform.Cisco or Platform.Git;
 
     private static string Active(bool on) => on ? "active" : "";
 

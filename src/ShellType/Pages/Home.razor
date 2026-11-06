@@ -250,7 +250,7 @@ else if (_session is not null)
 
         if (config.Platform == Platform.Cisco)
         {
-            var cisco = CiscoLibrary.Filter(config.MaxDifficulty);
+            var cisco = CiscoLibrary.Filter(config.CiscoCategories, config.MaxDifficulty);
             return cisco.Count > 0 ? cisco : CiscoLibrary.Essentials;
         }
 

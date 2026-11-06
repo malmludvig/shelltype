@@ -13,5 +13,6 @@ public static partial class CiscoLibrary
         C(Ospf, "network 10.0.0.0 0.0.0.255 area 0", "Run OSPF on interfaces in 10.0.0.0/24 and put them in area 0; note the wildcard mask", Hard),
         C(Ospf, "passive-interface GigabitEthernet0/1", "Advertise this LAN but send no OSPF hellos out of it", Hard),
         C(Exec, "show ip ospf neighbor", "List OSPF neighbors; FULL means the routers have synced their databases", Medium),
+        C(Exec, "show ip route", "Show the routing table; C is connected, S static, O learned via OSPF", Easy),
     ];
 }

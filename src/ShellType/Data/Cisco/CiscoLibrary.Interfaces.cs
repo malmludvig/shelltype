@@ -11,9 +11,7 @@ public static partial class CiscoLibrary
         C(If, "ip address 192.168.1.1 255.255.255.0", "Give the interface an IPv4 address and subnet mask", Hard),
         C(If, "no shutdown", "Turn the interface on; router ports are shut down by default", Easy),
         C(If, "description Link to SW1", "Label the port so the next person knows what it connects to", Medium),
-        C(Config, "enable secret Cisco123", "Protect privileged EXEC with a hashed password", Medium),
-        C(Config, "service password-encryption", "Hide plain-text passwords in the config with weak type 7 encryption", Medium),
-        C(Config, "banner motd #Authorized access only#", "Set the message shown to everyone who connects", Hard),
-        C(Config, "no ip domain-lookup", "Stop IOS from treating a mistyped command as a hostname to look up", Medium),
+        C(Exec, "show ip interface brief", "One line per interface: IP address and whether it is up/up", Medium),
+        C(Exec, "show interfaces GigabitEthernet0/0", "Details for one interface: speed, duplex, errors and counters", Medium),
     ];
 }

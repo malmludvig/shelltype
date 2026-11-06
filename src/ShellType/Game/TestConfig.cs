@@ -30,6 +30,9 @@ public sealed record TestConfig
     /// <summary>Categories to draw commands from. Empty means all of them.</summary>
     public IReadOnlySet<CommandCategory> Categories { get; init; } = new HashSet<CommandCategory>();
 
+    /// <summary>Cisco categories to draw commands from. Empty means all of them.</summary>
+    public IReadOnlySet<CiscoCategory> CiscoCategories { get; init; } = new HashSet<CiscoCategory>();
+
     /// <summary>Git categories to draw commands from. Empty means all of them.</summary>
     public IReadOnlySet<GitCategory> GitCategories { get; init; } = new HashSet<GitCategory>();
 

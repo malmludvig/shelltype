@@ -22,14 +22,35 @@ public static partial class CiscoLibrary
     private const string Vlan = "SW1(config-vlan)#";
 
     private static readonly Lazy<IReadOnlyList<CommandEntry>> AllCommands =
-        new(() => Sources().SelectMany(s => s).ToList());
+        new(() => Sources().SelectMany(s => s.Commands).ToList());
+
+    private static readonly Lazy<IReadOnlyList<(CiscoCategory Category, CommandEntry Command)>> Practice =
+        new(() => Sources().Concat(ExtraSources()).SelectMany(s => s.Commands.Select(c => (s.Category, c))).ToList());
 
     /// <summary>All 50 commands, in learning order.</summary>
     public static IReadOnlyList<CommandEntry> Essentials => AllCommands.Value;
 
-    /// <summary>The commands up to a difficulty, for time and commands tests.</summary>
-    public static IReadOnlyList<CommandEntry> Filter(Difficulty maxDifficulty) =>
-        Essentials.Where(c => c.Difficulty <= maxDifficulty).ToList();
+    /// <summary>The commands in the given categories up to a difficulty, for time and commands tests. An empty category set means every category.</summary>
+    public static IReadOnlyList<CommandEntry> Filter(IReadOnlyCollection<CiscoCategory> categories, Difficulty maxDifficulty) =>
+        Practice.Value
+            .Where(p => (categories.Count == 0 || categories.Contains(p.Category)) && p.Command.Difficulty <= maxDifficulty)
+            .Select(p => p.Command)
+            .ToList();
+
+    /// <summary>The category a command belongs to, e.g. <see cref="CiscoCategory.Vlan"/> for <c>switchport access vlan 10</c>.</summary>
+    public static CiscoCategory CategoryOf(CommandEntry command) =>
+        Practice.Value.First(p => p.Command == command).Category;
+
+    /// <summary>The name a category is shown with, e.g. "acl, nat &amp; dhcp".</summary>
+    public static string Label(CiscoCategory category) => category switch
+    {
+        CiscoCategory.Basics => "basics",
+        CiscoCategory.Interfaces => "interfaces",
+        CiscoCategory.Vlan => "vlan",
+        CiscoCategory.Routing => "routing",
+        CiscoCategory.Security => "security",
+        _ => "acl, nat & dhcp",
+    };
 
     /// <summary>The name of the IOS mode a prompt belongs to, e.g. "interface configuration" for <c>R1(config-if)#</c>.</summary>
     public static string ModeName(string prompt)
@@ -58,15 +79,16 @@ public static partial class CiscoLibrary
         };
     }
 
-    private static IEnumerable<CommandEntry[]> Sources()
+    private static IEnumerable<(CiscoCategory Category, CommandEntry[] Commands)> Sources()
     {
-        yield return Modes;
-        yield return Show;
-        yield return Interfaces;
-        yield return RemoteAccess;
-        yield return Routing;
-        yield return Switching;
-        yield return Services;
+        yield return (CiscoCategory.Basics, Modes);
+        yield return (CiscoCategory.Basics, Show);
+        yield return (CiscoCategory.Interfaces, Interfaces);
+        yield return (CiscoCategory.Security, Passwords);
+        yield return (CiscoCategory.Security, RemoteAccess);
+        yield return (CiscoCategory.Routing, Routing);
+        yield return (CiscoCategory.Vlan, Switching);
+        yield return (CiscoCategory.Services, Services);
     }
 
     private static CommandEntry C(string prompt, string text, string description, Difficulty difficulty) =>

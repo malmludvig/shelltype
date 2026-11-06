@@ -5,6 +5,13 @@ namespace ShellType.Data;
 
 public static partial class CiscoLibrary
 {
+    private static readonly CommandEntry[] Passwords =
+    [
+        C(Config, "enable secret Cisco123", "Protect privileged EXEC with a hashed password", Medium),
+        C(Config, "service password-encryption", "Hide plain-text passwords in the config with weak type 7 encryption", Medium),
+        C(Config, "banner motd #Authorized access only#", "Set the message shown to everyone who connects", Hard),
+    ];
+
     private static readonly CommandEntry[] RemoteAccess =
     [
         C(Config, "line console 0", "Configure the console port, the cable you plug in when you are standing at the device", Easy),
